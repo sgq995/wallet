@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model prisma {
+// }
+
+model Entry {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  description String?   @db.VarChar(255)
+  amount      Float
+  date        DateTime  @db.Date
+  type        Type      @relation(fields: [typeId], references: [id])
+  typeId      Int
+  account     Account?  @relation(fields: [accountId], references: [id])
+  accountId   Int
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+}
+
+model Type {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(25) @unique
+  entry Entry[]
+}
+
+model Account {
+  id      Int     @id @default(autoincrement())
+  name    String  @db.VarChar(255)
+  balance Float
+  entry   Entry[]
+}
+
+model Category {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(255)
+  entry Entry[]
+}

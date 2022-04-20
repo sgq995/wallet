@@ -1,8 +1,10 @@
 {
   "extends": "tsconfig/base.json",
   "compilerOptions": {
-    "target": "ES2017"
+    "target": "ES2017",
+    "rootDir": "src",
+    "outDir": "build",
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"],
 }
