@@ -1,17 +1,18 @@
 import fastify from 'fastify';
-import { PrismaClient } from '@prisma/client';
+import fp from 'fastify-plugin';
 
-import modules from './modules';
+import plugins from './plugins';
+import services from './services';
 
-const prisma = new PrismaClient();
 const server = fastify();
 
-server.register(modules);
+// Custom plugins
+server.register(plugins);
 
-server.get('/ping', async (request, reply) => {
-  return 'pong\n';
-});
+// Custom services
+server.register(services);
 
+// Listen
 server.listen(8080, (err, address) => {
   if (err) {
     console.error(err);
@@ -20,7 +21,3 @@ server.listen(8080, (err, address) => {
 
   console.log(`Server listening at ${address}`);
 });
-
-server.addHook('onClose', async () => {
-  await prisma.$disconnect();
-})

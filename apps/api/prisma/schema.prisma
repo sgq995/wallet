@@ -18,12 +18,12 @@ model Entry {
   description String?   @db.VarChar(255)
   amount      Float
   date        DateTime  @db.Date
-  type        Type      @relation(fields: [typeId], references: [id])
+  type        Type?     @relation(fields: [typeId], references: [id])
   typeId      Int
   account     Account?  @relation(fields: [accountId], references: [id])
-  accountId   Int
+  accountId   Int?
   category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  Int
+  categoryId  Int?
 }
 
 model Type {
