@@ -1,4 +1,4 @@
-import { FastifyPluginAsync, RouteHandlerMethod } from 'fastify';
+import { FastifyPluginAsync } from 'fastify';
 
 import { Reply, Request } from 'schemas/entries';
 
@@ -12,7 +12,24 @@ import { DefaultRouteHandlerMethod } from '../../utils/types';
 const findAll: DefaultRouteHandlerMethod<{
   Querystring: Request.TQuery;
 }> = async function (request, reply) {
-  const allEntries = await this.prisma.entry.findMany();
+  const query = request.query;
+  const allEntries = await this.prisma.entry.findMany({
+    where: {
+      AND: {
+        id: query.id,
+        description: query.description
+          ? {
+              contains: query.description,
+            }
+          : query.description,
+        amount: query.amount,
+        date: query.date ? new Date(query.date) : query.date,
+        typeId: query.typeId,
+        accountId: query.accountId,
+        categoryId: query.categoryId,
+      },
+    },
+  });
   replyOK(reply, allEntries);
 };
 
