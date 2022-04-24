@@ -1,22 +1,13 @@
-import {
-  ArrayOfEntryModel,
-  EntryModel,
-  TArrayOfEntryModel,
-  TEntryModel,
-} from './model';
+import { Created, NotFound, OK } from '../helpers/responses';
+import { ArrayOfEntryModel, EntryModel } from './model';
 
-export const FindAll = {
-  200: ArrayOfEntryModel,
-};
+export const EntryArrayOK = OK(ArrayOfEntryModel);
 
-export type TFindAll = {
-  200: TArrayOfEntryModel;
-};
+export const EntryCreated = Created(EntryModel);
 
-export const AddOne = {
-  201: EntryModel,
-};
+export const EntryOK = OK(EntryModel);
 
-export type TAddOne = {
-  201: TEntryModel;
+export const EntryRecord = {
+  ...EntryOK,
+  ...NotFound(),
 };
