@@ -1,12 +1,12 @@
 import { FastifyPluginAsync } from 'fastify';
 
 import { Request, Reply } from 'schemas/accounts';
+
 import {
   replyCreated,
   replyNotFound,
   replyOK,
 } from '../../utils/response-builder';
-
 import { DefaultRouteHandlerMethod } from '../../utils/types';
 
 const findAll: DefaultRouteHandlerMethod<{

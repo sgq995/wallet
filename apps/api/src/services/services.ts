@@ -6,7 +6,7 @@ import accounts from './accounts';
 import entries from './entries';
 
 const services: FastifyPluginAsync = fp(async (fastify, options) => {
-  fastify.register(entries);
+  // fastify.register(entries);
   fastify.register(accounts);
 });
 
