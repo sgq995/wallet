@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 
-import { Id } from '../types/id';
+import { Id } from '../custom-types/id';
 
 export const AccountModel = Type.Object({
   id: Id(),

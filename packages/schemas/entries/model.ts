@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 
-import { Id } from '../types/id';
+import { Id } from '../custom-types/id';
 import { Nullable } from '../helpers/nullable';
 
 export const EntryModel = Type.Object({

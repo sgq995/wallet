@@ -31,6 +31,7 @@
     ".": "./lib/index.js",
     "./accounts": "./lib/accounts/index.js",
     "./categories": "./lib/categories/index.js",
-    "./entries": "./lib/entries/index.js"
+    "./entries": "./lib/entries/index.js",
+    "./types": "./lib/types/index.js"
   }
 }
