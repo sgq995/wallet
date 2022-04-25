@@ -29,6 +29,7 @@
   },
   "exports": {
     ".": "./lib/index.js",
+    "./accounts": "./lib/entries/index.js",
     "./entries": "./lib/entries/index.js"
   }
 }

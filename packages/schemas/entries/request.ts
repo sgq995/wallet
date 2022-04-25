@@ -6,6 +6,10 @@ export const Params = Type.Required(Type.Pick(EntryModel, ['id']));
 
 export type TParams = Static<typeof Params>;
 
+export const Query = Type.Partial(EntryModel);
+
+export type TQuery = Static<typeof Query>;
+
 export const AddOne = Type.Intersect([
   Type.Omit(EntryModel, ['id', 'description', 'accountId', 'categoryId']),
   Type.Partial(Type.Omit(EntryModel, ['id', 'amount', 'date', 'typeId'])),
