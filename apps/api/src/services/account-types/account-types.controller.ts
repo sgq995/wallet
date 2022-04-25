@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 
-import { Request, Reply } from 'schemas/types';
+import { Request, Reply } from 'schemas/account-types';
 
 import {
   replyNotFound,
@@ -12,7 +12,7 @@ const findAll: DefaultRouteHandlerMethod<{
   Querystring: Request.TQuery;
 }> = async function (request, reply) {
   const query = request.query;
-  const allTypes = await this.prisma.type.findMany({
+  const allTypes = await this.prisma.accountType.findMany({
     where: {
       AND: {
         id: query.id,
@@ -32,7 +32,7 @@ const findOne: DefaultRouteHandlerMethod<{
 }> = async function (request, reply) {
   const id = request.params.id;
   try {
-    const type = await this.prisma.type.findUnique({
+    const type = await this.prisma.accountType.findUnique({
       where: {
         id,
       },
@@ -48,12 +48,12 @@ const findOne: DefaultRouteHandlerMethod<{
 const controller: FastifyPluginAsync = async (fastify, options) => {
   fastify.get(
     '/',
-    { schema: { querystring: Request.Query, response: Reply.TypeArrayOK } },
+    { schema: { querystring: Request.Query, response: Reply.AccountTypeArrayOK } },
     findAll
   );
   fastify.get(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.TypeRecord } },
+    { schema: { params: Request.Params, response: Reply.AccountTypeRecord } },
     findOne
   );
 };

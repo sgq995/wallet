@@ -12,23 +12,23 @@ datasource db {
 // }
 
 model Entry {
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  description String?   @db.VarChar(255)
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  description String?      @db.VarChar(255)
   amount      Float
-  date        DateTime  @db.Date
-  type        Type?     @relation(fields: [typeId], references: [id])
+  date        DateTime     @db.Date
+  type        AccountType? @relation(fields: [typeId], references: [id])
   typeId      Int
-  account     Account?  @relation(fields: [accountId], references: [id])
+  account     Account?     @relation(fields: [accountId], references: [id])
   accountId   Int?
-  category    Category? @relation(fields: [categoryId], references: [id])
+  category    Category?    @relation(fields: [categoryId], references: [id])
   categoryId  Int?
 }
 
-model Type {
+model AccountType {
   id    Int     @id @default(autoincrement())
-  name  String  @db.VarChar(25) @unique
+  name  String  @unique @db.VarChar(25)
   entry Entry[]
 }
 
