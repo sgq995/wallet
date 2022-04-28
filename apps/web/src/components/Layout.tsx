@@ -34,8 +34,9 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
         display="flex"
         flexDirection="column"
         justifyContent="space-between"
+        pb={16}
       >
-        <Container>{children}</Container>
+        <Container maxWidth="md">{children}</Container>
 
         <Stack
           direction="row"
@@ -59,13 +60,13 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
               icon={<BalanceSheetIcon />}
             />
             <BottomNavigationAction label="Cash Flow" icon={<CashFlowIcon />} />
-          </BottomNavigation>
 
-          <Box paddingRight={2} paddingBottom={4}>
-            <Fab color="primary">
-              <AddIcon />
-            </Fab>
-          </Box>
+            <Box paddingRight={2} sx={{ transform: 'translateY(-50%)' }}>
+              <Fab color="primary">
+                <AddIcon />
+              </Fab>
+            </Box>
+          </BottomNavigation>
         </Stack>
       </Box>
     </ThemeProvider>
