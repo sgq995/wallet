@@ -15,3 +15,5 @@ export const CashFlowIcon = dynamic(
 );
 
 export const AddIcon = dynamic(() => import('@mui/icons-material/Add'));
+
+export const DeleteIcon = dynamic(() => import('@mui/icons-material/Delete'));

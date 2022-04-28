@@ -21,6 +21,8 @@ export const Divider = dynamic(() => import('@mui/material/Divider'));
 
 export const Fab = dynamic(() => import('@mui/material/Fab'));
 
+export const IconButton = dynamic(() => import('@mui/material/IconButton'));
+
 export const Paper = dynamic(() => import('@mui/material/Paper'));
 
 export const Stack = dynamic(() => import('@mui/material/Stack'));

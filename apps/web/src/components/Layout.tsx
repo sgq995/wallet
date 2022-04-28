@@ -40,7 +40,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
 
         <Stack
           direction="row"
-          justifyContent="space-around"
+          justifyContent="space-between"
           alignItems="flex-end"
           position="fixed"
           left={0}
