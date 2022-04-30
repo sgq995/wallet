@@ -1,0 +1,31 @@
+# Do not copy docker files
+Dockerfile
+Dockerfile.dev
+docker-compose.yml
+docker-compose.dev.yml
+
+# Do not copy deps
+node_modules/
+
+# Do not copy turbo
+.turbo/
+
+# Do not copy artifacts
+build/
+dist/
+lib/
+.next/
+
+# Do not copy docs
+docs/
+
+# Do not copy .git
+.git/
+.gitignore
+README.md
+
+# Docker scripts
+docker-build.sh
+
+# Scripts
+install.sh

@@ -13,5 +13,23 @@ services:
     ports:
       - 5432:5432
 
+  monorepo:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /usr/src/node_modules
+      - /usr/src/packages/config/node_modules
+      - /usr/src/packages/schemas/node_modules
+      - /usr/src/packages/ui/node_modules
+      - /usr/src/apps/api/node_modules
+      - /usr/src/apps/web/node_modules
+      - .:/usr/src
+    ports:
+      - 8080:8080
+      - 3000:3000
+
 volumes:
   pgdata:

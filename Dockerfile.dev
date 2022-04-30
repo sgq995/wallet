@@ -1,0 +1,45 @@
+##
+# Installing deps
+FROM node:16-alpine AS deps
+
+WORKDIR /usr/src
+
+ENV NODE_ENV development
+
+# RUN chown node:node /usr/src
+
+# USER node
+
+# COPY --chown=node:node json/ .
+COPY json/ .
+
+RUN yarn install
+
+##
+# Runner
+FROM node:16-alpine AS runner
+
+WORKDIR /usr/src
+
+ENV NODE_ENV development
+
+RUN chown -R node:node /usr/src
+
+USER node
+
+COPY --from=deps --chown=node:node /usr/src/ .
+# COPY --from=deps /usr/src/ .
+
+# COPY --from=setup --chown=node:node /usr/src/ .
+# COPY --from=setup /usr/src/ .
+
+COPY --chown=node:node . .
+
+# RUN yarn run build
+WORKDIR /usr/src/apps/api
+
+RUN npx prisma generate
+
+WORKDIR /usr/src
+
+CMD [ "yarn", "run", "dev" ]
