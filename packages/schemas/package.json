@@ -5,6 +5,7 @@
   "types": "index.d.ts",
   "license": "MIT",
   "scripts": {
+    "predev": "mkdir -p build lib",
     "dev": "run-p typescript:watch babel:watch",
     "build": "run-s typescript babel",
     "build:watch": "run-p typescript:watch babel:watch",

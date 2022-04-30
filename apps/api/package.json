@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "predev": "prisma migrate dev",
     "dev": "nodemon src/index.ts",
     "build": "run-s typescript babel",
     "start": "node dist/index.js",

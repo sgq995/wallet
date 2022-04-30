@@ -1,8 +1,11 @@
 import dynamic from 'next/dynamic';
 
+import type { BoxProps } from '@mui/material/Box';
+import type { StackProps } from '@mui/material/Stack';
 import type { ThemeProviderProps } from '@mui/system';
+import type { TypographyProps } from '@mui/material/Typography';
 
-export const Box = dynamic(() => import('@mui/material/Box'));
+export const Box = dynamic<BoxProps>(() => import('@mui/material/Box'));
 
 export const BottomNavigation = dynamic(
   () => import('@mui/material/BottomNavigation')
@@ -25,11 +28,11 @@ export const IconButton = dynamic(() => import('@mui/material/IconButton'));
 
 export const Paper = dynamic(() => import('@mui/material/Paper'));
 
-export const Stack = dynamic(() => import('@mui/material/Stack'));
+export const Stack = dynamic<StackProps>(() => import('@mui/material/Stack'));
 
 // @mui/material/styles
 export const ThemeProvider = dynamic<ThemeProviderProps>(() =>
   import('@mui/material/styles').then((mod) => mod.ThemeProvider)
 );
 
-export const Typography = dynamic(() => import('@mui/material/Typography'));
+export const Typography = dynamic<TypographyProps>(() => import('@mui/material/Typography'));
