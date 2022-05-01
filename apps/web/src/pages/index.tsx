@@ -2,7 +2,7 @@ import { useState } from 'react';
 import EntryPaper from '../components/EntryPaper';
 import { Stack, Typography } from '../components/Material';
 
-export default function Web() {
+export default function Home() {
   const [entries, setEntries] = useState(new Array(50).fill({}));
 
   return (
@@ -10,8 +10,8 @@ export default function Web() {
       <Typography variant="h1">Home</Typography>
 
       <Stack spacing={2}>
-        {entries.map(() => (
-          <EntryPaper />
+        {entries.map((_, index) => (
+          <EntryPaper key={index} />
         ))}
       </Stack>
     </>
