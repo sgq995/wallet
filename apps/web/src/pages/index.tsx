@@ -1,8 +1,10 @@
 import {
   MutableRefObject,
+  PropsWithChildren,
   Ref,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -15,7 +17,6 @@ function useRefCallback<R>(
 ) {
   const ref = useRef<R>();
   const setRef = useCallback((element) => {
-    console.log({ element });
     callback(ref, element);
     ref.current = element;
   }, []);
@@ -47,8 +48,6 @@ function useObservedRef<T extends HTMLElement = undefined>(
   const observer = useObserver(callback, options);
 
   const setRef = useRefCallback<T>((ref, element) => {
-    console.log({ observer });
-
     if (ref.current) {
       observer?.unobserve(ref.current);
     }
@@ -59,6 +58,10 @@ function useObservedRef<T extends HTMLElement = undefined>(
   });
 
   return setRef;
+}
+
+function ElementWrapper({ children }: PropsWithChildren<{}>) {
+  return <>{children}</>;
 }
 
 interface InfiniteScrollProps<D, R extends HTMLElement = undefined> {
@@ -72,16 +75,19 @@ function InfiniteScroll<D, R extends HTMLElement = undefined>({
 }: InfiniteScrollProps<D, R>) {
   const root = useRef();
 
+  const [isFirstIntersecting, setIsFirstIntersecting] = useState(false);
+  const [isLastIntersecting, setIsLastIntersecting] = useState(false);
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(10);
 
   const firstRef = useObservedRef(
     (entries) => {
       entries.forEach((entry) => {
+        setIsFirstIntersecting(entry.isIntersecting);
         if (entry.isIntersecting) {
-          // setOffset(Math.max(offset - 1, 0));
+          // setEnd((end) => Math.min(end - 1, data.length));
         } else {
-          setStart(Math.min(start + 1, data.length));
+          // setStart((start) => Math.min(start + 1, data.length));
         }
       });
     },
@@ -91,25 +97,40 @@ function InfiniteScroll<D, R extends HTMLElement = undefined>({
   const lastRef = useObservedRef(
     (entries) => {
       entries.forEach((entry) => {
+        setIsLastIntersecting(entry.isIntersecting);
         if (entry.isIntersecting) {
-          setEnd(Math.min(end + 1, data.length));
+          // setEnd((end) => Math.min(end + 1, data.length));
+        } else {
+          // setStart((start) => Math.max(start - 1, 0));
         }
       });
     },
     { threshold: 1.0 }
   );
 
+  useLayoutEffect(() => {
+    console.log({ isFirstIntersecting, isLastIntersecting });
+  }, [isFirstIntersecting, isLastIntersecting]);
+
   const elements = data
-    .filter((_entry, index) => start <= index && index < end)
     .map((entry, index) => {
-      const ref =
-        index === start ? firstRef : index === end - 1 ? lastRef : undefined;
-      return children(entry, ref, index);
-    });
+      if (start <= index && index < end) {
+        return { entry, key: index };
+      }
+    })
+    .filter((result) => result);
+  // .map((entry, index, array) => {
+  //   const ref = undefined;
+  //   return children(entry, ref, index);
+  // });
 
   return (
     <Stack spacing={2} ref={root.current}>
-      {elements}
+      <span ref={firstRef}></span>
+      {elements.map(({ entry, key }) => (
+        <ElementWrapper key={key}>{children(entry)}</ElementWrapper>
+      ))}
+      <span ref={lastRef}></span>
     </Stack>
   );
 }
