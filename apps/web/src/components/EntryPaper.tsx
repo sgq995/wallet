@@ -1,3 +1,5 @@
+import { forwardRef, Ref } from 'react';
+
 import {
   Box,
   Divider,
@@ -8,9 +10,14 @@ import {
 } from '../components/Material';
 import { DeleteIcon } from './IconsMaterial';
 
-export default function EntryPaper({}) {
+interface EntryPaperProps {}
+
+export default forwardRef<any>(function EntryPaper(
+  {}: EntryPaperProps,
+  ref
+) {
   return (
-    <Paper variant="outlined">
+    <Paper ref={ref} variant="outlined">
       <Stack
         padding={2}
         spacing={2}
@@ -48,4 +55,4 @@ export default function EntryPaper({}) {
       </Stack>
     </Paper>
   );
-}
+});
