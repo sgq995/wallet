@@ -42,4 +42,7 @@ RUN npx prisma generate
 
 WORKDIR /usr/src
 
+EXPOSE 8080
+EXPOSE 3000
+
 CMD [ "yarn", "run", "dev" ]
