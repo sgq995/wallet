@@ -8,10 +8,12 @@ import categories from './categories';
 import entries from './entries';
 
 const services: FastifyPluginAsync = fp(async (fastify, options) => {
-  fastify.register(accountTypes);
-  fastify.register(accounts);
-  fastify.register(categories);
-  fastify.register(entries);
+  const prefix = '/v1';
+  fastify.register(accountTypes, { ...options, prefix: prefix });
+  fastify.register(accounts, { ...options, prefix: prefix });
+  fastify.register(categories, { ...options, prefix: prefix });
+  fastify.register(entries, { ...options, prefix: prefix });
+  fastify.log.info(__filename);
 });
 
 export default services;
