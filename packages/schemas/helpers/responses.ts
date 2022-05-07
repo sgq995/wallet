@@ -1,5 +1,7 @@
 import { TSchema, Type } from '@sinclair/typebox';
 
+export type ComposeStatic<T> = T[keyof T];
+
 export function OK<T extends TSchema>(data: T) {
   return {
     200: Type.Object({
@@ -18,10 +20,20 @@ export function Created<T extends TSchema>(data: T) {
   };
 }
 
+export function BadRequest() {
+  return {
+    400: Type.Object({
+      statusCode: Type.Literal(400),
+      error: Type.Literal('Not Found'),
+      message: Type.String(),
+    }),
+  }
+}
+
 export function NotFound() {
   return {
     404: Type.Object({
-      statusCode: Type.Literal(201),
+      statusCode: Type.Literal(404),
       error: Type.Literal('Not Found'),
       message: Type.String(),
     }),
