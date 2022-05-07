@@ -28,5 +28,5 @@ server.listen(5000, '0.0.0.0', (err, address) => {
     console.error(err);
     process.exit(1);
   }
-  // console.log(`Server listening at ${address}`);
+  server.log.info(server.printRoutes({ commonPrefix: false }));
 });
