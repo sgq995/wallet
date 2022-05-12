@@ -2,14 +2,12 @@ import { FastifyPluginAsync } from 'fastify';
 
 import { Request, Reply } from 'schemas/account-types';
 
-import {
-  replyNotFound,
-  replyOK,
-} from '../../utils/response-builder';
+import { replyNotFound, replyOK } from '../../utils/response-builder';
 import { DefaultRouteHandlerMethod } from '../../utils/types';
 
 const findAll: DefaultRouteHandlerMethod<{
   Querystring: Request.TQuery;
+  Reply: Reply.TFindAll;
 }> = async function (request, reply) {
   const query = request.query;
   const allTypes = await this.prisma.accountType.findMany({
@@ -29,6 +27,7 @@ const findAll: DefaultRouteHandlerMethod<{
 
 const findOne: DefaultRouteHandlerMethod<{
   Params: Request.TParams;
+  Reply: Reply.TFindOne;
 }> = async function (request, reply) {
   const id = request.params.id;
   try {
@@ -48,12 +47,12 @@ const findOne: DefaultRouteHandlerMethod<{
 const controller: FastifyPluginAsync = async (fastify, options) => {
   fastify.get(
     '/',
-    { schema: { querystring: Request.Query, response: Reply.AccountTypeArrayOK } },
+    { schema: { querystring: Request.Query, response: Reply.FindAll } },
     findAll
   );
   fastify.get(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.AccountTypeRecord } },
+    { schema: { params: Request.Params, response: Reply.FindOne } },
     findOne
   );
 };
