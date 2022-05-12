@@ -11,6 +11,7 @@ import { DefaultRouteHandlerMethod } from '../../utils/types';
 
 const findAll: DefaultRouteHandlerMethod<{
   Querystring: Request.TQuery;
+  Reply: Reply.TFindAll;
 }> = async function (request, reply) {
   const query = request.query;
   const allAccounts = await this.prisma.account.findMany({
@@ -31,6 +32,7 @@ const findAll: DefaultRouteHandlerMethod<{
 
 const addOne: DefaultRouteHandlerMethod<{
   Body: Request.TAddOne;
+  Reply: Reply.TAddOne;
 }> = async function (request, reply) {
   const account = request.body;
   const createdAccount = await this.prisma.account.create({
@@ -44,6 +46,7 @@ const addOne: DefaultRouteHandlerMethod<{
 
 const findOne: DefaultRouteHandlerMethod<{
   Params: Request.TParams;
+  Reply: Reply.TFindOne;
 }> = async function (request, reply) {
   const id = request.params.id;
   try {
@@ -63,6 +66,7 @@ const findOne: DefaultRouteHandlerMethod<{
 const updateOne: DefaultRouteHandlerMethod<{
   Body: Request.TUpdateOne;
   Params: Request.TParams;
+  Reply: Reply.TUpdateOne;
 }> = async function (request, reply) {
   const id = request.params.id;
   const account = request.body;
@@ -85,6 +89,7 @@ const updateOne: DefaultRouteHandlerMethod<{
 
 const removeOne: DefaultRouteHandlerMethod<{
   Params: Request.TParams;
+  Reply: Reply.TRemoveOne;
 }> = async function (request, reply) {
   const id = request.params.id;
   try {
@@ -103,17 +108,17 @@ const removeOne: DefaultRouteHandlerMethod<{
 const controller: FastifyPluginAsync = async (fastify, options) => {
   fastify.get(
     '/',
-    { schema: { querystring: Request.Query, response: Reply.AccountArrayOK } },
+    { schema: { querystring: Request.Query, response: Reply.FindAll } },
     findAll
   );
   fastify.post(
     '/',
-    { schema: { body: Request.AddOne, response: Reply.AccountCreated } },
+    { schema: { body: Request.AddOne, response: Reply.AddOne } },
     addOne
   );
   fastify.get(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.AccountRecord } },
+    { schema: { params: Request.Params, response: Reply.FindOne } },
     findOne
   );
   fastify.put(
@@ -122,14 +127,14 @@ const controller: FastifyPluginAsync = async (fastify, options) => {
       schema: {
         body: Request.UpdateOne,
         params: Request.Params,
-        response: Reply.AccountRecord,
+        response: Reply.UpdateOne,
       },
     },
     updateOne
   );
   fastify.delete(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.AccountRecord } },
+    { schema: { params: Request.Params, response: Reply.RemoveOne } },
     removeOne
   );
 };

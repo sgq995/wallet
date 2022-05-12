@@ -56,26 +56,30 @@ export function requestWithBaseFactory(routeBase: string) {
   };
 }
 
+type TDefault = unknown;
+
 export interface IEndpointServiceRequest {
-  AddOne?: unknown;
-  UpdateOne?: unknown;
+  AddOne?: TDefault;
+  UpdateOne?: TDefault;
 }
 
 export interface IEndpointServiceReply {
-  FindAll?: unknown;
-  AddOne?: unknown;
-  FindOne?: unknown;
-  UpdateOne?: unknown;
-  RemoveOne?: unknown;
+  FindAll?: TDefault;
+  AddOne?: TDefault;
+  FindOne?: TDefault;
+  UpdateOne?: TDefault;
+  RemoveOne?: TDefault;
 }
 
 export interface IEndpointServiceOptions {
-  Id?: unknown;
-  Query?: unknown;
+  Id?: TDefault;
+  Query?: TDefault;
   Request?: IEndpointServiceRequest;
   Reply?: IEndpointServiceReply;
 }
-export class EndpointService<Options extends IEndpointServiceOptions> {
+export class EndpointService<
+  Options extends IEndpointServiceOptions = IEndpointServiceOptions
+> {
   constructor(private basePath: string) {}
 
   request<T>(input: RequestInfo, init?: RequestInit) {
