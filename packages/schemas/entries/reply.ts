@@ -1,11 +1,6 @@
 import { Static } from '@sinclair/typebox';
 
-import {
-  HttpBadRequest,
-  HttpNotFound,
-  THttpBadRequest,
-  THttpNotFound,
-} from '../commons/reply';
+import { HttpBadRequest, HttpNotFound } from '../commons/reply';
 
 import { ComposeStatic, Created, OK } from '../helpers/responses';
 import { ArrayOfEntryModel, EntryModel } from './model';

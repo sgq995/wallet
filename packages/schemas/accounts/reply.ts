@@ -1,6 +1,6 @@
 import { Static } from '@sinclair/typebox';
 import { HttpBadRequest, HttpNotFound } from '../commons/reply';
-import { ComposeStatic, Created, NotFound, OK } from '../helpers/responses';
+import { ComposeStatic, Created, OK } from '../helpers/responses';
 import { AccountModel, ArrayOfAccountModel } from './model';
 
 export const AccountArrayOK = OK(ArrayOfAccountModel);

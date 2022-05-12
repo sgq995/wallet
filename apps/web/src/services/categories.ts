@@ -1,9 +1,9 @@
 import { Request, Reply } from 'schemas/categories';
 import { EndpointService } from './api';
 
-const ACCOUNTS_BASE_URL = '/v1/accounts';
+const CATEGORIES_BASE_URL = '/v1/accounts';
 
-const accountsService = new EndpointService<{
+const categoriesService = new EndpointService<{
   Id: Request.TParams['id'];
   Query: Request.TQuery;
   Request: {
@@ -17,6 +17,6 @@ const accountsService = new EndpointService<{
     UpdateOne: Reply.TUpdateOne;
     RemoveOne: Reply.TRemoveOne;
   };
-}>(ACCOUNTS_BASE_URL);
+}>(CATEGORIES_BASE_URL);
 
-export default accountsService;
+export default categoriesService;
