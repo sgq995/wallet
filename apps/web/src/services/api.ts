@@ -56,52 +56,6 @@ export function requestWithBaseFactory(routeBase: string) {
   };
 }
 
-export class BaseEndpointService {
-  constructor(private basePath: string) {}
-
-  request<T>(input: RequestInfo, init?: RequestInit) {
-    if (typeof input === 'string') {
-      return request<T>(`${this.basePath}${input}`, init);
-    } else {
-      return request<T>(
-        {
-          ...input,
-          url: `${this.basePath}${input.url}`,
-        },
-        init
-      );
-    }
-  }
-}
-
-export enum EndpointServiceMethod {
-  FindAll = 'findAll',
-  AddOne = 'addOne',
-  FindOne = 'findOne',
-  UpdateOne = 'updateOne',
-  RemoveOne = 'removeOne',
-}
-
-interface IEndpointServiceFindAll<TQuery, TReply> {
-  [EndpointServiceMethod.FindAll]: (query?: TQuery) => Promise<TReply>;
-}
-
-interface IEndpointServiceAddOne<TRequest, TReply> {
-  [EndpointServiceMethod.AddOne]: (body: TRequest) => Promise<TReply>;
-}
-interface IEndpointServiceFindOne<TId, TReply> {
-  [EndpointServiceMethod.FindOne]: (id: TId) => Promise<TReply>;
-}
-interface IEndpointServiceUpdateOne<TId, TRequest, TReply> {
-  [EndpointServiceMethod.UpdateOne]: (
-    id: TId,
-    body: TRequest
-  ) => Promise<TReply>;
-}
-interface IEndpointServiceRemoveOne<TId, TRemoveOne> {
-  [EndpointServiceMethod.RemoveOne]: (id: TId) => Promise<TRemoveOne>;
-}
-
 export interface IEndpointServiceRequest {
   AddOne?: unknown;
   UpdateOne?: unknown;
@@ -121,71 +75,68 @@ export interface IEndpointServiceOptions {
   Request?: IEndpointServiceRequest;
   Reply?: IEndpointServiceReply;
 }
+export class EndpointService<Options extends IEndpointServiceOptions> {
+  constructor(private basePath: string) {}
 
-export type TEndpointService<
-  Options extends IEndpointServiceOptions = IEndpointServiceOptions
-> = BaseEndpointService &
-  IEndpointServiceFindAll<Options['Query'], Options['Reply']['FindAll']> &
-  IEndpointServiceAddOne<
-    Options['Request']['AddOne'],
-    Options['Reply']['AddOne']
-  > &
-  IEndpointServiceFindOne<Options['Id'], Options['Reply']['FindOne']> &
-  IEndpointServiceUpdateOne<
-    Options['Id'],
-    Options['Request']['UpdateOne'],
-    Options['Reply']['UpdateOne']
-  > &
-  IEndpointServiceRemoveOne<Options['Id'], Options['Reply']['RemoveOne']>;
+  request<T>(input: RequestInfo, init?: RequestInit) {
+    if (typeof input === 'string') {
+      return request<T>(`${this.basePath}${input}`, init);
+    } else {
+      return request<T>(
+        {
+          ...input,
+          url: `${this.basePath}${input.url}`,
+        },
+        init
+      );
+    }
+  }
 
-function findAll<TQuery, TFindAll>(this: BaseEndpointService, query?: TQuery) {
-  const searchParams = query ? objectToUrlSearchParams(query) : '';
-  const url = query ? `/?${searchParams}` : '/';
-  return this.request<TFindAll>(url);
-}
+  findAll = <TQuery = Options['Query'], TFindAll = Options['Reply']['FindAll']>(
+    query?: TQuery
+  ) => {
+    const searchParams = query ? objectToUrlSearchParams(query) : '';
+    const url = query ? `/?${searchParams}` : '/';
+    return this.request<TFindAll>(url);
+  };
 
-function addOne<TRequestAddOne, TReplyAddOne>(
-  this: BaseEndpointService,
-  body: TRequestAddOne
-) {
-  return this.request<TReplyAddOne>('/', {
-    method: 'POST',
-    body: JSON.stringify(body),
-  });
-}
+  addOne = <
+    TRequestAddOne = Options['Request']['AddOne'],
+    TReplyAddOne = Options['Reply']['AddOne']
+  >(
+    body: TRequestAddOne
+  ) => {
+    return this.request<TReplyAddOne>('/', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  };
 
-function findOne<TId, TFindOne>(this: BaseEndpointService, id: TId) {
-  return this.request<TFindOne>(`/${id}`);
-}
+  findOne = <TId = Options['Id'], TFindOne = Options['Reply']['FindOne']>(
+    id: TId
+  ) => {
+    return this.request<TFindOne>(`/${id}`);
+  };
 
-function updateOne<TId, TRequestUpdateOne, TReplyUpdateOne>(
-  this: BaseEndpointService,
-  id: TId,
-  body: TRequestUpdateOne
-) {
-  return this.request<TReplyUpdateOne>(`/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(body),
-  });
-}
+  updateOne = <
+    TId = Options['Id'],
+    TRequestUpdateOne = Options['Request']['UpdateOne'],
+    TReplyUpdateOne = Options['Reply']['UpdateOne']
+  >(
+    id: TId,
+    body: TRequestUpdateOne
+  ) => {
+    return this.request<TReplyUpdateOne>(`/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  };
 
-function removeOne<TId, TRemoveOne>(this: BaseEndpointService, id: TId) {
-  return this.request<TRemoveOne>(`/${id}`, {
-    method: 'DELETE',
-  });
-}
-
-type Flatten<T> = T extends any[] ? T[number] : T;
-
-type TEndpointServiceKeys = (keyof TEndpointService)[];
-
-export function endpointService<
-  Options extends IEndpointServiceOptions,
-  Methods extends TEndpointServiceKeys = TEndpointServiceKeys,
-  Keys extends keyof TEndpointService = Flatten<Methods>,
-  Return extends BaseEndpointService = BaseEndpointService &
-    Pick<TEndpointService<Options>, Keys>
->(basePath: string, methods: Methods): Return {
-  const base: unknown = new BaseEndpointService(basePath);
-  return base as Return;
+  removeOne = <TId = Options['Id'], TRemoveOne = Options['Reply']['RemoveOne']>(
+    id: TId
+  ) => {
+    return this.request<TRemoveOne>(`/${id}`, {
+      method: 'DELETE',
+    });
+  };
 }
