@@ -15,16 +15,12 @@ export const AccountOK = OK(AccountModel);
 
 export type TAccountOK = Static<typeof AccountOK['200']>;
 
-export const AccountNotFound = NotFound();
-
-export type TAccountNotFound = Static<typeof AccountNotFound['404']>;
-
 export const AccountRecord = {
   ...AccountOK,
-  ...AccountNotFound,
+  ...HttpNotFound,
 };
 
-export type TAccountRecord = TAccountOK | TAccountNotFound;
+export type TAccountRecord = ComposeStatic<typeof AccountRecord>;
 
 export const FindAll = {
   ...AccountArrayOK,
