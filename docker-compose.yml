@@ -2,6 +2,11 @@ version: '3.8'
 
 services:
   postgres:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     image: postgres:14-alpine
     container_name: postgres
     restart: always
@@ -14,9 +19,26 @@ services:
     ports:
       - 5432:5432
 
+  supertokens:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: registry.supertokens.io/supertokens/supertokens-postgresql
+    container_name: supertokens
+    restart: always
+    environment:
+      POSTGRESQL_PASSWORD: prisma
+      POSTGRESQL_USER: prisma
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DATABASE_NAME: supertokens
+    ports:
+      - 3567:3567
+
   webapp:
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build:
       context: .
       dockerfile: Dockerfile.dev
