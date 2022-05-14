@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 
 import { Request, Reply } from 'schemas/accounts';
+import { getOrCreateProfileId } from '../../utils/profile-helper';
 
 import {
   replyCreated,
@@ -18,6 +19,7 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
   const query = request.query;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   const allAccounts = await this.prisma.account.findMany({
     where: {
       AND: {
@@ -28,6 +30,7 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
             }
           : query.name,
         balance: query.balance,
+        profileId,
       },
     },
   });
@@ -39,10 +42,12 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
   const account = request.body;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   const createdAccount = await this.prisma.account.create({
     data: {
       name: account.name,
       balance: account.balance,
+      profileId,
     },
   });
   replyCreated(reply, createdAccount);
@@ -53,10 +58,14 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TFindOne;
 }> = async function (request, reply) {
   const id = request.params.id;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const account = await this.prisma.account.findUnique({
+    const account = await this.prisma.account.findFirst({
       where: {
-        id,
+        AND: {
+          id,
+          profileId,
+        },
       },
       rejectOnNotFound: true,
     });
@@ -74,10 +83,14 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
 }> = async function (request, reply) {
   const id = request.params.id;
   const account = request.body;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const updatedAccount = await this.prisma.account.update({
+    const updatedAccount = await this.prisma.account.updateMany({
       where: {
-        id,
+        AND: {
+          id,
+          profileId,
+        },
       },
       data: {
         name: account.name,
@@ -91,15 +104,19 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   }
 };
 
-const removeOne: DefaultRouteHandlerMethod<{
+const removeOne: DefaultRouteHandlerMethodWithSession<{
   Params: Request.TParams;
   Reply: Reply.TRemoveOne;
 }> = async function (request, reply) {
   const id = request.params.id;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const deletedAccount = await this.prisma.account.delete({
+    const deletedAccount = await this.prisma.account.deleteMany({
       where: {
-        id,
+        AND: {
+          id,
+          profileId,
+        },
       },
     });
 

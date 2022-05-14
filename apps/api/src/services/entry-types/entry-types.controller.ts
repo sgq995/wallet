@@ -4,6 +4,7 @@ import { Request, Reply } from 'schemas/entry-types';
 
 import { replyNotFound, replyOK } from '../../utils/response-builder';
 import { DefaultRouteHandlerMethod } from '../../utils/types';
+import { verifySessionHandler } from '../../utils/verify-session-handler';
 
 const findAll: DefaultRouteHandlerMethod<{
   Querystring: Request.TQuery;
@@ -47,12 +48,18 @@ const findOne: DefaultRouteHandlerMethod<{
 const controller: FastifyPluginAsync = async (fastify, options) => {
   fastify.get(
     '/',
-    { schema: { querystring: Request.Query, response: Reply.FindAll } },
+    {
+      schema: { querystring: Request.Query, response: Reply.FindAll },
+      preHandler: verifySessionHandler(),
+    },
     findAll
   );
   fastify.get(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.FindOne } },
+    {
+      schema: { params: Request.Params, response: Reply.FindOne },
+      preHandler: verifySessionHandler(),
+    },
     findOne
   );
 };

@@ -1,84 +1,76 @@
 import { FastifyPluginAsync } from 'fastify';
 
 import { Reply, Request } from 'schemas/entries';
+import { getOrCreateProfileId } from '../../utils/profile-helper';
 
 import {
   replyCreated,
-  replyForbidden,
   replyNotFound,
   replyOK,
 } from '../../utils/response-builder';
-import {
-  DefaultRouteHandlerMethod,
-  DefaultRouteHandlerMethodWithSession,
-} from '../../utils/types';
+import { DefaultRouteHandlerMethodWithSession } from '../../utils/types';
 import { verifySessionHandler } from '../../utils/verify-session-handler';
 
-const findAll: DefaultRouteHandlerMethod<{
+const findAll: DefaultRouteHandlerMethodWithSession<{
   Querystring: Request.TQuery;
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
-  try {
-    const query = request.query;
-    const allEntries = await this.prisma.entry.findMany({
-      where: {
-        AND: {
-          id: query.id,
-          description: query.description
-            ? {
-                contains: query.description,
-              }
-            : query.description,
-          amount: query.amount,
-          date: query.date ? new Date(query.date) : query.date,
-          typeId: query.typeId,
-          accountId: query.accountId,
-          categoryId: query.categoryId,
-        },
+  const query = request.query;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
+  const allEntries = await this.prisma.entry.findMany({
+    where: {
+      AND: {
+        id: query.id,
+        description: query.description
+          ? {
+              contains: query.description,
+            }
+          : query.description,
+        amount: query.amount,
+        date: query.date ? new Date(query.date) : query.date,
+        typeId: query.typeId,
+        accountId: query.accountId,
+        categoryId: query.categoryId,
+        profileId,
       },
-    });
-    replyOK(reply, allEntries);
-  } catch (e) {}
+    },
+  });
+  replyOK(reply, allEntries);
 };
 
 const addOne: DefaultRouteHandlerMethodWithSession<{
   Body: Request.TAddOne;
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
-  try {
-    const userId = request.session?.getUserId();
-    const profile = await this.prisma.profile.findUnique({
-      where: { userId },
-      rejectOnNotFound: true,
-    });
-
-    const entry = request.body;
-    const createdEntry = await this.prisma.entry.create({
-      data: {
-        description: entry.description,
-        amount: entry.amount,
-        date: new Date(entry.date),
-        typeId: entry.typeId,
-        accountId: entry.accountId,
-        categoryId: entry.categoryId,
-        profileId: profile?.id,
-      },
-    });
-    replyCreated(reply, createdEntry);
-  } catch (e) {
-    replyForbidden(reply, `Entry is not associated with current session`);
-  }
+  const entry = request.body;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
+  const createdEntry = await this.prisma.entry.create({
+    data: {
+      description: entry.description,
+      amount: entry.amount,
+      date: new Date(entry.date),
+      typeId: entry.typeId,
+      accountId: entry.accountId,
+      categoryId: entry.categoryId,
+      profileId,
+    },
+  });
+  replyCreated(reply, createdEntry);
 };
 
-const findOne: DefaultRouteHandlerMethod<{
+const findOne: DefaultRouteHandlerMethodWithSession<{
   Params: Request.TParams;
   Reply: Reply.TFindOne;
 }> = async function (request, reply) {
   const id = request.params.id;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const entry = await this.prisma.entry.findUnique({
+    const entry = await this.prisma.entry.findFirst({
       where: {
-        id,
+        AND: {
+          id,
+          profileId,
+        },
       },
       rejectOnNotFound: true,
     });
@@ -89,17 +81,21 @@ const findOne: DefaultRouteHandlerMethod<{
   }
 };
 
-const updateOne: DefaultRouteHandlerMethod<{
+const updateOne: DefaultRouteHandlerMethodWithSession<{
   Params: Request.TParams;
   Body: Request.TUpdateOne;
   Reply: Reply.TUpdateOne;
 }> = async function (request, reply) {
   const id = request.params.id;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
     const entry = request.body;
-    const updatedEntry = await this.prisma.entry.update({
+    const updatedEntry = await this.prisma.entry.updateMany({
       where: {
-        id,
+        AND: {
+          id,
+          profileId,
+        },
       },
       data: {
         description: entry.description,
@@ -117,15 +113,19 @@ const updateOne: DefaultRouteHandlerMethod<{
   }
 };
 
-const removeOne: DefaultRouteHandlerMethod<{
+const removeOne: DefaultRouteHandlerMethodWithSession<{
   Params: Request.TParams;
   Reply: Reply.TRemoveOne;
 }> = async function (request, reply) {
   const id = request.params.id;
+  const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const deletedEntry = await this.prisma.entry.delete({
+    const deletedEntry = await this.prisma.entry.deleteMany({
       where: {
-        id,
+        AND: {
+          id,
+          profileId,
+        },
       },
     });
 
@@ -138,7 +138,10 @@ const removeOne: DefaultRouteHandlerMethod<{
 const controller: FastifyPluginAsync = async (fastify, options) => {
   fastify.get(
     '/',
-    { schema: { querystring: Request.Query, response: Reply.FindAll } },
+    {
+      schema: { querystring: Request.Query, response: Reply.FindAll },
+      preHandler: verifySessionHandler(),
+    },
     findAll
   );
   fastify.post(
@@ -151,7 +154,10 @@ const controller: FastifyPluginAsync = async (fastify, options) => {
   );
   fastify.get(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.FindOne } },
+    {
+      schema: { params: Request.Params, response: Reply.FindOne },
+      preHandler: verifySessionHandler(),
+    },
     findOne
   );
   fastify.put(
@@ -162,12 +168,16 @@ const controller: FastifyPluginAsync = async (fastify, options) => {
         body: Request.UpdateOne,
         response: Reply.UpdateOne,
       },
+      preHandler: verifySessionHandler(),
     },
     updateOne
   );
   fastify.delete(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.RemoveOne } },
+    {
+      schema: { params: Request.Params, response: Reply.RemoveOne },
+      preHandler: verifySessionHandler(),
+    },
     removeOne
   );
 };
