@@ -34,7 +34,7 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
   replyOK(reply, allAccounts);
 };
 
-const addOne: DefaultRouteHandlerMethod<{
+const addOne: DefaultRouteHandlerMethodWithSession<{
   Body: Request.TAddOne;
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
@@ -48,7 +48,7 @@ const addOne: DefaultRouteHandlerMethod<{
   replyCreated(reply, createdAccount);
 };
 
-const findOne: DefaultRouteHandlerMethod<{
+const findOne: DefaultRouteHandlerMethodWithSession<{
   Params: Request.TParams;
   Reply: Reply.TFindOne;
 }> = async function (request, reply) {
@@ -67,7 +67,7 @@ const findOne: DefaultRouteHandlerMethod<{
   }
 };
 
-const updateOne: DefaultRouteHandlerMethod<{
+const updateOne: DefaultRouteHandlerMethodWithSession<{
   Body: Request.TUpdateOne;
   Params: Request.TParams;
   Reply: Reply.TUpdateOne;
@@ -120,12 +120,18 @@ const controller: FastifyPluginAsync = async (fastify, options) => {
   );
   fastify.post(
     '/',
-    { schema: { body: Request.AddOne, response: Reply.AddOne } },
+    {
+      schema: { body: Request.AddOne, response: Reply.AddOne },
+      preHandler: verifySessionHandler(),
+    },
     addOne
   );
   fastify.get(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.FindOne } },
+    {
+      schema: { params: Request.Params, response: Reply.FindOne },
+      preHandler: verifySessionHandler(),
+    },
     findOne
   );
   fastify.put(
@@ -136,12 +142,16 @@ const controller: FastifyPluginAsync = async (fastify, options) => {
         params: Request.Params,
         response: Reply.UpdateOne,
       },
+      preHandler: verifySessionHandler(),
     },
     updateOne
   );
   fastify.delete(
     '/:id',
-    { schema: { params: Request.Params, response: Reply.RemoveOne } },
+    {
+      schema: { params: Request.Params, response: Reply.RemoveOne },
+      preHandler: verifySessionHandler(),
+    },
     removeOne
   );
 };

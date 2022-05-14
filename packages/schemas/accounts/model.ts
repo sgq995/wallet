@@ -6,6 +6,7 @@ export const AccountModel = Type.Object({
   id: Id(),
   name: Type.String(),
   balance: Type.Number(),
+  profileId: Id(),
 });
 
 export type TAccountModel = Static<typeof AccountModel>;

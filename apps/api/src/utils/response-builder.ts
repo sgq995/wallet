@@ -78,3 +78,27 @@ export function replyNotFound<
     message,
   });
 }
+
+export function replyForbidden<
+  T,
+  RawServer extends RawServerBase = RawServerDefault,
+  RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,
+  RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>,
+  RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+  ContextConfig = ContextConfigDefault
+>(
+  reply: FastifyReply<
+    RawServer,
+    RawRequest,
+    RawReply,
+    RouteGeneric,
+    ContextConfig
+  >,
+  message: string
+) {
+  return reply.status(403).send({
+    statusCode: 403,
+    error: 'Forbidden',
+    message,
+  });
+}
