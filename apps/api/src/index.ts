@@ -4,6 +4,8 @@ import fastify from 'fastify';
 import plugins from './plugins';
 import services from './services';
 
+import config from './config';
+
 const server = fastify({
   logger: {
     prettyPrint:
@@ -24,7 +26,7 @@ const server = fastify({
   await server.register(services);
 
   // Listen
-  await server.listen(5000, '0.0.0.0', (err, address) => {
+  await server.listen(config.app.port, config.app.host, (err, address) => {
     if (err) {
       console.error(err);
       process.exit(1);
