@@ -1,6 +1,6 @@
 {
   "name": "schemas",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",
@@ -30,7 +30,6 @@
   },
   "exports": {
     ".": "./lib/index.js",
-    "./account-types": "./lib/account-types/index.js",
     "./entry-types": "./lib/entry-types/index.js",
     "./accounts": "./lib/accounts/index.js",
     "./categories": "./lib/categories/index.js",
