@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 function types() {
-  return prisma.accountType.createMany({
+  return prisma.entryType.createMany({
     data: [
       { name: 'Income' },
       { name: 'Expense' },
