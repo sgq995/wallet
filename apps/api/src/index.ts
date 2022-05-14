@@ -16,17 +16,19 @@ const server = fastify({
   },
 });
 
-// Custom plugins
-server.register(plugins);
+(async () => {
+  // Custom plugins
+  await server.register(plugins);
 
-// Custom services
-server.register(services);
+  // Custom services
+  await server.register(services);
 
-// Listen
-server.listen(5000, '0.0.0.0', (err, address) => {
-  if (err) {
-    console.error(err);
-    process.exit(1);
-  }
-  server.log.info(server.printRoutes({ commonPrefix: false }));
-});
+  // Listen
+  await server.listen(5000, '0.0.0.0', (err, address) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    server.log.info(server.printRoutes({ commonPrefix: false }));
+  });
+})();

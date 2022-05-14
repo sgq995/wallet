@@ -8,8 +8,9 @@ export const backendConfig = (): TypeInput => {
     framework: 'express',
     supertokens: {
       // try.supertokens.com is for demo purposes. Replace this with the address of your core instance (sign up on supertokens.com), or self host a core.
-      connectionURI: 'https://try.supertokens.com',
-      // apiKey: "IF YOU HAVE AN API KEY FOR THE CORE, ADD IT HERE",
+      // connectionURI: 'https://try.supertokens.com',
+      connectionURI: 'http://supertokens:3567',
+      // apiKey: "IF YOU HA1VE AN API KEY FOR THE CORE, ADD IT HERE",
     },
     appInfo,
     recipeList: [
@@ -41,7 +42,9 @@ export const backendConfig = (): TypeInput => {
           // }),
         ],
       }),
-      SessionNode.init(),
+      SessionNode.init({
+        cookieDomain: 'localhost',
+      }),
     ],
     isInServerlessEnv: true,
   };

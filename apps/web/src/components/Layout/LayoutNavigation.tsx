@@ -1,6 +1,11 @@
 import { useState } from 'react';
 
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+
+import ThirdPartyEmailPassword, {
+  signOut,
+} from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
 
 import {
   BottomNavigation,
@@ -15,7 +20,15 @@ import {
   BalanceSheetIcon,
   CashFlowIcon,
   HomeIcon,
+  LogoutIcon,
 } from '../IconsMaterial';
+
+const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
+  new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
+    (res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
+  ),
+  { ssr: false }
+);
 
 interface Route {
   path: string;
@@ -60,8 +73,17 @@ export default function LayoutNavigation() {
   );
 
   const handleOnChange = (event, newValue) => {
+    if (!routes[newValue]) {
+      return;
+    }
+
     setValue(newValue);
     router.push(routes[newValue].path);
+  };
+
+  const handleOnLogout = async () => {
+    await signOut();
+    router.push('/auth/');
   };
 
   return (
@@ -79,6 +101,14 @@ export default function LayoutNavigation() {
           onMouseOver={(event) => router.prefetch(route.path)}
         />
       ))}
+
+      <ThirdPartyEmailPasswordAuthNoSSR requireAuth={false}>
+        <BottomNavigationAction
+          label="Logout"
+          icon={<LogoutIcon />}
+          onClick={handleOnLogout}
+        />
+      </ThirdPartyEmailPasswordAuthNoSSR>
 
       <Box paddingRight={2} sx={{ transform: 'translateY(-50%)' }}>
         <Fab color="primary">

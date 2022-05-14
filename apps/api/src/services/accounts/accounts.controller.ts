@@ -7,9 +7,13 @@ import {
   replyNotFound,
   replyOK,
 } from '../../utils/response-builder';
-import { DefaultRouteHandlerMethod } from '../../utils/types';
+import {
+  DefaultRouteHandlerMethod,
+  DefaultRouteHandlerMethodWithSession,
+} from '../../utils/types';
+import { verifySessionHandler } from '../../utils/verify-session-handler';
 
-const findAll: DefaultRouteHandlerMethod<{
+const findAll: DefaultRouteHandlerMethodWithSession<{
   Querystring: Request.TQuery;
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
@@ -108,7 +112,10 @@ const removeOne: DefaultRouteHandlerMethod<{
 const controller: FastifyPluginAsync = async (fastify, options) => {
   fastify.get(
     '/',
-    { schema: { querystring: Request.Query, response: Reply.FindAll } },
+    {
+      schema: { querystring: Request.Query, response: Reply.FindAll },
+      preHandler: verifySessionHandler(),
+    },
     findAll
   );
   fastify.post(

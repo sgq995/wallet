@@ -1,16 +1,25 @@
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import { dehydrate, QueryClient, useQuery } from 'react-query';
 
-import { Reply } from 'schemas/entries';
+import { useSessionContext } from 'supertokens-auth-react/recipe/session';
+import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
 
 import EntryPaper from '../components/EntryPaper';
 import { Stack, Typography } from '../components/Material';
+import EntriesService from '../services/entries';
 
-export default function Home() {
+const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
+  new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
+    (res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
+  ),
+  { ssr: false }
+);
+
+function Home() {
   // const [entries, setEntries] = useState(new Array(50).fill({}));
 
-  const { data } = useQuery<Reply.TEntryArrayOK>('entries', getAllEntries);
+  const { data } = useQuery('entries', getAllEntries);
 
   return (
     <>
@@ -25,10 +34,16 @@ export default function Home() {
   );
 }
 
-async function getAllEntries() {
-  return fetch('http://localhost:5000/v1/entries').then((response) =>
-    response.json()
+export default function ProtectedHome() {
+  return (
+    <ThirdPartyEmailPasswordAuthNoSSR>
+      <Home />
+    </ThirdPartyEmailPasswordAuthNoSSR>
   );
+}
+
+async function getAllEntries() {
+  return EntriesService.findAll();
 }
 
 export async function getStaticProps() {

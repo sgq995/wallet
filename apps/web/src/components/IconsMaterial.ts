@@ -14,6 +14,8 @@ export const CashFlowIcon = dynamic(
   () => import('@mui/icons-material/CurrencyExchange')
 );
 
+export const LogoutIcon = dynamic(() => import('@mui/icons-material/Logout'));
+
 export const AddIcon = dynamic(() => import('@mui/icons-material/Add'));
 
 export const DeleteIcon = dynamic(() => import('@mui/icons-material/Delete'));
