@@ -4,52 +4,70 @@ import { Reply, Request } from 'schemas/entries';
 
 import {
   replyCreated,
+  replyForbidden,
   replyNotFound,
   replyOK,
 } from '../../utils/response-builder';
-import { DefaultRouteHandlerMethod } from '../../utils/types';
+import {
+  DefaultRouteHandlerMethod,
+  DefaultRouteHandlerMethodWithSession,
+} from '../../utils/types';
+import { verifySessionHandler } from '../../utils/verify-session-handler';
 
 const findAll: DefaultRouteHandlerMethod<{
   Querystring: Request.TQuery;
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
-  const query = request.query;
-  const allEntries = await this.prisma.entry.findMany({
-    where: {
-      AND: {
-        id: query.id,
-        description: query.description
-          ? {
-              contains: query.description,
-            }
-          : query.description,
-        amount: query.amount,
-        date: query.date ? new Date(query.date) : query.date,
-        typeId: query.typeId,
-        accountId: query.accountId,
-        categoryId: query.categoryId,
+  try {
+    const query = request.query;
+    const allEntries = await this.prisma.entry.findMany({
+      where: {
+        AND: {
+          id: query.id,
+          description: query.description
+            ? {
+                contains: query.description,
+              }
+            : query.description,
+          amount: query.amount,
+          date: query.date ? new Date(query.date) : query.date,
+          typeId: query.typeId,
+          accountId: query.accountId,
+          categoryId: query.categoryId,
+        },
       },
-    },
-  });
-  replyOK(reply, allEntries);
+    });
+    replyOK(reply, allEntries);
+  } catch (e) {}
 };
 
-const addOne: DefaultRouteHandlerMethod<{
+const addOne: DefaultRouteHandlerMethodWithSession<{
   Body: Request.TAddOne;
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
-  const entry = request.body;
-  const createdEntry = await this.prisma.entry.create({
-    data: {
-      description: entry.description,
-      amount: entry.amount,
-      date: new Date(entry.date),
-      typeId: entry.typeId,
-      accountId: entry.accountId,
-      categoryId: entry.categoryId,
-    },
-  });
-  replyCreated(reply, createdEntry);
+  try {
+    const userId = request.session?.getUserId();
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+      rejectOnNotFound: true,
+    });
+
+    const entry = request.body;
+    const createdEntry = await this.prisma.entry.create({
+      data: {
+        description: entry.description,
+        amount: entry.amount,
+        date: new Date(entry.date),
+        typeId: entry.typeId,
+        accountId: entry.accountId,
+        categoryId: entry.categoryId,
+        profileId: profile?.id,
+      },
+    });
+    replyCreated(reply, createdEntry);
+  } catch (e) {
+    replyForbidden(reply, `Entry is not associated with current session`);
+  }
 };
 
 const findOne: DefaultRouteHandlerMethod<{
@@ -125,7 +143,10 @@ const controller: FastifyPluginAsync = async (fastify, options) => {
   );
   fastify.post(
     '/',
-    { schema: { body: Request.AddOne, response: Reply.AddOne } },
+    {
+      schema: { body: Request.AddOne, response: Reply.AddOne },
+      preHandler: verifySessionHandler(),
+    },
     addOne
   );
   fastify.get(

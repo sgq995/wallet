@@ -11,36 +11,60 @@ datasource db {
 // model prisma {
 // }
 
-model Entry {
-  id          Int          @id @default(autoincrement())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  description String?      @db.VarChar(255)
-  amount      Float
-  date        DateTime     @db.Date
-  type        AccountType? @relation(fields: [typeId], references: [id])
-  typeId      Int
-  account     Account?     @relation(fields: [accountId], references: [id])
-  accountId   Int?
-  category    Category?    @relation(fields: [categoryId], references: [id])
-  categoryId  Int?
+model Profile {
+  id                Int                  @id @default(autoincrement())
+  userId            String               @unique
+  entries           Entry[]
+  accounts          Account[]
+  profileCategories ProfilesCategories[]
 }
 
-model AccountType {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique @db.VarChar(25)
-  entry Entry[]
+model Entry {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  description String?    @db.VarChar(255)
+  amount      Float
+  date        DateTime   @db.Date
+  type        EntryType? @relation(fields: [typeId], references: [id])
+  typeId      Int
+  account     Account?   @relation(fields: [accountId], references: [id])
+  accountId   Int?
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
+  profile     Profile?   @relation(fields: [profileId], references: [id])
+  profileId   Int
+}
+
+model EntryType {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique @db.VarChar(25)
+  entries Entry[]
+
+  @@map("AccountType")
 }
 
 model Account {
-  id      Int     @id @default(autoincrement())
-  name    String  @db.VarChar(255)
-  balance Float   @default(0)
-  entry   Entry[]
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  balance   Float    @default(0)
+  entries   Entry[]
+  profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId Int
 }
 
 model Category {
-  id    Int     @id @default(autoincrement())
-  name  String  @db.VarChar(255)
-  entry Entry[]
+  id                Int                  @id @default(autoincrement())
+  name              String               @db.VarChar(255)
+  entries           Entry[]
+  profileCategories ProfilesCategories[]
+}
+
+model ProfilesCategories {
+  profile    Profile?  @relation(fields: [profileId], references: [id])
+  profileId  Int
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  @@id([profileId, categoryId], name: "profileCategoryId")
 }

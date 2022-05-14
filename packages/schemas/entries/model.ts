@@ -13,6 +13,7 @@ export const EntryModel = Type.Object({
   typeId: Id(),
   accountId: Nullable(Id()),
   categoryId: Nullable(Id()),
+  profileId: Id(),
 });
 
 export type TEntryModel = Static<typeof EntryModel>;

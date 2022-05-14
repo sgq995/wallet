@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 
-import { Request, Reply } from 'schemas/account-types';
+import { Request, Reply } from 'schemas/entry-types';
 
 import { replyNotFound, replyOK } from '../../utils/response-builder';
 import { DefaultRouteHandlerMethod } from '../../utils/types';
@@ -10,7 +10,7 @@ const findAll: DefaultRouteHandlerMethod<{
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
   const query = request.query;
-  const allTypes = await this.prisma.accountType.findMany({
+  const allTypes = await this.prisma.entryType.findMany({
     where: {
       AND: {
         id: query.id,
@@ -31,7 +31,7 @@ const findOne: DefaultRouteHandlerMethod<{
 }> = async function (request, reply) {
   const id = request.params.id;
   try {
-    const type = await this.prisma.accountType.findUnique({
+    const type = await this.prisma.entryType.findUnique({
       where: {
         id,
       },

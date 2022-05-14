@@ -10,13 +10,12 @@ export const Query = Type.Partial(AccountModel);
 
 export type TQuery = Static<typeof Query>;
 
-export const AddOne = Type.Omit(AccountModel, ['id']);
+export const AddOne = Type.Pick(AccountModel, ['name', 'balance']);
 
 export type TAddOne = Static<typeof AddOne>;
 
 export const UpdateOne = Type.Intersect([
-  Type.Pick(AccountModel, ['id']),
-  Type.Partial(Type.Omit(AccountModel, ['id'])),
+  Type.Partial(Type.Pick(AccountModel, ['name', 'balance'])),
 ]);
 
 export type TUpdateOne = Static<typeof UpdateOne>;
