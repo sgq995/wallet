@@ -1,6 +1,7 @@
+import config from '../config';
 import { objectToUrlSearchParams } from '../utils/url-utils';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = config.app.apiBaseUrl;
 
 export class RequestError<T = any> extends Error {
   readonly status: number;

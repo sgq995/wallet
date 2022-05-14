@@ -7,7 +7,7 @@ import SuperTokensReact from 'supertokens-auth-react';
 
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
-import { frontendConfig } from '../../config/frontendConfig';
+import { frontendConfig } from '../config/frontendConfig';
 
 const Layout = dynamic(() => import('../components/Layout'));
 

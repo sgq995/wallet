@@ -9,49 +9,65 @@ import Session from 'supertokens-node/recipe/session';
 import { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 
+import config from '../../config';
+
 supertokens.init({
   framework: 'fastify',
   supertokens: {
     // try.supertokens.com is for demo purposes. Replace this with the address of your core instance (sign up on supertokens.com), or self host a core.
     // connectionURI: 'https://try.supertokens.com',
-    connectionURI: 'http://supertokens:3567',
+    connectionURI: config.supertokens.connectionURI,
     // apiKey: "IF YOU HAVE AN API KEY FOR THE CORE, ADD IT HERE",
   },
   appInfo: {
     // learn more about this on https://supertokens.com/docs/session/appinfo
-    appName: 'Personal Budget',
-    apiDomain: 'http://localhost:5000',
-    websiteDomain: 'http://localhost:3000',
-    apiBasePath: '/v1/auth',
-    websiteBasePath: '/auth',
+    appName: config.supertokens.appName,
+    apiDomain: config.supertokens.apiDomain,
+    websiteDomain: config.supertokens.websiteDomain,
+    apiBasePath: config.supertokens.apiBasePath,
+    websiteBasePath: config.supertokens.websiteBasePath,
   },
   recipeList: [
     ThirdPartyEmailPasswordNode.init({
       providers: [
         // We have provided you with development keys which you can use for testsing.
         // IMPORTANT: Please replace them with your own OAuth keys for production use.
-        ThirdPartyEmailPasswordNode.Google({
-          clientId:
-            '1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com',
-          clientSecret: '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',
-        }),
-        ThirdPartyEmailPasswordNode.Github({
-          clientId: '467101b197249757c71f',
-          clientSecret: 'e97051221f4b6426e8fe8d51486396703012f5bd',
-        }),
-        ThirdPartyEmailPasswordNode.Apple({
-          clientId: '4398792-io.supertokens.example.service',
-          clientSecret: {
-            keyId: '7M48Y4RYDL',
-            privateKey:
-              '-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----',
-            teamId: 'YWQCXGJRJL',
-          },
-        }),
-        // ThirdPartyEmailPasswordNode.Facebook({
-        //   clientSecret: "FACEBOOK_CLIENT_SECRET",
-        //   clientId: "FACEBOOK_CLIENT_ID",
-        // }),
+        ...(config.oauth.google
+          ? [
+              ThirdPartyEmailPasswordNode.Google({
+                clientId: config.oauth.google.clientId,
+                clientSecret: config.oauth.google.clientSecret,
+              }),
+            ]
+          : []),
+        ...(config.oauth.github
+          ? [
+              ThirdPartyEmailPasswordNode.Github({
+                clientId: config.oauth.github.clientId,
+                clientSecret: config.oauth.github.clientSecret,
+              }),
+            ]
+          : []),
+        ...(config.oauth.apple
+          ? [
+              ThirdPartyEmailPasswordNode.Apple({
+                clientId: config.oauth.apple.clientId,
+                clientSecret: {
+                  keyId: config.oauth.apple.keyId,
+                  privateKey: config.oauth.apple.privateKey,
+                  teamId: config.oauth.apple.teamId,
+                },
+              }),
+            ]
+          : []),
+        ...(config.oauth.facebook
+          ? [
+              ThirdPartyEmailPasswordNode.Facebook({
+                clientSecret: config.oauth.facebook.clientSecret,
+                clientId: config.oauth.facebook.clientId,
+              }),
+            ]
+          : []),
       ],
     }),
     Session.init({

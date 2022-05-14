@@ -8,9 +8,11 @@ import SuperTokens from 'supertokens-node';
 import { SuperTokensPlugin } from './supertokens';
 import { PrismaPlugin } from './prisma';
 
+import config from '../config';
+
 const services: FastifyPluginAsync = fp(async (fastify, options) => {
   await fastify.register(cors, {
-    origin: 'http://localhost:3000',
+    origin: config.cors.origin,
     allowedHeaders: ['Content-Type', ...SuperTokens.getAllCORSHeaders()],
     credentials: true,
   });
