@@ -3,7 +3,7 @@ import { EndpointService } from './api';
 
 const ENTRIES_BASE_URL = '/v1/entries';
 
-const accountsService = new EndpointService<{
+const entriesService = new EndpointService<{
   Id: Request.TParams['id'];
   Query: Request.TQuery;
   Request: {
@@ -19,4 +19,6 @@ const accountsService = new EndpointService<{
   };
 }>(ENTRIES_BASE_URL);
 
-export default accountsService;
+export default entriesService;
+
+export type { TEntryModel, TArrayOfEntryModel } from 'schemas/entries/model';

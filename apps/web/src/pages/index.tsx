@@ -1,13 +1,23 @@
+import {
+  Children,
+  ComponentType,
+  PropsWithChildren,
+  ReactElement,
+} from 'react';
+
 import dynamic from 'next/dynamic';
 
-import { dehydrate, QueryClient, useQuery } from 'react-query';
-
-import { useSessionContext } from 'supertokens-auth-react/recipe/session';
 import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
 
 import EntryPaper from '../components/EntryPaper';
-import { Stack, Typography } from '../components/Material';
-import EntriesService from '../services/entries';
+import { CircularProgress, Stack, Typography } from '../components/Material';
+import { useFindAllQuery } from '../hooks/entries';
+import { TArrayOfEntryModel } from '../services/entries';
+import AsyncViewer, {
+  AsyncData,
+  AsyncError,
+  AsyncLoading,
+} from '../components/AsyncViewer';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
@@ -16,20 +26,49 @@ const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   { ssr: false }
 );
 
+interface EntryListProps {
+  data: TArrayOfEntryModel;
+}
+
+function EntryList({ data }: EntryListProps) {
+  if (data.length === 0) {
+    return <>Empty</>;
+  }
+
+  return (
+    <Stack spacing={2}>
+      {data.map(({ description, amount, date }, index) => (
+        <EntryPaper
+          key={index}
+          description={description}
+          amount={amount}
+          date={date}
+        />
+      ))}
+    </Stack>
+  );
+}
+
 function Home() {
   // const [entries, setEntries] = useState(new Array(50).fill({}));
 
-  const { data } = useQuery('entries', getAllEntries);
+  const { isLoading, isError, data, error } = useFindAllQuery();
 
   return (
     <>
       <Typography variant="h1">Home</Typography>
 
-      <Stack spacing={2}>
-        {data?.data?.map((_, index) => (
-          <EntryPaper key={index} />
-        ))}
-      </Stack>
+      <AsyncViewer isLoading={isLoading} isError={isError}>
+        <AsyncLoading>
+          <CircularProgress />
+        </AsyncLoading>
+
+        <AsyncError>{error?.message}</AsyncError>
+
+        <AsyncData>
+          <EntryList data={data?.data} />
+        </AsyncData>
+      </AsyncViewer>
     </>
   );
 }
@@ -40,20 +79,4 @@ export default function ProtectedHome() {
       <Home />
     </ThirdPartyEmailPasswordAuthNoSSR>
   );
-}
-
-async function getAllEntries() {
-  return EntriesService.findAll();
-}
-
-export async function getStaticProps() {
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery('entries', getAllEntries);
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
 }

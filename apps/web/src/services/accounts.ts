@@ -20,3 +20,8 @@ const accountsService = new EndpointService<{
 }>(ACCOUNTS_BASE_URL);
 
 export default accountsService;
+
+export type {
+  TAccountModel,
+  TArrayOfAccountModel,
+} from 'schemas/accounts/model';

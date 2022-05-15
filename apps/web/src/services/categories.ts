@@ -20,3 +20,8 @@ const categoriesService = new EndpointService<{
 }>(CATEGORIES_BASE_URL);
 
 export default categoriesService;
+
+export type {
+  TCategoryModel,
+  TArrayOfCategoryModel,
+} from 'schemas/categories/model';
