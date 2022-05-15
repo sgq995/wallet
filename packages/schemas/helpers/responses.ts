@@ -1,6 +1,8 @@
-import { TSchema, Type } from '@sinclair/typebox';
+import { Static, TSchema, Type } from '@sinclair/typebox';
 
-export type ComposeStatic<T> = T[keyof T];
+export type ComposeStatic<T> = T[keyof T] extends TSchema
+  ? Static<T[keyof T]>
+  : T[keyof T];
 
 export function OK<T extends TSchema>(data: T) {
   return {
@@ -27,7 +29,7 @@ export function BadRequest() {
       error: Type.Literal('Not Found'),
       message: Type.String(),
     }),
-  }
+  };
 }
 
 export function NotFound() {

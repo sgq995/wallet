@@ -53,6 +53,10 @@ export const BottomNavigationAction = dynamic(
 
 export const Card = dynamic(() => import('@mui/material/Card'));
 
+export const CircularProgress = dynamic(
+  () => import('@mui/material/CircularProgress')
+);
+
 export const Container = dynamic(() => import('@mui/material/Container'));
 
 export const CssBaseline = dynamic(() => import('@mui/material/CssBaseline'));

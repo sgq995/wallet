@@ -98,29 +98,33 @@ export class EndpointService<
   }
 
   findAll = <TQuery = Options['Query'], TFindAll = Options['Reply']['FindAll']>(
-    query?: TQuery
+    query?: TQuery,
+    init?: RequestInit
   ) => {
     const searchParams = query ? objectToUrlSearchParams(query) : '';
     const url = query ? `/?${searchParams}` : '/';
-    return this.request<TFindAll>(url);
+    return this.request<TFindAll>(url, init);
   };
 
   addOne = <
     TRequestAddOne = Options['Request']['AddOne'],
     TReplyAddOne = Options['Reply']['AddOne']
   >(
-    body: TRequestAddOne
+    body: TRequestAddOne,
+    init?: RequestInit
   ) => {
     return this.request<TReplyAddOne>('/', {
+      ...init,
       method: 'POST',
       body: JSON.stringify(body),
     });
   };
 
   findOne = <TId = Options['Id'], TFindOne = Options['Reply']['FindOne']>(
-    id: TId
+    id: TId,
+    init?: RequestInit
   ) => {
-    return this.request<TFindOne>(`/${id}`);
+    return this.request<TFindOne>(`/${id}`, init);
   };
 
   updateOne = <
@@ -129,18 +133,22 @@ export class EndpointService<
     TReplyUpdateOne = Options['Reply']['UpdateOne']
   >(
     id: TId,
-    body: TRequestUpdateOne
+    body: TRequestUpdateOne,
+    init?: RequestInit
   ) => {
     return this.request<TReplyUpdateOne>(`/${id}`, {
+      ...init,
       method: 'PUT',
       body: JSON.stringify(body),
     });
   };
 
   removeOne = <TId = Options['Id'], TRemoveOne = Options['Reply']['RemoveOne']>(
-    id: TId
+    id: TId,
+    init?: RequestInit
   ) => {
     return this.request<TRemoveOne>(`/${id}`, {
+      ...init,
       method: 'DELETE',
     });
   };

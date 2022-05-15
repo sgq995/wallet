@@ -13,3 +13,8 @@ const entryTypesService = new EndpointService<{
 }>(ENTRY_TYPES_BASE_URL);
 
 export default entryTypesService;
+
+export type {
+  TEntryTypeModel,
+  TArrayOfEntryTypeModel,
+} from 'schemas/entry-types/model';
