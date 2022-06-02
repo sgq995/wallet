@@ -1,41 +1,26 @@
-import { ChangeEvent, ChangeEventHandler, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 import {
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  SelectProps,
   Stack,
   TextField,
 } from '@mui/material';
 
-// import { Box, Stack } from '../components/Material';
-
-import { TEntryModel } from '../services/entries';
-
-interface IFormControlState {
-  description?: string;
-  amount?: string;
-  day?: string;
-  month?: string;
-  year?: string;
-  typeId?: string;
-  accountId?: string;
-  categoryId?: string;
-}
-
-type ConvertKeyTo<T, R> = { [K in keyof T]: R };
-
-interface IFormErrorState extends ConvertKeyTo<IFormControlState, boolean> {}
-
-type Filter = (value: string) => string;
-
-interface IFormFilters extends ConvertKeyTo<IFormControlState, Filter> {}
-
-type Validator = (value: string) => boolean;
-
-interface IFormValidators extends ConvertKeyTo<IFormControlState, Validator> {}
+import { Save as SaveIcon } from '@mui/icons-material';
+import {
+  IFormControlState,
+  IFormErrorState,
+  IFormFilters,
+  IFormValidators,
+} from './types';
+import { MONTH_LIST } from './common';
+import EntryFormDate from './EntryFormDate';
 
 const filters: IFormFilters = {
   amount: (rawValue) => {
@@ -67,7 +52,7 @@ const filters: IFormFilters = {
       value = `${left},${right}`;
     }
 
-    return `${value}.${decimal}`;
+    return hasDecimalSeparator ? `${value}.${decimal}` : value;
   },
 };
 
@@ -99,7 +84,16 @@ const validators: IFormValidators = {
 };
 
 export default function EntryForm() {
-  const [form, setForm] = useState<IFormControlState>({});
+  const [form, setForm] = useState<IFormControlState>({
+    description: '',
+    amount: '',
+    day: new Date().getDate().toString(),
+    month: MONTH_LIST[new Date().getMonth()],
+    year: new Date().getFullYear().toString(),
+    typeId: '',
+    accountId: '',
+    categoryId: '',
+  });
   const [warning, setWarning] = useState<IFormErrorState>({});
   const [error, setError] = useState<IFormErrorState>({});
 
@@ -124,20 +118,16 @@ export default function EntryForm() {
     });
   };
 
-  const handleTextfieldChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  const handleChange = (
+    event:
+      | ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+      | SelectChangeEvent<string>
   ) => {
     const { name, value } = event.target;
     formChange(name, value);
   };
 
-  const handleSelectChange = (
-    event: SelectChangeEvent<string>,
-    child: React.ReactNode
-  ) => {
-    const { name, value } = event.target;
-    formChange(name, value);
-  };
+  const handleSubmit = () => {};
 
   return (
     <Stack component="form" noValidate spacing={2}>
@@ -150,11 +140,11 @@ export default function EntryForm() {
           multiline
           error={error.description}
           value={form.description}
-          onChange={handleTextfieldChange}
+          onChange={handleChange}
         />
       </FormControl>
 
-      <FormControl fullWidth>
+      <FormControl fullWidth error={error.amount}>
         <TextField
           required
           inputMode="numeric"
@@ -162,65 +152,71 @@ export default function EntryForm() {
           name="amount"
           label="Amount"
           variant="outlined"
+          error={error.amount}
           value={form.amount}
-          onChange={handleTextfieldChange}
+          onChange={handleChange}
         />
       </FormControl>
 
-      <Stack direction="row" spacing={2}>
-        <FormControl fullWidth>
-          <InputLabel id="entry-select-day">Day</InputLabel>
-          <Select
-            required
-            id="entry-form-day"
-            name="day"
-            labelId="entry-select-day"
-            label="Day"
-            value={form.day}
-            onChange={handleSelectChange}
-          ></Select>
-        </FormControl>
+      <EntryFormDate
+        form={form}
+        error={error}
+        handleChange={handleChange}
+      />
 
-        <FormControl fullWidth>
-          <InputLabel id="entry-select-month">Month</InputLabel>
-          <Select
-            required
-            id="entry-form-month"
-            name="month"
-            labelId="entry-select-month"
-            label="Month"
-            value={form.month}
-            onChange={handleSelectChange}
-          ></Select>
-        </FormControl>
-
-        <FormControl fullWidth>
-          <InputLabel id="entry-select-year">Year</InputLabel>
-          <Select required labelId="entry-select-year" label="Year"></Select>
-        </FormControl>
-      </Stack>
-
-      <FormControl fullWidth required>
-        <InputLabel id="entry-select-type">Type</InputLabel>
-        <Select required labelId="entry-select-type" label="Type">
+      <FormControl fullWidth required error={error.typeId}>
+        <InputLabel id="entry-form-type-label">Type</InputLabel>
+        <Select
+          required
+          id="entry-form-type"
+          name="typeId"
+          labelId="entry-form-type-label"
+          label="Type"
+          value={form.typeId}
+          onChange={handleChange}
+        >
           <MenuItem value={1}>Income</MenuItem>
           <MenuItem value={2}>Expense</MenuItem>
           <MenuItem value={3}>Asset</MenuItem>
           <MenuItem value={4}>Liability</MenuItem>
         </Select>
       </FormControl>
-      <FormControl>
-        <InputLabel id="entry-select-account">Account</InputLabel>
-        <Select required labelId="entry-select-account" label="Account">
+
+      <FormControl fullWidth error={error.accountId}>
+        <InputLabel id="entry-form-account-label">Account</InputLabel>
+        <Select
+          required
+          id="entry-form-account"
+          name="accountId"
+          labelId="entry-form-account-label"
+          label="Account"
+          value={form.accountId}
+          onChange={handleChange}
+        >
+          <MenuItem value="">None</MenuItem>
           <MenuItem value={1}>Davivienda</MenuItem>
         </Select>
       </FormControl>
-      <FormControl>
-        <InputLabel id="entry-select-category">Category</InputLabel>
-        <Select required labelId="entry-select-category" label="Category">
+
+      <FormControl fullWidth error={error.categoryId}>
+        <InputLabel id="entry-form-category-label">Category</InputLabel>
+        <Select
+          required
+          id="entry-form-category"
+          name="categoryId"
+          labelId="entry-form-category-label"
+          label="Category"
+          value={form.categoryId}
+          onChange={handleChange}
+        >
+          <MenuItem value="">None</MenuItem>
           <MenuItem value={1}>House</MenuItem>
         </Select>
       </FormControl>
+
+      <Button variant="outlined" startIcon={<SaveIcon />}>
+        SAVE
+      </Button>
     </Stack>
   );
 }

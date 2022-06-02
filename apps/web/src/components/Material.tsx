@@ -71,7 +71,7 @@ export const Paper: ComponentType<PaperProps> = withDynamicForwardRef(
   import('@mui/material/Paper')
 );
 
-export const Stack: ComponentType<StackProps> = withDynamicForwardRef(
+export const Stack: ComponentType<StackProps> = dynamic(
   import('@mui/material/Stack')
 );
 
