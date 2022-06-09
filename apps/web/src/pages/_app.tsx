@@ -8,6 +8,7 @@ import SuperTokensReact from 'supertokens-auth-react';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
 import { frontendConfig } from '../config/frontendConfig';
+import { SystemContextProvider } from '../contexts/system';
 
 const Layout = dynamic(() => import('../components/Layout'));
 
@@ -21,9 +22,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <SystemContextProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </SystemContextProvider>
       </Hydrate>
     </QueryClientProvider>
   );
