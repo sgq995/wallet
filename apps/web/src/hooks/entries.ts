@@ -14,8 +14,10 @@ export function useFindAllQuery(query?: Request.TQuery) {
 }
 
 export function useAddOneMutation() {
-  return useMutation([key, 'addOne'], (body: Request.TAddOne) =>
-    entriesService.addOne(body)
+  return useMutation<Reply.TAddOneData, Reply.TAddOneError, Request.TAddOne>(
+    [key, 'addOne'],
+    (body: Request.TAddOne) =>
+      entriesService.addOne(body) as Promise<Reply.TAddOneData>
   );
 }
 
