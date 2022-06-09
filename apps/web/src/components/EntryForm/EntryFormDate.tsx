@@ -60,6 +60,30 @@ function getDaysPerMonth(month: string, year?: number): number {
   }
 }
 
+export function dayFilter(value: string): string {
+  return value;
+}
+
+export function dayValidator(value: string): boolean {
+  return true;
+}
+
+export function monthFilter(value: string): string {
+  return value;
+}
+
+export function monthValidator(value: string): boolean {
+  return true;
+}
+
+export function yearFilter(value: string): string {
+  return value;
+}
+
+export function yearValidator(value: string): boolean {
+  return true;
+}
+
 export default function EntryFormDate({
   form,
   error,
@@ -73,7 +97,11 @@ export default function EntryFormDate({
 
     if (MONTH_LIST.includes(month)) {
       const daysPerMonth = getDaysPerMonth(form.month, year);
-      setDayList(new Array(daysPerMonth).fill(0).map((_, index) => index + 1));
+      setDayList(
+        new Array(daysPerMonth)
+          .fill(0)
+          .map((_, index) => (index + 1).toString())
+      );
     }
   }, [form.month, form.year]);
 

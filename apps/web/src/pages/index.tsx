@@ -1,10 +1,3 @@
-import {
-  Children,
-  ComponentType,
-  PropsWithChildren,
-  ReactElement,
-} from 'react';
-
 import dynamic from 'next/dynamic';
 
 import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
@@ -18,6 +11,7 @@ import AsyncViewer, {
   AsyncError,
   AsyncLoading,
 } from '../components/AsyncViewer';
+import EntryForm from '../components/EntryForm';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
@@ -57,6 +51,8 @@ function Home() {
   return (
     <>
       <Typography variant="h1">Home</Typography>
+
+      <EntryForm />
 
       <AsyncViewer isLoading={isLoading} isError={isError}>
         <AsyncLoading>

@@ -1,16 +1,6 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  SelectProps,
-  Stack,
-  TextField,
-} from '@mui/material';
+import { Button, SelectChangeEvent, Stack } from '@mui/material';
 
 import { Save as SaveIcon } from '@mui/icons-material';
 import {
@@ -20,71 +10,71 @@ import {
   IFormValidators,
 } from './types';
 import { MONTH_LIST } from './common';
-import EntryFormDate from './EntryFormDate';
+import EntryFormDate, {
+  dayFilter,
+  dayValidator,
+  monthFilter,
+  monthValidator,
+  yearFilter,
+  yearValidator,
+} from './EntryFormDate';
+import EntryFormDescription, {
+  descriptionFilter,
+  descriptionValidator,
+} from './EntryFormDescription';
+import EntryFormAmount, {
+  amountFilter,
+  amountValidator,
+} from './EntryFormAmount';
+import EntryFormType, { typeIdFilter, typeIdValidator } from './EntryFormType';
+import EntryFormAccount, {
+  accountIdFilter,
+  accountIdValidator,
+} from './EntryFormAccount';
+import EntryFormCategory, {
+  categoryIdFilter,
+  categoryIdValidator,
+} from './EntryFormCategory';
+import { useAddOneMutation } from '../../hooks/entries';
 
 const filters: IFormFilters = {
-  amount: (rawValue) => {
-    // currency.js
-    let value = rawValue;
-    let decimal = '';
-
-    const hasDecimalSeparator = rawValue.indexOf('.') > -1;
-    if (hasDecimalSeparator) {
-      const [integer, ...decimalParts] = value.split('.');
-      value = integer;
-      decimal = []
-        .concat(decimalParts)
-        .join('')
-        .replaceAll(/[^0-9]/g, '');
-    }
-
-    const hasThousandsSeparator = rawValue.indexOf(',') > -1;
-    if (hasThousandsSeparator) {
-      value = value
-        .split(',')
-        .join('')
-        .replaceAll(/[^0-9]/g, '');
-    }
-
-    for (let i = value.length - 3; i > 0; i -= 3) {
-      const left = value.substring(0, i);
-      const right = value.substring(i);
-      value = `${left},${right}`;
-    }
-
-    return hasDecimalSeparator ? `${value}.${decimal}` : value;
-  },
+  description: descriptionFilter,
+  amount: amountFilter,
+  day: dayFilter,
+  month: monthFilter,
+  year: yearFilter,
+  typeId: typeIdFilter,
+  accountId: accountIdFilter,
+  categoryId: categoryIdFilter,
 };
 
 const validators: IFormValidators = {
-  description: (value) => {
-    if (value.length > 255) {
-      return false;
-    }
-
-    return true;
-  },
-  amount: (value) => {
-    const asNumber = parseFloat(value);
-
-    if (isNaN(asNumber)) {
-      return false;
-    }
-
-    if (asNumber < 0) {
-      return false;
-    }
-
-    if (asNumber > Number.MAX_VALUE) {
-      return false;
-    }
-
-    return true;
-  },
+  description: descriptionValidator,
+  amount: amountValidator,
+  day: dayValidator,
+  month: monthValidator,
+  year: yearValidator,
+  typeId: typeIdValidator,
+  accountId: accountIdValidator,
+  categoryId: categoryIdValidator,
 };
 
+function detectWrongFields(
+  fieldsRecord: object,
+  fieldsToCheck: string[],
+  isValidField: (field: string, value: string) => boolean
+): { hasError: boolean; errorsRecord: Record<string, boolean> } {
+  const errorsRecord = {};
+  fieldsToCheck.forEach((field) => {
+    const value = fieldsRecord[field];
+    errorsRecord[field] = !isValidField(field, value);
+  });
+  const hasError = Object.values(errorsRecord).some((error) => error);
+  return { hasError, errorsRecord };
+}
+
 export default function EntryForm() {
-  const [form, setForm] = useState<IFormControlState>({
+  const [formData, setFormData] = useState<IFormControlState>({
     description: '',
     amount: '',
     day: new Date().getDate().toString(),
@@ -94,23 +84,26 @@ export default function EntryForm() {
     accountId: '',
     categoryId: '',
   });
-  const [warning, setWarning] = useState<IFormErrorState>({});
-  const [error, setError] = useState<IFormErrorState>({});
+  // const [warning, setWarning] = useState<IFormErrorState>({});
+  const [formError, setFormError] = useState<IFormErrorState>({});
 
-  const formChange = (name: string, rawValue: string) => {
+  const { isLoading, isSuccess, isError, data, error, mutate } =
+    useAddOneMutation();
+
+  const applyFormChange = (name: string, rawValue: string) => {
     const value =
       typeof filters[name] === 'function' ? filters[name](rawValue) : rawValue;
 
     const isValid =
       typeof validators[name] === 'function' ? validators[name](value) : true;
 
-    setForm((prevForm) => {
+    setFormData((prevForm) => {
       return {
         ...prevForm,
         [name]: value,
       };
     });
-    setError((prevError) => {
+    setFormError((prevError) => {
       return {
         ...prevError,
         [name]: !isValid,
@@ -124,97 +117,114 @@ export default function EntryForm() {
       | SelectChangeEvent<string>
   ) => {
     const { name, value } = event.target;
-    formChange(name, value);
+    applyFormChange(name, value);
   };
 
-  const handleSubmit = () => {};
+  const validateFormFields = (
+    fieldsToCheck: string[],
+    isValidField: (field: string, value: string) => boolean
+  ) => {
+    const { hasError, errorsRecord } = detectWrongFields(
+      formData,
+      fieldsToCheck,
+      isValidField
+    );
+
+    if (hasError) {
+      setFormError({
+        ...formError,
+        ...errorsRecord,
+      });
+    }
+
+    return !hasError;
+  };
+
+  const areRequiredFieldsFilled = () => {
+    const required = ['amount', 'day', 'month', 'year', 'typeId'];
+    return validateFormFields(required, (_, value) => value.length > 0);
+  };
+
+  const areFieldsCorrectlyFilled = () => {
+    return validateFormFields(Object.keys(formData), (field, value) =>
+      typeof validators[field] === 'function' ? validators[field](value) : true
+    );
+  };
+
+  const handleSubmit = () => {
+    if (!areRequiredFieldsFilled()) {
+      return;
+    }
+
+    if (!areFieldsCorrectlyFilled()) {
+      return;
+    }
+
+    // const year = parseInt(formData.year);
+    // const month = MONTH_LIST.indexOf(formData.month);
+    // const day = parseInt(formData.day);
+
+    const year = formData.year;
+    const month = (MONTH_LIST.indexOf(formData.month) + 1)
+      .toString()
+      .padStart(2, '0');
+    const day = formData.day.padStart(2, '0');
+
+    const amount = parseFloat(formData.amount);
+    const typeId = parseInt(formData.typeId);
+    const date = `${year}-${month}-${day}`;
+
+    mutate({
+      amount,
+      typeId,
+      date,
+    });
+  };
 
   return (
     <Stack component="form" noValidate spacing={2}>
-      <FormControl fullWidth error={error.description}>
-        <TextField
-          id="entry-form-description"
-          name="description"
-          label="Description"
-          variant="outlined"
-          multiline
-          error={error.description}
-          value={form.description}
-          onChange={handleChange}
-        />
-      </FormControl>
-
-      <FormControl fullWidth error={error.amount}>
-        <TextField
-          required
-          inputMode="numeric"
-          id="entry-form-amount"
-          name="amount"
-          label="Amount"
-          variant="outlined"
-          error={error.amount}
-          value={form.amount}
-          onChange={handleChange}
-        />
-      </FormControl>
-
       <EntryFormDate
-        form={form}
-        error={error}
+        form={formData}
+        error={formError}
         handleChange={handleChange}
       />
 
-      <FormControl fullWidth required error={error.typeId}>
-        <InputLabel id="entry-form-type-label">Type</InputLabel>
-        <Select
-          required
-          id="entry-form-type"
-          name="typeId"
-          labelId="entry-form-type-label"
-          label="Type"
-          value={form.typeId}
-          onChange={handleChange}
-        >
-          <MenuItem value={1}>Income</MenuItem>
-          <MenuItem value={2}>Expense</MenuItem>
-          <MenuItem value={3}>Asset</MenuItem>
-          <MenuItem value={4}>Liability</MenuItem>
-        </Select>
-      </FormControl>
+      <EntryFormAmount
+        form={formData}
+        error={formError}
+        handleChange={handleChange}
+      />
 
-      <FormControl fullWidth error={error.accountId}>
-        <InputLabel id="entry-form-account-label">Account</InputLabel>
-        <Select
-          required
-          id="entry-form-account"
-          name="accountId"
-          labelId="entry-form-account-label"
-          label="Account"
-          value={form.accountId}
-          onChange={handleChange}
-        >
-          <MenuItem value="">None</MenuItem>
-          <MenuItem value={1}>Davivienda</MenuItem>
-        </Select>
-      </FormControl>
+      <EntryFormType
+        form={formData}
+        error={formError}
+        handleChange={handleChange}
+      />
 
-      <FormControl fullWidth error={error.categoryId}>
-        <InputLabel id="entry-form-category-label">Category</InputLabel>
-        <Select
-          required
-          id="entry-form-category"
-          name="categoryId"
-          labelId="entry-form-category-label"
-          label="Category"
-          value={form.categoryId}
-          onChange={handleChange}
-        >
-          <MenuItem value="">None</MenuItem>
-          <MenuItem value={1}>House</MenuItem>
-        </Select>
-      </FormControl>
+      <EntryFormDescription
+        form={formData}
+        error={formError}
+        handleChange={handleChange}
+      />
 
-      <Button variant="outlined" startIcon={<SaveIcon />}>
+      <EntryFormAccount
+        form={formData}
+        error={formError}
+        handleChange={handleChange}
+      />
+
+      <EntryFormCategory
+        form={formData}
+        error={formError}
+        handleChange={handleChange}
+      />
+
+      <Button
+        type="button"
+        variant="outlined"
+        startIcon={<SaveIcon />}
+        onClick={handleSubmit}
+      >
         SAVE
       </Button>
     </Stack>
