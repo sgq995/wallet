@@ -1,19 +1,33 @@
 import { useQuery } from 'react-query';
 
-import { Request } from 'schemas/entry-types';
+import { Request, Reply } from 'schemas/entry-types';
 
 import entryTypesService from '../services/entry-types';
 
 export const key = 'entry-types';
 
 export function useFindAllQuery(query?: Request.TQuery) {
-  return useQuery([key, 'findAll', query], ({ signal }) =>
-    entryTypesService.findAll(query, { signal })
+  return useQuery<Reply.TFindAllData, Reply.TFindAllError>(
+    [key, 'findAll', query],
+    ({ signal }) => entryTypesService.findAll(query, { signal }),
+    {
+      cacheTime: Infinity,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
   );
 }
 
 export function useFindOneQuery(id: Request.TParams['id']) {
-  return useQuery([key, 'findOne', id], ({ signal }) =>
-    entryTypesService.findOne(id, { signal })
+  return useQuery(
+    [key, 'findOne', id],
+    ({ signal }) => entryTypesService.findOne(id, { signal }),
+    {
+      cacheTime: Infinity,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
   );
 }
