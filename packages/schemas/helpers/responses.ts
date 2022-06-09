@@ -26,7 +26,7 @@ export function BadRequest() {
   return {
     400: Type.Object({
       statusCode: Type.Literal(400),
-      error: Type.Literal('Not Found'),
+      error: Type.Literal('Bad Request'),
       message: Type.String(),
     }),
   };

@@ -42,6 +42,10 @@ export const AddOne = {
 
 export type TAddOne = ComposeStatic<typeof AddOne>;
 
+export type TAddOneData = ComposeStatic<typeof EntryCreated>;
+
+export type TAddOneError = ComposeStatic<typeof HttpBadRequest>;
+
 export const FindOne = {
   ...EntryOK,
   ...HttpBadRequest,
