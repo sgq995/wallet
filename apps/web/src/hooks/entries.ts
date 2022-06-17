@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { Request, Reply } from 'schemas/entries';
 
@@ -9,15 +9,23 @@ export const key = 'entries';
 export function useFindAllQuery(query?: Request.TQuery) {
   return useQuery<Reply.TFindAllData, Reply.TFindAllError>(
     [key, 'findAll', query],
-    ({ signal }) => entriesService.findAll(query, { signal })
+    ({ signal }) => entriesService.findAll(query, { signal }),
+    { refetchOnWindowFocus: false }
   );
 }
 
 export function useAddOneMutation() {
+  const queryClient = useQueryClient();
+
   return useMutation<Reply.TAddOneData, Reply.TAddOneError, Request.TAddOne>(
     [key, 'addOne'],
     (body: Request.TAddOne) =>
-      entriesService.addOne(body) as Promise<Reply.TAddOneData>
+      entriesService.addOne(body) as Promise<Reply.TAddOneData>,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([key, 'findAll']);
+      },
+    }
   );
 }
 

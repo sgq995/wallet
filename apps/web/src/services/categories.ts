@@ -1,7 +1,7 @@
 import { Request, Reply } from 'schemas/categories';
 import { EndpointService } from './api';
 
-const CATEGORIES_BASE_URL = '/v1/accounts';
+const CATEGORIES_BASE_URL = '/v1/categories';
 
 const categoriesService = new EndpointService<{
   Id: Request.TParams['id'];
