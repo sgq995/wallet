@@ -20,12 +20,20 @@ export const FindAll = {
 
 export type TFindAll = ComposeStatic<typeof FindAll>;
 
+export type TFindAllData = ComposeStatic<typeof CategoryArrayOK>;
+
+export type TFindAllError = ComposeStatic<typeof HttpBadRequest>;
+
 export const AddOne = {
   ...CategoryOK,
   ...HttpBadRequest,
 };
 
 export type TAddOne = ComposeStatic<typeof AddOne>;
+
+export type TAddOneData = ComposeStatic<typeof CategoryOK>;
+
+export type TAddOneError = ComposeStatic<typeof HttpBadRequest>;
 
 export const FindOne = {
   ...CategoryCreated,
