@@ -1,4 +1,4 @@
-import { SelectProps, TextFieldProps } from '@mui/material';
+import type { SelectProps, TextFieldProps } from '@mui/material';
 
 export interface IFormControlState {
   description?: string;

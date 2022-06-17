@@ -3,7 +3,9 @@ import { ComponentType, createElement, forwardRef, Ref } from 'react';
 import dynamic from 'next/dynamic';
 
 import type { BoxProps } from '@mui/material/Box';
-import type { PaperProps } from '@mui/material';
+import type { BackdropProps } from '@mui/material/Backdrop';
+import type { DialogTitleProps } from '@mui/material/DialogTitle';
+import type { PaperProps } from '@mui/material/Paper';
 import type { StackProps } from '@mui/material/Stack';
 import type { ThemeProviderProps } from '@mui/system';
 import type { TypographyProps } from '@mui/material/Typography';
@@ -42,14 +44,21 @@ function withDynamicForwardRef<
   ) as OverridableComponent<M>;
 }
 
+export const Backdrop = dynamic<BackdropProps>(
+  () => import('@mui/material/Backdrop')
+);
+
 export const Box = dynamic<BoxProps>(() => import('@mui/material/Box'));
 
 export const BottomNavigation = dynamic(
   () => import('@mui/material/BottomNavigation')
 );
+
 export const BottomNavigationAction = dynamic(
   () => import('@mui/material/BottomNavigationAction')
 );
+
+export const Button = dynamic(() => import('@mui/material/Button'));
 
 export const Card = dynamic(() => import('@mui/material/Card'));
 
@@ -61,19 +70,43 @@ export const Container = dynamic(() => import('@mui/material/Container'));
 
 export const CssBaseline = dynamic(() => import('@mui/material/CssBaseline'));
 
+export const Dialog = dynamic(() => import('@mui/material/Dialog'));
+
+export const DialogContent = dynamic(
+  () => import('@mui/material/DialogContent')
+);
+
+export const DialogTitle = dynamic<DialogTitleProps>(
+  () => import('@mui/material/DialogTitle')
+);
+
 export const Divider = dynamic(() => import('@mui/material/Divider'));
 
 export const Fab = dynamic(() => import('@mui/material/Fab'));
 
+export const FormControl = dynamic(() => import('@mui/material/FormControl'));
+
 export const IconButton = dynamic(() => import('@mui/material/IconButton'));
+
+export const InputLabel = dynamic(() => import('@mui/material/InputLabel'));
+
+export const MenuItem = dynamic(() => import('@mui/material/MenuItem'));
 
 export const Paper: ComponentType<PaperProps> = withDynamicForwardRef(
   import('@mui/material/Paper')
 );
 
+export const Select = dynamic(() => import('@mui/material/Select'));
+
 export const Stack: ComponentType<StackProps> = dynamic(
   import('@mui/material/Stack')
 );
+
+export const Tab = dynamic(() => import('@mui/material/Tab'));
+
+export const Tabs = dynamic(() => import('@mui/material/Tabs'));
+
+export const TextField = dynamic(() => import('@mui/material/TextField'));
 
 // @mui/material/styles
 export const ThemeProvider = dynamic<ThemeProviderProps>(() =>

@@ -11,7 +11,12 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Fab,
+  Tab,
+  Tabs,
 } from '../Material';
 
 import {
@@ -22,6 +27,10 @@ import {
   HomeIcon,
   LogoutIcon,
 } from '../IconsMaterial';
+
+import EntryForm from '../EntryForm';
+import CategoryForm from '../CategoryForm';
+import AccountForm from '../AccountForm';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
@@ -62,7 +71,19 @@ const routes: Route[] = [
 export default function LayoutNavigation() {
   const router = useRouter();
 
-  const [value, setValue] = useState(
+  const [selectedForm, setSelectedForm] = useState(0);
+
+  const handleFormChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedForm(newValue);
+  };
+
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+
+  const handleClickOpen = () => setIsFormDialogOpen(true);
+
+  const handleClickClose = () => setIsFormDialogOpen(false);
+
+  const [route, setRoute] = useState(
     routes.findIndex((route) => {
       if (route.path !== '/') {
         return router.pathname.startsWith(route.path);
@@ -77,7 +98,7 @@ export default function LayoutNavigation() {
       return;
     }
 
-    setValue(newValue);
+    setRoute(newValue);
     router.push(routes[newValue].path);
   };
 
@@ -90,7 +111,7 @@ export default function LayoutNavigation() {
     <BottomNavigation
       showLabels
       sx={{ flexGrow: 1 }}
-      value={value}
+      value={route}
       onChange={handleOnChange}
     >
       {routes.map((route) => (
@@ -111,10 +132,36 @@ export default function LayoutNavigation() {
       </ThirdPartyEmailPasswordAuthNoSSR>
 
       <Box paddingRight={2} sx={{ transform: 'translateY(-50%)' }}>
-        <Fab color="primary">
+        <Fab color="primary" onClick={handleClickOpen}>
           <AddIcon />
         </Fab>
       </Box>
+
+      <Dialog open={isFormDialogOpen} onClose={handleClickClose}>
+        <DialogTitle>New Data</DialogTitle>
+        <DialogContent>
+          <Box width="100%" borderBottom={1} sx={{ borderColor: 'divider' }}>
+            <Tabs value={selectedForm} onChange={handleFormChange} centered>
+              <Tab label="Entry" />
+              <Tab label="Category" />
+              <Tab label="Account" />
+            </Tabs>
+          </Box>
+          <Box p={2}>
+            <Box sx={{ display: selectedForm === 0 ? 'block' : 'none' }}>
+              <EntryForm />
+            </Box>
+
+            <Box sx={{ display: selectedForm === 1 ? 'block' : 'none' }}>
+              <CategoryForm />
+            </Box>
+
+            <Box sx={{ display: selectedForm === 2 ? 'block' : 'none' }}>
+              <AccountForm />
+            </Box>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </BottomNavigation>
   );
 }

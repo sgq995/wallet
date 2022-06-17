@@ -1,6 +1,8 @@
 import { EntryFormComponentProps } from './types';
 
-import { FormControl, TextField, TextFieldProps } from '@mui/material';
+import type { TextFieldProps } from '@mui/material';
+
+import { FormControl, TextField } from '../Material';
 
 export function descriptionFilter(value: string): string {
   return value;
