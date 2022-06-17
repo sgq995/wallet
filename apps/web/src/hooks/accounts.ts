@@ -1,20 +1,30 @@
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-import { Request } from 'schemas/accounts';
+import { Request, Reply } from 'schemas/accounts';
 
 import accountsService from '../services/accounts';
 
 export const key = 'accounts';
 
 export function useFindAllQuery(query?: Request.TQuery) {
-  return useQuery([key, 'findAll', query], ({ signal }) =>
-    accountsService.findAll(query, { signal })
+  return useQuery<Reply.TFindAllData, Reply.TFindAllError>(
+    [key, 'findAll', query],
+    ({ signal }) => accountsService.findAll(query, { signal }),
+    { refetchOnWindowFocus: false }
   );
 }
 
 export function useAddOneMutation() {
-  return useMutation([key, 'addOne'], (body: Request.TAddOne) =>
-    accountsService.addOne(body)
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    [key, 'addOne'],
+    (body: Request.TAddOne) => accountsService.addOne(body),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([key, 'findAll']);
+      },
+    }
   );
 }
 

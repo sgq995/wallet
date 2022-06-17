@@ -1,20 +1,31 @@
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-import { Request } from 'schemas/categories';
+import { Request, Reply } from 'schemas/categories';
 
 import categoriesService from '../services/categories';
 
 export const key = 'categories';
 
 export function useFindAllQuery(query?: Request.TQuery) {
-  return useQuery([key, 'findAll', query], ({ signal }) =>
-    categoriesService.findAll(query, { signal })
+  return useQuery<Reply.TFindAllData, Reply.TFindAllError>(
+    [key, 'findAll', query],
+    ({ signal }) => categoriesService.findAll(query, { signal }),
+    { refetchOnWindowFocus: false }
   );
 }
 
 export function useAddOneMutation() {
-  return useMutation([key, 'addOne'], (body: Request.TAddOne) =>
-    categoriesService.addOne(body)
+  const queryClient = useQueryClient();
+
+  return useMutation<Reply.TAddOneData, Reply.TAddOneError, Request.TAddOne>(
+    [key, 'addOne'],
+    (body: Request.TAddOne) =>
+      categoriesService.addOne(body) as Promise<Reply.TAddOneData>,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([key, 'findAll']);
+      },
+    }
   );
 }
 
