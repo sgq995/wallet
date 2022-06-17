@@ -1,39 +1,61 @@
-import { PropsWithChildren, useEffect, useState } from 'react';
-import AsyncViewer, {
-  AsyncData,
-  AsyncError,
-  AsyncLoading,
-} from '../../../components/AsyncViewer';
-import { CircularProgress } from '../../../components/Material';
-import { useFindAllQuery } from '../../../hooks/entry-types';
-import { ISystemContext, SystemContext } from '../SystemContext';
+import { PropsWithChildren, useEffect, useReducer, useState } from 'react';
+import { Backdrop, CircularProgress } from '../../../components/Material';
+import { useFindAllQuery as useEntryTypesFindAllQuery } from '../../../hooks/entry-types';
+import {
+  defaultSystemContext,
+  ISystemContext,
+  SystemContext,
+} from '../SystemContext';
+
+enum SystemAction {
+  UpdateEntryTypes,
+}
+
+interface ISystemAction {
+  type: SystemAction;
+  payload: any;
+}
+
+function systemReducer(state: ISystemContext, action: ISystemAction) {
+  switch (action.type) {
+    case SystemAction.UpdateEntryTypes:
+      return { ...state, entryTypes: action.payload };
+
+    default:
+      throw Error(`Unknown system action ${action.type}`);
+  }
+}
 
 export default function SystemContextProvider({
   children,
 }: PropsWithChildren<{}>) {
-  const [system, setSystem] = useState<ISystemContext>();
+  const [system, dispatch] = useReducer(systemReducer, defaultSystemContext);
 
-  const { isLoading, isError, data, error } = useFindAllQuery();
+  const {
+    isLoading: isEntryTypesLoading,
+    isError: isEntryTypesError,
+    data: entryTypesData,
+    error: entryTypesError,
+  } = useEntryTypesFindAllQuery();
 
   useEffect(() => {
-    if (data) {
-      setSystem({ entryTypes: data.data });
+    if (entryTypesData) {
+      dispatch({
+        type: SystemAction.UpdateEntryTypes,
+        payload: entryTypesData.data,
+      });
     }
-  }, [data]);
+  }, [entryTypesData]);
 
   return (
-    <AsyncViewer isLoading={isLoading} isError={isError}>
-      <AsyncLoading>
+    <>
+      <Backdrop
+        sx={{ zIndex: (theme) => theme.zIndex.fab + 1 }}
+        open={isEntryTypesLoading}
+      >
         <CircularProgress />
-      </AsyncLoading>
-
-      <AsyncError>{error?.message}</AsyncError>
-
-      <AsyncData>
-        <SystemContext.Provider value={system}>
-          {children}
-        </SystemContext.Provider>
-      </AsyncData>
-    </AsyncViewer>
+      </Backdrop>
+      <SystemContext.Provider value={system}>{children}</SystemContext.Provider>
+    </>
   );
 }
