@@ -29,6 +29,10 @@ export const FindAll = {
 
 export type TFindAll = ComposeStatic<typeof FindAll>;
 
+export type TFindAllData = ComposeStatic<typeof AccountArrayOK>;
+
+export type TFindAllError = ComposeStatic<typeof HttpBadRequest>;
+
 export const AddOne = {
   ...AccountCreated,
   ...HttpBadRequest,
