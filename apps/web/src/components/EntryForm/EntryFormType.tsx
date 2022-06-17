@@ -1,10 +1,6 @@
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectProps,
-} from '@mui/material';
+import type { SelectProps } from '@mui/material';
+
+import { FormControl, InputLabel, MenuItem, Select } from '../Material';
 import { useSystemContext } from '../../contexts/system';
 
 import { EntryFormComponentProps } from './types';

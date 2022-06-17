@@ -11,7 +11,6 @@ import AsyncViewer, {
   AsyncError,
   AsyncLoading,
 } from '../components/AsyncViewer';
-import EntryForm from '../components/EntryForm';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
@@ -51,8 +50,6 @@ function Home() {
   return (
     <>
       <Typography variant="h1">Home</Typography>
-
-      <EntryForm />
 
       <AsyncViewer isLoading={isLoading} isError={isError}>
         <AsyncLoading>

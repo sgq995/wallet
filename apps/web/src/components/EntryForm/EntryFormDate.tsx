@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectProps,
-} from '@mui/material';
+import type { SelectProps } from '@mui/material';
 
-import { Stack } from '../Material';
+import { FormControl, InputLabel, MenuItem, Select, Stack } from '../Material';
 
 import { EntryFormComponentProps } from './types';
 import { MONTH_LIST, YEAR_LIST } from './common';

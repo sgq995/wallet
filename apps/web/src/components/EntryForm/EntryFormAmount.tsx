@@ -1,4 +1,6 @@
-import { FormControl, TextField, TextFieldProps } from '@mui/material';
+import type { TextFieldProps } from '@mui/material/TextField';
+
+import { FormControl, TextField } from '../Material';
 
 import { EntryFormComponentProps } from './types';
 

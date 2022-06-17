@@ -1,8 +1,9 @@
 import { ChangeEvent, useState } from 'react';
 
-import { Button, SelectChangeEvent, Stack } from '@mui/material';
+import { SelectChangeEvent, Snackbar } from '@mui/material';
 
-import { Save as SaveIcon } from '@mui/icons-material';
+import Stack from '@mui/material/Stack';
+
 import {
   IFormControlState,
   IFormErrorState,
@@ -36,6 +37,7 @@ import EntryFormCategory, {
   categoryIdValidator,
 } from './EntryFormCategory';
 import { useAddOneMutation } from '../../hooks/entries';
+import SaveButton from '../SaveButton';
 
 const filters: IFormFilters = {
   description: descriptionFilter,
@@ -74,7 +76,7 @@ function detectWrongFields(
 }
 
 export default function EntryForm() {
-  const [formData, setFormData] = useState<IFormControlState>({
+  const initialForm = {
     description: '',
     amount: '',
     day: new Date().getDate().toString(),
@@ -83,7 +85,9 @@ export default function EntryForm() {
     typeId: '',
     accountId: '',
     categoryId: '',
-  });
+  };
+
+  const [formData, setFormData] = useState<IFormControlState>(initialForm);
   // const [warning, setWarning] = useState<IFormErrorState>({});
   const [formError, setFormError] = useState<IFormErrorState>({});
 
@@ -173,12 +177,26 @@ export default function EntryForm() {
     const amount = parseFloat(formData.amount);
     const typeId = parseInt(formData.typeId);
     const date = `${year}-${month}-${day}`;
+    const description = formData.description;
+    const accountId =
+      formData.accountId && formData.accountId.length > 0
+        ? parseInt(formData.accountId)
+        : undefined;
+    const categoryId =
+      formData.categoryId && formData.categoryId.length > 0
+        ? parseInt(formData.categoryId)
+        : undefined;
 
     mutate({
       amount,
       typeId,
       date,
+      description,
+      accountId,
+      categoryId,
     });
+
+    setFormData(initialForm);
   };
 
   return (
@@ -219,14 +237,7 @@ export default function EntryForm() {
         handleChange={handleChange}
       />
 
-      <Button
-        type="button"
-        variant="outlined"
-        startIcon={<SaveIcon />}
-        onClick={handleSubmit}
-      >
-        SAVE
-      </Button>
+      <SaveButton onClick={handleSubmit} />
     </Stack>
   );
 }
