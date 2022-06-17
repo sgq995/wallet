@@ -5,10 +5,9 @@ export interface ISystemContext {
   entryTypes: TArrayOfEntryTypeModel;
 }
 
-export const defaultFirebaseContext: ISystemContext = {
+export const defaultSystemContext: ISystemContext = {
   entryTypes: [],
 };
 
-export const SystemContext = createContext<ISystemContext>(
-  defaultFirebaseContext
-);
+export const SystemContext =
+  createContext<ISystemContext>(defaultSystemContext);
