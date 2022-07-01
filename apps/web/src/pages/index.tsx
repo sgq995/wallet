@@ -3,14 +3,25 @@ import dynamic from 'next/dynamic';
 import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
 
 import EntryPaper from '../components/EntryPaper';
-import { CircularProgress, Stack, Typography } from '../components/Material';
-import { useFindAllQuery } from '../hooks/entries';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  Typography,
+} from '../components/Material';
+import { useFindAllQuery, useRemoveOneMutation } from '../hooks/entries';
 import { TArrayOfEntryModel } from '../services/entries';
 import AsyncViewer, {
   AsyncData,
   AsyncError,
   AsyncLoading,
 } from '../components/AsyncViewer';
+import { useState } from 'react';
+import { yyyyMMdd } from '../utils/date-utils';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
@@ -24,21 +35,69 @@ interface EntryListProps {
 }
 
 function EntryList({ data }: EntryListProps) {
+  const { mutate } = useRemoveOneMutation();
+
+  const [id, setId] = useState(-1);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = () => {
+    mutate(id);
+    setOpen(false);
+  };
+
+  const handleDeleteConfirm = (id) => {
+    setId(id);
+    setOpen(true);
+  };
+
   if (data.length === 0) {
     return <>Empty</>;
   }
 
   return (
-    <Stack spacing={2}>
-      {data.map(({ description, amount, date }, index) => (
-        <EntryPaper
-          key={index}
-          description={description}
-          amount={amount}
-          date={date}
-        />
-      ))}
-    </Stack>
+    <>
+      <Stack spacing={2}>
+        {data.map(({ description, amount, date, id }, index) => (
+          <EntryPaper
+            key={index}
+            description={description}
+            amount={amount}
+            date={date}
+            onDelete={() => handleDeleteConfirm(id)}
+          />
+        ))}
+      </Stack>
+
+      <Dialog open={open}>
+        <DialogTitle>Delete Entry</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Are you sure you want to delete?
+          </Typography>
+
+          {data
+            .filter(({ id: dataId }) => dataId === id)
+            .map(({ description, date, amount }) => (
+              <Box display="flex" flexDirection="column">
+                <Typography>{description}</Typography>
+                <Typography>{yyyyMMdd(date)}</Typography>
+                <Typography>{amount}</Typography>
+              </Box>
+            ))}
+
+          <Box mt={2} display="flex" flexDirection="row" justifyContent="end">
+            <Button onClick={handleClose}>CANCEL</Button>
+            <Button color="error" onClick={handleDelete}>
+              DELETE
+            </Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

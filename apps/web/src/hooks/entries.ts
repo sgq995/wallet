@@ -44,7 +44,15 @@ export function useUpdateOneMutation() {
 }
 
 export function useRemoveOneMutation() {
-  return useMutation([key, 'removeOne'], (id: Request.TParams['id']) =>
-    entriesService.removeOne(id)
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    [key, 'removeOne'],
+    (id: Request.TParams['id']) => entriesService.removeOne(id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([key, 'findAll']);
+      },
+    }
   );
 }

@@ -89,13 +89,20 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const entry = request.body;
-    const updatedEntry = await this.prisma.entry.updateMany({
+    await this.prisma.entry.findFirst({
       where: {
         AND: {
           id,
           profileId,
         },
+      },
+      rejectOnNotFound: true,
+    });
+
+    const entry = request.body;
+    const updatedEntry = await this.prisma.entry.update({
+      where: {
+        id,
       },
       data: {
         description: entry.description,
@@ -120,12 +127,19 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const deletedEntry = await this.prisma.entry.deleteMany({
+    await this.prisma.entry.findFirst({
       where: {
         AND: {
           id,
           profileId,
         },
+      },
+      rejectOnNotFound: true,
+    });
+
+    const deletedEntry = await this.prisma.entry.delete({
+      where: {
+        id,
       },
     });
 
