@@ -1,3 +1,4 @@
+import type { IconButtonProps } from '@mui/material/IconButton';
 import {
   Box,
   Divider,
@@ -13,12 +14,14 @@ interface EntryPaperProps {
   description: string;
   amount: number;
   date: string | Date;
+  onDelete: IconButtonProps['onClick'];
 }
 
 export default function EntryPaper({
   description,
   amount,
   date,
+  onDelete,
 }: EntryPaperProps) {
   return (
     <Paper variant="outlined">
@@ -49,7 +52,7 @@ export default function EntryPaper({
         </Stack>
 
         <Box display="flex" alignItems="center">
-          <IconButton>
+          <IconButton onClick={onDelete}>
             <DeleteIcon color="error" />
           </IconButton>
         </Box>

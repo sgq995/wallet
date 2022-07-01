@@ -85,12 +85,19 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   const account = request.body;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const updatedAccount = await this.prisma.account.updateMany({
+    await this.prisma.account.findFirst({
       where: {
         AND: {
           id,
           profileId,
         },
+      },
+      rejectOnNotFound: true,
+    });
+
+    const updatedAccount = await this.prisma.account.update({
+      where: {
+        id,
       },
       data: {
         name: account.name,
@@ -111,12 +118,19 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    const deletedAccount = await this.prisma.account.deleteMany({
+    await this.prisma.account.findFirst({
       where: {
         AND: {
           id,
           profileId,
         },
+      },
+      rejectOnNotFound: true,
+    });
+
+    const deletedAccount = await this.prisma.account.delete({
+      where: {
+        id,
       },
     });
 
