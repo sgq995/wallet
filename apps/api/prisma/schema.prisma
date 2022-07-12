@@ -19,21 +19,46 @@ model Profile {
   profileCategories ProfilesCategories[]
 }
 
+model Currency {
+  id           Int           @id @default(autoincrement())
+  precision    Int           @default(2)
+  symbol       String        @db.VarChar(10)
+  code         String        @db.Char(3)
+  decimal      String        @default(".") @db.Char(1)
+  separator    String        @default(",") @db.Char(1)
+  transactions Transaction[]
+  accounts     Account[]
+}
+
+model Transaction {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  units      Int
+  cents      Int
+  currency   Currency @relation(fields: [currencyId], references: [id])
+  currencyId Int
+  entry      Entry?
+}
+
 model Entry {
-  id          Int        @id @default(autoincrement())
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  description String?    @db.VarChar(255)
-  amount      Float
-  date        DateTime   @db.Date
-  type        EntryType? @relation(fields: [typeId], references: [id])
-  typeId      Int
-  account     Account?   @relation(fields: [accountId], references: [id])
-  accountId   Int?
-  category    Category?  @relation(fields: [categoryId], references: [id])
-  categoryId  Int?
-  profile     Profile?   @relation(fields: [profileId], references: [id])
-  profileId   Int
+  id            Int         @id @default(autoincrement())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  description   String?     @db.VarChar(255)
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId Int         @unique
+  date          DateTime    @db.Date
+  type          EntryType?  @relation(fields: [typeId], references: [id])
+  typeId        Int
+  account       Account?    @relation(fields: [accountId], references: [id])
+  accountId     Int?
+  category      Category?   @relation(fields: [categoryId], references: [id])
+  categoryId    Int?
+  profile       Profile?    @relation(fields: [profileId], references: [id])
+  profileId     Int
+  tag           Tag?        @relation(fields: [tagId], references: [id])
+  tagId         Int?
 }
 
 model EntryType {
@@ -45,16 +70,22 @@ model EntryType {
 }
 
 model Account {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(255)
-  balance   Float    @default(0)
-  entries   Entry[]
-  profile   Profile? @relation(fields: [profileId], references: [id])
-  profileId Int
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  name       String   @db.VarChar(255)
+  balance    Float    @default(0)
+  entries    Entry[]
+  profile    Profile  @relation(fields: [profileId], references: [id])
+  profileId  Int
+  currency   Currency @relation(fields: [currencyId], references: [id])
+  currencyId Int
 }
 
 model Category {
   id                Int                  @id @default(autoincrement())
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
   name              String               @db.VarChar(255)
   entries           Entry[]
   profileCategories ProfilesCategories[]
@@ -67,4 +98,12 @@ model ProfilesCategories {
   categoryId Int
 
   @@id([profileId, categoryId], name: "profileCategoryId")
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  entries   Entry[]
 }
