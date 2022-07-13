@@ -1,6 +1,6 @@
 {
   "name": "schemas",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",
@@ -33,6 +33,9 @@
     "./entry-types": "./lib/entry-types/index.js",
     "./accounts": "./lib/accounts/index.js",
     "./categories": "./lib/categories/index.js",
-    "./entries": "./lib/entries/index.js"
+    "./entries": "./lib/entries/index.js",
+    "./currencies": "./lib/currencies/index.js",
+    "./tags": "./lib/tags/index.js",
+    "./transactions": "./lib/transactions/index.js"
   }
 }

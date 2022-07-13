@@ -11,23 +11,41 @@ export const Query = Type.Partial(EntryModel);
 export type TQuery = Static<typeof Query>;
 
 export const AddOne = Type.Intersect([
-  Type.Pick(EntryModel, ['amount', 'date', 'typeId']),
+  Type.Pick(EntryModel, ['date', 'typeId']),
+  Type.Object({
+    transaction: Type.Pick(EntryModel['properties']['transaction'], [
+      'units',
+      'cents',
+      'currencyId',
+    ]),
+  }),
   Type.Partial(
-    Type.Pick(EntryModel, ['description', 'accountId', 'categoryId'])
+    Type.Pick(EntryModel, ['description', 'accountId', 'categoryId', 'tagId'])
   ),
 ]);
 
 export type TAddOne = Static<typeof AddOne>;
 
-export const UpdateOne = Type.Partial(
-  Type.Pick(EntryModel, [
-    'description',
-    'amount',
-    'date',
-    'typeId',
-    'accountId',
-    'categoryId',
-  ])
-);
+export const UpdateOne = Type.Intersect([
+  Type.Partial(
+    Type.Pick(EntryModel, [
+      'description',
+      'date',
+      'typeId',
+      'accountId',
+      'categoryId',
+      'tagId',
+    ])
+  ),
+  Type.Object({
+    transaction: Type.Partial(
+      Type.Pick(EntryModel['properties']['transaction'], [
+        'units',
+        'cents',
+        'currencyId',
+      ])
+    ),
+  }),
+]);
 
 export type TUpdateOne = Static<typeof UpdateOne>;
