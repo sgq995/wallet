@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 
-import { Request, Reply } from 'schemas/categories';
+import { Request, Reply } from 'schemas/currencies';
 
 import {
   replyCreated,
@@ -15,32 +15,41 @@ const findAll: DefaultRouteHandlerMethod<{
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
   const query = request.query;
-  const allCategories = await this.prisma.category.findMany({
+  const allCurrencies = await this.prisma.currency.findMany({
     where: {
       AND: {
         id: query.id,
-        name: query.name
+        precision: query.precision,
+        symbol: query.symbol
           ? {
-              contains: query.name,
+              contains: query.symbol,
             }
-          : query.name,
+          : query.symbol,
+        code: query.code,
+        decimal: query.decimal,
+        separator: query.separator,
       },
     },
   });
-  replyOK(reply, allCategories);
+  console.log({ allCurrencies });
+  replyOK(reply, allCurrencies);
 };
 
 const addOne: DefaultRouteHandlerMethod<{
   Body: Request.TAddOne;
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
-  const category = request.body;
-  const createdCategory = await this.prisma.category.create({
+  const currency = request.body;
+  const createdCurrency = await this.prisma.currency.create({
     data: {
-      name: category.name,
+      precision: currency.precision,
+      symbol: currency.symbol,
+      code: currency.code,
+      decimal: currency.decimal,
+      separator: currency.separator,
     },
   });
-  replyCreated(reply, createdCategory);
+  replyCreated(reply, createdCurrency);
 };
 
 const findOne: DefaultRouteHandlerMethod<{
@@ -49,16 +58,16 @@ const findOne: DefaultRouteHandlerMethod<{
 }> = async function (request, reply) {
   const id = request.params.id;
   try {
-    const category = await this.prisma.category.findUnique({
+    const currency = await this.prisma.currency.findUnique({
       where: {
         id,
       },
       rejectOnNotFound: true,
     });
 
-    replyOK(reply, category);
+    replyOK(reply, currency);
   } catch (e) {
-    replyNotFound(reply, `Category id ${id} was not found`);
+    replyNotFound(reply, `Currency id ${id} was not found`);
   }
 };
 
@@ -68,20 +77,24 @@ const updateOne: DefaultRouteHandlerMethod<{
   Reply: Reply.TUpdateOne;
 }> = async function (request, reply) {
   const id = request.params.id;
-  const category = request.body;
+  const currency = request.body;
   try {
-    const updatedCategory = await this.prisma.category.update({
+    const updatedCurrency = await this.prisma.currency.update({
       where: {
         id,
       },
       data: {
-        name: category.name,
+        precision: currency.precision,
+        symbol: currency.symbol,
+        code: currency.code,
+        decimal: currency.decimal,
+        separator: currency.separator,
       },
     });
 
-    replyOK(reply, updatedCategory);
+    replyOK(reply, updatedCurrency);
   } catch (e) {
-    replyNotFound(reply, `Category id ${id} was not found`);
+    replyNotFound(reply, `Currency id ${id} was not found`);
   }
 };
 
@@ -91,15 +104,15 @@ const removeOne: DefaultRouteHandlerMethod<{
 }> = async function (request, reply) {
   const id = request.params.id;
   try {
-    const deletedCategory = await this.prisma.category.delete({
+    const deletedCurrency = await this.prisma.currency.delete({
       where: {
         id,
       },
     });
 
-    replyOK(reply, deletedCategory);
+    replyOK(reply, deletedCurrency);
   } catch (e) {
-    replyNotFound(reply, `Category id ${id} was not found`);
+    replyNotFound(reply, `Currency id ${id} was not found`);
   }
 };
 

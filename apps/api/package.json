@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "predev": "run-s migrate:dev seed",
+    "predev": "run-s migrate:dev",
     "dev": "nodemon src/index.ts",
     "build": "run-s typescript babel",
     "start": "node dist/index.js",

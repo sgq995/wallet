@@ -3,6 +3,7 @@ import {
   plugin as SuperTokensNodePlugin,
   errorHandler as SuperTokensNodeErrorHandler,
 } from 'supertokens-node/framework/fastify';
+import EmailPassword from 'supertokens-node/recipe/emailpassword';
 import ThirdPartyEmailPasswordNode from 'supertokens-node/recipe/thirdpartyemailpassword';
 import Session from 'supertokens-node/recipe/session';
 
@@ -28,6 +29,7 @@ supertokens.init({
     websiteBasePath: config.supertokens.websiteBasePath,
   },
   recipeList: [
+    EmailPassword.init(),
     ThirdPartyEmailPasswordNode.init({
       providers: [
         // We have provided you with development keys which you can use for testsing.
