@@ -8,10 +8,7 @@ import {
   replyNotFound,
   replyOK,
 } from '../../utils/response-builder';
-import {
-  DefaultRouteHandlerMethod,
-  DefaultRouteHandlerMethodWithSession,
-} from '../../utils/types';
+import { DefaultRouteHandlerMethodWithSession } from '../../utils/types';
 import { verifySessionHandler } from '../../utils/verify-session-handler';
 
 const findAll: DefaultRouteHandlerMethodWithSession<{
@@ -30,8 +27,12 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
             }
           : query.name,
         balance: query.balance,
+        currencyId: query.currencyId,
         profileId,
       },
+    },
+    include: {
+      currency: true,
     },
   });
   replyOK(reply, allAccounts);
@@ -47,7 +48,11 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
     data: {
       name: account.name,
       balance: account.balance,
+      currencyId: account.currencyId,
       profileId,
+    },
+    include: {
+      currency: true,
     },
   });
   replyCreated(reply, createdAccount);
@@ -66,6 +71,9 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
           id,
           profileId,
         },
+      },
+      include: {
+        currency: true,
       },
       rejectOnNotFound: true,
     });
@@ -102,6 +110,7 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
       data: {
         name: account.name,
         balance: account.balance,
+        currencyId: account.currencyId,
       },
     });
 

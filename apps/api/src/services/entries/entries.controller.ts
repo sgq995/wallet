@@ -26,12 +26,18 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
               contains: query.description,
             }
           : query.description,
-        amount: query.amount,
         date: query.date ? new Date(query.date) : query.date,
         typeId: query.typeId,
         accountId: query.accountId,
         categoryId: query.categoryId,
         profileId,
+      },
+    },
+    include: {
+      transaction: {
+        include: {
+          currency: true,
+        },
       },
     },
   });
@@ -43,16 +49,51 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
   const entry = request.body;
+  const transaction = entry.transaction;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   const createdEntry = await this.prisma.entry.create({
     data: {
       description: entry.description,
-      amount: entry.amount,
+      transaction: {
+        create: {
+          units: transaction.units,
+          cents: transaction.cents,
+          currencyId: transaction.currencyId,
+        },
+      },
       date: new Date(entry.date),
-      typeId: entry.typeId,
-      accountId: entry.accountId,
-      categoryId: entry.categoryId,
-      profileId,
+      type: {
+        connect: {
+          id: entry.typeId,
+        },
+      },
+      account: {
+        connect: {
+          id: entry.accountId ?? undefined,
+        },
+      },
+      category: {
+        connect: {
+          id: entry.categoryId ?? undefined,
+        },
+      },
+      tag: {
+        connect: {
+          id: entry.tagId ?? undefined,
+        },
+      },
+      profile: {
+        connect: {
+          id: profileId,
+        },
+      },
+    },
+    include: {
+      transaction: {
+        include: {
+          currency: true,
+        },
+      },
     },
   });
   replyCreated(reply, createdEntry);
@@ -70,6 +111,13 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
         AND: {
           id,
           profileId,
+        },
+      },
+      include: {
+        transaction: {
+          include: {
+            currency: true,
+          },
         },
       },
       rejectOnNotFound: true,
@@ -100,17 +148,48 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
     });
 
     const entry = request.body;
+    const transaction = entry.transaction;
+
     const updatedEntry = await this.prisma.entry.update({
       where: {
         id,
       },
       data: {
         description: entry.description,
-        amount: entry.amount,
         date: entry.date,
-        typeId: entry.typeId,
-        accountId: entry.accountId,
-        categoryId: entry.categoryId,
+        transaction: {
+          update: {
+            units: transaction.units,
+            cents: transaction.cents,
+            currencyId: transaction.currencyId,
+          },
+        },
+        type: {
+          update: {
+            id: entry.typeId,
+          },
+        },
+        account: {
+          update: {
+            id: entry.accountId ?? undefined,
+          },
+          disconnect: entry.accountId === null,
+        },
+        category: {
+          update: {
+            id: entry.categoryId ?? undefined,
+          },
+          disconnect: entry.categoryId === null,
+        },
+        tag: {
+          update: {
+            id: entry.tagId ?? undefined,
+          },
+          disconnect: entry.tagId === null,
+        },
+      },
+      include: {
+        transaction: true,
       },
     });
 
@@ -127,7 +206,7 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   try {
-    await this.prisma.entry.findFirst({
+    const foundEntry = await this.prisma.entry.findFirst({
       where: {
         AND: {
           id,
@@ -137,11 +216,25 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
       rejectOnNotFound: true,
     });
 
-    const deletedEntry = await this.prisma.entry.delete({
+    const deleteTransaction = this.prisma.transaction.delete({
+      where: {
+        id: foundEntry.transactionId,
+      },
+    });
+
+    const deleteEntry = this.prisma.entry.delete({
       where: {
         id,
       },
+      include: {
+        transaction: true,
+      },
     });
+
+    const [_, deletedEntry] = await this.prisma.$transaction([
+      deleteTransaction,
+      deleteEntry,
+    ]);
 
     replyOK(reply, deletedEntry);
   } catch (e) {

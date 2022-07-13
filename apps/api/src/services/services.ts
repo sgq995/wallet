@@ -6,6 +6,7 @@ import entryTypes from './entry-types';
 import accounts from './accounts';
 import categories from './categories';
 import entries from './entries';
+import currencies from './currencies';
 
 const services: FastifyPluginAsync = fp(async (fastify, options) => {
   const prefix = '/v1';
@@ -13,6 +14,7 @@ const services: FastifyPluginAsync = fp(async (fastify, options) => {
   fastify.register(accounts, { ...options, prefix: prefix });
   fastify.register(categories, { ...options, prefix: prefix });
   fastify.register(entries, { ...options, prefix: prefix });
+  fastify.register(currencies, { ...options, prefix: prefix });
   fastify.log.info(__filename);
 });
 
