@@ -1,27 +1,25 @@
 # Do not copy docker files
-Dockerfile
-Dockerfile.dev
-docker-compose.yml
-docker-compose.dev.yml
+**/Dockerfile*
+**/docker-compose*
 
 # Do not copy deps
-node_modules/
+**/node_modules
 
 # Do not copy turbo
 .turbo/
 
 # Do not copy artifacts
-build/
-dist/
-lib/
-.next/
+**/build
+**/dist
+**/lib
+**/.next
 
 # Do not copy docs
-docs/
+**/docs
 
 # Do not copy .git
-.git/
-.gitignore
+**/.git
+**/.gitignore
 README.md
 
 # Docker scripts
