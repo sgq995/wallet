@@ -7,7 +7,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    image: postgres:14-alpine
+    # image: postgres:14-alpine
+    build:
+      context: docker/postgres
+      dockerfile: Dockerfile
     container_name: postgres
     restart: always
     volumes:
