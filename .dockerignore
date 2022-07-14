@@ -1,6 +1,7 @@
 # Do not copy docker files
 **/Dockerfile*
 **/docker-compose*
+**/docker
 
 # Do not copy deps
 **/node_modules
