@@ -10,10 +10,10 @@
 .turbo/
 
 # Do not copy artifacts
-**/build
-**/dist
-**/lib
-**/.next
+apps/*/build
+apps/*/dist
+apps/*/lib
+apps/*/.next
 
 # Do not copy docs
 **/docs
