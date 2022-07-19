@@ -125,14 +125,14 @@ const controller: FastifyPluginAsync = async (fastify, options) => {
     },
     findAll
   );
-  fastify.post(
-    '/',
-    {
-      schema: { body: Request.AddOne, response: Reply.AddOne },
-      preHandler: verifySessionHandler(),
-    },
-    addOne
-  );
+  // fastify.post(
+  //   '/',
+  //   {
+  //     schema: { body: Request.AddOne, response: Reply.AddOne },
+  //     preHandler: verifySessionHandler(),
+  //   },
+  //   addOne
+  // );
   fastify.get(
     '/:id',
     {
@@ -141,26 +141,26 @@ const controller: FastifyPluginAsync = async (fastify, options) => {
     },
     findOne
   );
-  fastify.put(
-    '/:id',
-    {
-      schema: {
-        body: Request.UpdateOne,
-        params: Request.Params,
-        response: Reply.UpdateOne,
-      },
-      preHandler: verifySessionHandler(),
-    },
-    updateOne
-  );
-  fastify.delete(
-    '/:id',
-    {
-      schema: { params: Request.Params, response: Reply.RemoveOne },
-      preHandler: verifySessionHandler(),
-    },
-    removeOne
-  );
+  // fastify.put(
+  //   '/:id',
+  //   {
+  //     schema: {
+  //       body: Request.UpdateOne,
+  //       params: Request.Params,
+  //       response: Reply.UpdateOne,
+  //     },
+  //     preHandler: verifySessionHandler(),
+  //   },
+  //   updateOne
+  // );
+  // fastify.delete(
+  //   '/:id',
+  //   {
+  //     schema: { params: Request.Params, response: Reply.RemoveOne },
+  //     preHandler: verifySessionHandler(),
+  //   },
+  //   removeOne
+  // );
 };
 
 export default controller;
