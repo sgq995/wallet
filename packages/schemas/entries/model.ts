@@ -10,7 +10,8 @@ export const EntryModel = Type.Object({
   transaction: Type.Optional(TransactionModel),
   transactionId: Id(),
   date: Type.String({
-    pattern: '\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2})?',
+    description: 'yyyy-MM-DD',
+    pattern: '\\d{4}-\\d{2}-\\d{2}',
   }),
   typeId: Id(),
   accountId: Nullable(Id()),

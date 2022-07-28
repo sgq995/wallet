@@ -67,21 +67,27 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
           id: entry.typeId,
         },
       },
-      account: {
-        connect: {
-          id: entry.accountId ?? undefined,
-        },
-      },
-      category: {
-        connect: {
-          id: entry.categoryId ?? undefined,
-        },
-      },
-      tag: {
-        connect: {
-          id: entry.tagId ?? undefined,
-        },
-      },
+      ...(entry.accountId
+        ? {
+            account: {
+              connect: { id: entry.accountId },
+            },
+          }
+        : undefined),
+      ...(entry.categoryId
+        ? {
+            category: {
+              connect: { id: entry.categoryId },
+            },
+          }
+        : undefined),
+      ...(entry.tagId
+        ? {
+            tag: {
+              connect: { id: entry.tagId },
+            },
+          }
+        : undefined),
       profile: {
         connect: {
           id: profileId,
