@@ -22,6 +22,7 @@ import AsyncViewer, {
 } from '../components/AsyncViewer';
 import { useState } from 'react';
 import { yyyyMMdd } from '../utils/date-utils';
+import AddEntryForm from '../components/entries/AddEntryForm';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
@@ -61,11 +62,12 @@ function EntryList({ data }: EntryListProps) {
   return (
     <>
       <Stack spacing={2}>
-        {data.map(({ description, amount, date, id }, index) => (
+        {data.map(({ description, date, id, transaction }, index) => (
           <EntryPaper
             key={index}
             description={description}
-            amount={amount}
+            units={transaction.units}
+            cents={transaction.cents}
             date={date}
             onDelete={() => handleDeleteConfirm(id)}
           />
@@ -81,11 +83,12 @@ function EntryList({ data }: EntryListProps) {
 
           {data
             .filter(({ id: dataId }) => dataId === id)
-            .map(({ description, date, amount }) => (
+            .map(({ description, date, transaction }) => (
               <Box display="flex" flexDirection="column">
                 <Typography>{description}</Typography>
                 <Typography>{yyyyMMdd(date)}</Typography>
-                <Typography>{amount}</Typography>
+                <Typography>{transaction.units}</Typography>
+                <Typography>{transaction.cents}</Typography>
               </Box>
             ))}
 
@@ -102,8 +105,6 @@ function EntryList({ data }: EntryListProps) {
 }
 
 function Home() {
-  // const [entries, setEntries] = useState(new Array(50).fill({}));
-
   const { isLoading, isError, data, error } = useFindAllQuery();
 
   return (
