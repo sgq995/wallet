@@ -1,4 +1,10 @@
-import { ComponentType, createElement, forwardRef, Ref } from 'react';
+import {
+  ComponentType,
+  createElement,
+  ElementType,
+  forwardRef,
+  Ref,
+} from 'react';
 
 import dynamic from 'next/dynamic';
 
@@ -48,7 +54,11 @@ export const Backdrop = dynamic<BackdropProps>(
   () => import('@mui/material/Backdrop')
 );
 
-export const Box = dynamic<BoxProps>(() => import('@mui/material/Box'));
+export const DynamicBox = dynamic<BoxProps>(() => import('@mui/material/Box'));
+
+export const Box = <D extends ElementType, P>(props: BoxProps<D, P>) => (
+  <DynamicBox {...props} />
+);
 
 export const BottomNavigation = dynamic(
   () => import('@mui/material/BottomNavigation')
@@ -98,8 +108,10 @@ export const Paper: ComponentType<PaperProps> = withDynamicForwardRef(
 
 export const Select = dynamic(() => import('@mui/material/Select'));
 
-export const Stack: ComponentType<StackProps> = dynamic(
-  import('@mui/material/Stack')
+export const DynamicStack = dynamic<StackProps>(import('@mui/material/Stack'));
+
+export const Stack = <D extends ElementType, P>(props: StackProps<D, P>) => (
+  <DynamicStack {...props} />
 );
 
 export const Tab = dynamic(() => import('@mui/material/Tab'));
