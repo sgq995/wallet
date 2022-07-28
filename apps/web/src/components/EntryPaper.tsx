@@ -12,14 +12,16 @@ import { DeleteIcon } from './IconsMaterial';
 
 interface EntryPaperProps {
   description: string;
-  amount: number;
+  units: number;
+  cents: number;
   date: string | Date;
   onDelete: IconButtonProps['onClick'];
 }
 
 export default function EntryPaper({
   description,
-  amount,
+  units,
+  cents,
   date,
   onDelete,
 }: EntryPaperProps) {
@@ -47,7 +49,9 @@ export default function EntryPaper({
           justifyContent="space-between"
           alignItems="flex-end"
         >
-          <Typography variant="body2">{amount}</Typography>
+          <Typography variant="body2">
+            {units}.{cents}
+          </Typography>
           <Typography variant="body2">{yyyyMMdd(date)}</Typography>
         </Stack>
 
