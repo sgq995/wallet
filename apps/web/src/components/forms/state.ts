@@ -19,7 +19,12 @@ export interface IFormErrorAction {
   (newState: IFormError): void;
 }
 
+export interface IFormResetAction {
+  (): void;
+}
+
 export interface IFormDispatch {
   change: IFormChangeAction;
   error: IFormErrorAction;
+  reset: IFormResetAction;
 }

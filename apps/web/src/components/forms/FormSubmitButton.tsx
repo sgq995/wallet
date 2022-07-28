@@ -11,19 +11,25 @@ import { IFormState } from './state';
 interface IFormSubmitButtonProps {
   onClick?: (state: IFormState) => void;
   disabledOnError?: boolean;
+  resetOnSubmit?: boolean;
 }
 
 export default function FormSubmitButton({
   onClick,
   disabledOnError,
+  resetOnSubmit,
 }: IFormSubmitButtonProps) {
-  const { state } = useContext(FormContext);
+  const { state, dispatch } = useContext(FormContext);
 
   const isDisabled =
     disabledOnError && Object.values(state.error).some((value) => value);
 
   const handleClick = () => {
     onClick?.(state);
+
+    if (resetOnSubmit) {
+      dispatch.reset();
+    }
   };
 
   return (

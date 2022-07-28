@@ -4,16 +4,14 @@ import { IFormData, IFormDispatch, IFormError, IFormState } from './state';
 import { FormActionType } from './actions';
 import { reducer } from './reducer';
 import { FormContext } from './context';
+import { getErrorFromInitialData } from './utils';
 
 export function useFormState(
   initialState: IFormData
 ): [IFormState, IFormDispatch] {
   const [state, dispatch] = useReducer(reducer, {
     data: initialState,
-    error: Object.keys(initialState).reduce((error, key) => {
-      error[key] = false;
-      return error;
-    }, {}),
+    error: getErrorFromInitialData(initialState),
   });
 
   const change = useCallback(
@@ -28,9 +26,15 @@ export function useFormState(
     [state]
   );
 
+  const reset = useCallback(
+    () => dispatch({ type: FormActionType.Reset, payload: initialState }),
+    [initialState]
+  );
+
   const formDispatch: IFormDispatch = {
     change,
     error,
+    reset,
   };
 
   return [state, formDispatch];
