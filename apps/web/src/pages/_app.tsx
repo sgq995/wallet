@@ -9,6 +9,7 @@ import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
 import { frontendConfig } from '../config/frontendConfig';
 import { SystemContextProvider } from '../contexts/system';
+import { NotificationSystemProvider } from '../contexts/notifications';
 
 const Layout = dynamic(() => import('../components/Layout'));
 
@@ -23,9 +24,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <SystemContextProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <NotificationSystemProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </NotificationSystemProvider>
         </SystemContextProvider>
       </Hydrate>
     </QueryClientProvider>
