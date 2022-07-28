@@ -1,3 +1,4 @@
+import { useNotificationSystem } from '../../contexts/notifications';
 import { useAddOneMutation } from '../../hooks/entries';
 import { FormAccountField, FormAmountField, IFormState } from '../forms';
 import Form from '../forms/Form';
@@ -9,6 +10,8 @@ import FormSubmitButton from '../forms/FormSubmitButton';
 import { Stack } from '../Material';
 
 export default function AddEntryForm() {
+  const { success: notifySuccess, error: notifyError } =
+    useNotificationSystem();
   const { mutate } = useAddOneMutation();
 
   const handleSubmit = ({ data }: IFormState) => {
@@ -24,19 +27,28 @@ export default function AddEntryForm() {
     const accountId = parseInt(data['accountId']);
     const categoryId = parseInt(data['categoryId']);
 
-    mutate({
-      date,
-      typeId,
-      transaction: {
-        units,
-        cents,
-        currencyId,
+    mutate(
+      {
+        date,
+        typeId,
+        transaction: {
+          units,
+          cents,
+          currencyId,
+        },
+        description,
+        accountId,
+        categoryId,
       },
-      description,
-      accountId,
-      categoryId,
-    });
-    console.log({ data });
+      {
+        onSuccess: () => {
+          notifySuccess('Entry was created');
+        },
+        onError: () => {
+          notifyError('Something goes wrong');
+        },
+      }
+    );
   };
 
   return (
@@ -67,7 +79,7 @@ export default function AddEntryForm() {
 
         <FormCategoryField fullWidth />
 
-        <FormSubmitButton disabledOnError onClick={handleSubmit} />
+        <FormSubmitButton disabledOnError resetOnSubmit onClick={handleSubmit} />
       </Stack>
     </Form>
   );
