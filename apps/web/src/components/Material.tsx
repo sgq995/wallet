@@ -50,6 +50,8 @@ function withDynamicForwardRef<
   ) as OverridableComponent<M>;
 }
 
+export const Alert = dynamic(() => import('@mui/material/Alert'));
+
 export const Backdrop = dynamic<BackdropProps>(
   () => import('@mui/material/Backdrop')
 );
@@ -75,6 +77,8 @@ export const Card = dynamic(() => import('@mui/material/Card'));
 export const CircularProgress = dynamic(
   () => import('@mui/material/CircularProgress')
 );
+
+export const Collapse = dynamic(() => import('@mui/material/Collapse'));
 
 export const Container = dynamic(() => import('@mui/material/Container'));
 
