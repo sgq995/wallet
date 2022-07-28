@@ -28,9 +28,9 @@ import {
   LogoutIcon,
 } from '../IconsMaterial';
 
-import EntryForm from '../EntryForm';
 import CategoryForm from '../CategoryForm';
 import AccountForm from '../AccountForm';
+import AddEntryForm from '../entries/AddEntryForm';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
@@ -149,7 +149,8 @@ export default function LayoutNavigation() {
           </Box>
           <Box p={2}>
             <Box sx={{ display: selectedForm === 0 ? 'block' : 'none' }}>
-              <EntryForm />
+              {/* <EntryForm /> */}
+              <AddEntryForm />
             </Box>
 
             <Box sx={{ display: selectedForm === 1 ? 'block' : 'none' }}>
