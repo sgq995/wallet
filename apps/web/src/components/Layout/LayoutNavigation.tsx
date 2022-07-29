@@ -11,7 +11,6 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
-  Dialog,
   DialogContent,
   DialogTitle,
   Fab,
@@ -30,7 +29,8 @@ import {
 
 import CategoryForm from '../CategoryForm';
 import AccountForm from '../AccountForm';
-import AddEntryForm from '../entries/AddEntryForm';
+import EntryForm from '../entries/EntryForm';
+import ResponsiveDialog from '../dialogs/ResponsiveDialog';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
@@ -137,7 +137,9 @@ export default function LayoutNavigation() {
         </Fab>
       </Box>
 
-      <Dialog open={isFormDialogOpen} onClose={handleClickClose}>
+{/* TODO: fullScreen */}
+      <ResponsiveDialog open={isFormDialogOpen} onClose={handleClickClose}>
+        {/* TODO: AppBar & Close Button */}
         <DialogTitle>New Data</DialogTitle>
         <DialogContent>
           <Box width="100%" borderBottom={1} sx={{ borderColor: 'divider' }}>
@@ -150,7 +152,7 @@ export default function LayoutNavigation() {
           <Box p={2}>
             <Box sx={{ display: selectedForm === 0 ? 'block' : 'none' }}>
               {/* <EntryForm /> */}
-              <AddEntryForm />
+              <EntryForm />
             </Box>
 
             <Box sx={{ display: selectedForm === 1 ? 'block' : 'none' }}>
@@ -162,7 +164,7 @@ export default function LayoutNavigation() {
             </Box>
           </Box>
         </DialogContent>
-      </Dialog>
+      </ResponsiveDialog>
     </BottomNavigation>
   );
 }

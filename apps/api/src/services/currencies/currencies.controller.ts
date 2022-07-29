@@ -31,7 +31,6 @@ const findAll: DefaultRouteHandlerMethod<{
       },
     },
   });
-  console.log({ allCurrencies });
   replyOK(reply, allCurrencies);
 };
 
