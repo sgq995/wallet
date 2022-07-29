@@ -41,6 +41,7 @@ const findOne: DefaultRouteHandlerMethod<{
 
     replyOK(reply, type);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Type id ${id} was not found`);
   }
 };

@@ -58,6 +58,7 @@ const findOne: DefaultRouteHandlerMethod<{
 
     replyOK(reply, category);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Category id ${id} was not found`);
   }
 };
@@ -81,6 +82,7 @@ const updateOne: DefaultRouteHandlerMethod<{
 
     replyOK(reply, updatedCategory);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Category id ${id} was not found`);
   }
 };
@@ -99,6 +101,7 @@ const removeOne: DefaultRouteHandlerMethod<{
 
     replyOK(reply, deletedCategory);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Category id ${id} was not found`);
   }
 };

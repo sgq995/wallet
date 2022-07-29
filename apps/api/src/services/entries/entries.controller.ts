@@ -131,6 +131,7 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
 
     replyOK(reply, entry);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Entry with id ${id} not found`);
   }
 };
@@ -201,6 +202,7 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
 
     replyOK(reply, updatedEntry);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Entry with id ${id} not found`);
   }
 };
@@ -222,12 +224,6 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
       rejectOnNotFound: true,
     });
 
-    const deleteTransaction = this.prisma.transaction.delete({
-      where: {
-        id: foundEntry.transactionId,
-      },
-    });
-
     const deleteEntry = this.prisma.entry.delete({
       where: {
         id,
@@ -237,13 +233,20 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
       },
     });
 
-    const [_, deletedEntry] = await this.prisma.$transaction([
-      deleteTransaction,
+    const deleteTransaction = this.prisma.transaction.delete({
+      where: {
+        id: foundEntry.transactionId,
+      },
+    });
+    
+    const [deletedEntry] = await this.prisma.$transaction([
       deleteEntry,
+      deleteTransaction,
     ]);
 
     replyOK(reply, deletedEntry);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Entry with id ${id} not found`);
   }
 };
