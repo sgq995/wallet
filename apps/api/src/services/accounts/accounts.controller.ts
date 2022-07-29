@@ -80,6 +80,7 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
 
     replyOK(reply, account);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Account id ${id} was not found`);
   }
 };
@@ -116,6 +117,7 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
 
     replyOK(reply, updatedAccount);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Account id ${id} was not found`);
   }
 };
@@ -145,6 +147,7 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
 
     replyOK(reply, deletedAccount);
   } catch (e) {
+    this.log.error(e);
     replyNotFound(reply, `Account id ${id} was not found`);
   }
 };
