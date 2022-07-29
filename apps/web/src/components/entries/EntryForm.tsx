@@ -1,15 +1,19 @@
 import { useNotificationSystem } from '../../contexts/notifications';
 import { useAddOneMutation } from '../../hooks/entries';
-import { FormAccountField, FormAmountField, IFormState } from '../forms';
-import Form from '../forms/Form';
-import FormCategoryField from '../forms/FormCategoryField';
-import FormDateField from '../forms/FormDateField';
-import FormDescriptionField from '../forms/FormDescriptionField';
-import FormEntryTypeField from '../forms/FormEntryTypeField';
-import FormSubmitButton from '../forms/FormSubmitButton';
+import {
+  Form,
+  FormAccountField,
+  FormAmountField,
+  FormCategoryField,
+  FormDateField,
+  FormDescriptionField,
+  FormEntryTypeField,
+  FormSubmitButton,
+  IFormState,
+} from '../forms';
 import { Stack } from '../Material';
 
-export default function AddEntryForm() {
+export default function EntryForm() {
   const { success: notifySuccess, error: notifyError } =
     useNotificationSystem();
   const { mutate } = useAddOneMutation();
@@ -79,7 +83,11 @@ export default function AddEntryForm() {
 
         <FormCategoryField fullWidth />
 
-        <FormSubmitButton disabledOnError resetOnSubmit onClick={handleSubmit} />
+        <FormSubmitButton
+          disabledOnError
+          resetOnSubmit
+          onClick={handleSubmit}
+        />
       </Stack>
     </Form>
   );
