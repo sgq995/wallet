@@ -21,6 +21,7 @@ import type {
   OverridableTypeMap,
   OverrideProps,
 } from '@mui/material/OverridableComponent';
+import { ListItemProps } from '@mui/material';
 
 function withForwardedRef<
   C extends React.ElementType,
@@ -103,6 +104,16 @@ export const FormControl = dynamic(() => import('@mui/material/FormControl'));
 export const IconButton = dynamic(() => import('@mui/material/IconButton'));
 
 export const InputLabel = dynamic(() => import('@mui/material/InputLabel'));
+
+export const List = dynamic(() => import('@mui/material/List'));
+
+export const DynamicListItem = dynamic(() => import('@mui/material/ListItem'));
+
+export const ListItem = <D extends ElementType, P>(
+  props: ListItemProps<D, P>
+) => <DynamicListItem {...props} />;
+
+export const ListItemText = dynamic(() => import('@mui/material/ListItemText'));
 
 export const MenuItem = dynamic(() => import('@mui/material/MenuItem'));
 
