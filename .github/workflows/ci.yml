@@ -23,7 +23,6 @@ jobs:
         node-version: 16
         cache: 'yarn'
     - run: yarn install --frozen-lockfile
-    - run: yarn build --cache-dir=".turbo" --filter
   
   lint:
     runs-on: ubuntu-20.04
