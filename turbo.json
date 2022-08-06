@@ -8,6 +8,9 @@
     "lint": {
       "outputs": []
     },
+    "test": {
+      "outputs": [".nyc_output/**"]
+    },
     "dev": {
       "cache": false
     }

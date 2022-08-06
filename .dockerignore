@@ -8,12 +8,15 @@
 
 # Do not copy turbo
 .turbo/
+**/.turbo
+apps/*/.turbo
 
 # Do not copy artifacts
 apps/*/build
 apps/*/dist
 apps/*/lib
 apps/*/.next
+apps/*/.nyc_output
 
 # Do not copy docs
 **/docs
@@ -28,3 +31,6 @@ docker-build.sh
 
 # Scripts
 install.sh
+
+# Tools
+tools.js
