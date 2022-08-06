@@ -17,13 +17,13 @@ export function useFormState(
   const change = useCallback(
     (newState: IFormData) =>
       dispatch({ type: FormActionType.Change, payload: newState }),
-    [state]
+    []
   );
 
   const error = useCallback(
     (newState: IFormError) =>
       dispatch({ type: FormActionType.Error, payload: newState }),
-    [state]
+    []
   );
 
   const reset = useCallback(
@@ -63,18 +63,18 @@ export function useFormController(
 ): [string, boolean, IOnChange] {
   const { state, dispatch } = useContext(FormContext);
 
-  const filter: IFormFilter = options?.filter ?? ((value: string) => value);
-  const validator: IFormValidator = options?.validator ?? (() => true);
-
   const value = state.data[name] ?? '';
   const error = state.error[name] ?? false;
   const onChange = useCallback(
     (newValue: string) => {
+      const filter: IFormFilter = options?.filter ?? ((value: string) => value);
+      const validator: IFormValidator = options?.validator ?? (() => true);
+
       const filteredValue = filter(newValue);
       dispatch.error({ [name]: !validator(filteredValue) });
       dispatch.change({ [name]: filteredValue });
     },
-    [name, dispatch]
+    [name, dispatch, options]
   );
 
   return [value, error, onChange];
