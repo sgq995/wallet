@@ -14,29 +14,29 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-20.04
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    container: node:16-alpine
 
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 16
         cache: 'yarn'
     - run: yarn install --frozen-lockfile
   
   lint:
     runs-on: ubuntu-20.04
+    container: node:16-alpine
     
     needs: setup
     
     steps:
-      - uses: actions/checkout@v3
-      - run: yarn lint
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'yarn'
+    - run: yarn lint
   
   test:
     runs-on: ubuntu-20.04
@@ -44,8 +44,12 @@ jobs:
     needs: setup
     
     steps:
-      - uses: actions/checkout@v3
-      - run: yarn test
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'yarn'
+    - run: yarn test
   
   build:
     runs-on: ubuntu-20.04
@@ -53,8 +57,12 @@ jobs:
     needs: setup
     
     steps:
-      - uses: actions/checkout@v3
-      - run: yarn build
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'yarn'
+    - run: yarn build
 
   docker-build:
     runs-on: ubuntu-20.04
@@ -62,5 +70,9 @@ jobs:
     needs: setup
     
     steps:
-      - uses: actions/checkout@v3
-      - run: node tools.js build-docker
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'yarn'
+    - run: node tools.js build-docker
