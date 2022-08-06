@@ -78,4 +78,4 @@ jobs:
       with:
         node-version: 16
         cache: 'yarn'
-    - run: node tools.js build-docker
+    - run: node tools.js docker-build
