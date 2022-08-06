@@ -106,10 +106,10 @@ export default function AccountForm() {
       return;
     }
 
-    mutate({
-      name: formData.name,
-      balance: parseFloat(formData.balance),
-    });
+    // mutate({
+    //   name: formData.name,
+    //   balance: parseFloat(formData.balance),
+    // });
 
     setFormData(initialForm);
   };
