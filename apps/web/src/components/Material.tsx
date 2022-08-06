@@ -39,6 +39,7 @@ function withDynamicForwardRef<
   C extends React.ElementType,
   P extends OverrideProps<M, C> | DefaultComponentProps<M>
 >(importedModule: Promise<any>) {
+  // eslint-disable-next-line react/display-name
   return forwardRef((props: any, ref) =>
     createElement(
       dynamic<P>(() =>
@@ -100,6 +101,8 @@ export const Divider = dynamic(() => import('@mui/material/Divider'));
 export const Fab = dynamic(() => import('@mui/material/Fab'));
 
 export const FormControl = dynamic(() => import('@mui/material/FormControl'));
+
+export const Hidden = dynamic(() => import('@mui/material/Hidden'));
 
 export const IconButton = dynamic(() => import('@mui/material/IconButton'));
 

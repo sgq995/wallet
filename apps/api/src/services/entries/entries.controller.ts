@@ -11,13 +11,22 @@ import {
 import { DefaultRouteHandlerMethodWithSession } from '../../utils/types';
 import { verifySessionHandler } from '../../utils/verify-session-handler';
 
+// TODO: Move this to configuration
+const MAX_ALLOWED_TAKE = 25;
+
 const findAll: DefaultRouteHandlerMethodWithSession<{
   Querystring: Request.TQuery;
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
   const query = request.query;
+  const take = Math.min(
+    request.query.take ?? MAX_ALLOWED_TAKE,
+    MAX_ALLOWED_TAKE
+  );
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   const allEntries = await this.prisma.entry.findMany({
+    skip: query.skip,
+    take: take,
     where: {
       AND: {
         id: query.id,
@@ -31,8 +40,18 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
         accountId: query.accountId,
         categoryId: query.categoryId,
         profileId,
+        ...(query.cursor
+          ? { [query.cursor.key]: query.cursor.value }
+          : undefined),
       },
     },
+    ...(query.sort
+      ? {
+          orderBy: {
+            [query.sort]: query.desc ? 'desc' : 'asc',
+          },
+        }
+      : undefined),
     include: {
       transaction: {
         include: {
@@ -238,7 +257,7 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
         id: foundEntry.transactionId,
       },
     });
-    
+
     const [deletedEntry] = await this.prisma.$transaction([
       deleteEntry,
       deleteTransaction,

@@ -1,12 +1,14 @@
 import { Static, Type } from '@sinclair/typebox';
+import { CreateQuery } from '../helpers/models';
 
 import { EntryModel } from './model';
 
 export const Params = Type.Required(Type.Pick(EntryModel, ['id']));
 
 export type TParams = Static<typeof Params>;
+const a = Type.KeyOf(EntryModel);
 
-export const Query = Type.Partial(EntryModel);
+export const Query = CreateQuery(EntryModel);
 
 export type TQuery = Static<typeof Query>;
 

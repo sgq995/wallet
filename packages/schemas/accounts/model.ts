@@ -7,7 +7,7 @@ export const AccountModel = Type.Object({
   id: Id(),
   name: Type.String(),
   balance: Type.Number(),
-  profileId: Id(),
+  // profileId: Id(),
   currency: Type.Optional(CurrencyModel),
   currencyId: Id(),
 });
