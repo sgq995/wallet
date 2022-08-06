@@ -40,6 +40,8 @@ function copyIfDiffer(src, dst) {
     return;
   }
 
+  const dir = path.dirname(dst);
+  fs.mkdirSync(dir, { recursive: true });
   fs.copyFileSync(src, dst);
 }
 
