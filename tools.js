@@ -30,6 +30,8 @@ function copyIfDiffer(src, dst) {
   }
 
   if (!fs.existsSync(dst)) {
+    const dir = path.dirname(dst);
+    fs.mkdirSync(dir, { recursive: true });
     fs.copyFileSync(src, dst);
     return;
   }
@@ -40,8 +42,6 @@ function copyIfDiffer(src, dst) {
     return;
   }
 
-  const dir = path.dirname(dst);
-  fs.mkdirSync(dir, { recursive: true });
   fs.copyFileSync(src, dst);
 }
 
