@@ -33,12 +33,13 @@ tap.before(async () => {
 
 tap.test('should return the list of accounts', async () => {
   const response = await app.inject().get('/accounts');
-  tap.equal(response.statusCode, 200);
+  tap.equal(response.statusCode, 200, 'status code');
   tap.equal(
     response.body,
     JSON.stringify({
       statusCode: 200,
-      data: [{ id: 0, name: '', balance: 0, profileId: 0, currencyId: 0 }],
-    })
+      data: [{ id: 0, name: '', balance: 0, currencyId: 0 }],
+    }),
+    'body'
   );
 });
