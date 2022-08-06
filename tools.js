@@ -78,6 +78,26 @@ function removeDirnameFromPathList(dirname, filepathList) {
   });
 }
 
+function installEnv() {
+  let envList = wildcardSearch(
+    path.join(__dirname, 'apps'),
+    /\.env.*\.example$/,
+    ['node_modules', 'build', 'dist', '.next', '.turbo']
+  );
+  envList.forEach((env) => {
+    const src = env;
+    const dst = env.replace(/\.example$/, '');
+    if (!fs.existsSync(dst)) {
+      console.log(`New ${dst}`);
+      const dir = path.dirname(dst);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.copyFileSync(src, dst);
+    } else {
+      console.log(`Exists ${dst}`);
+    }
+  });
+}
+
 function install() {
   spawnSync('yarn', ['install'], { stdio: 'inherit' });
   spawnSync('npx', ['prisma', 'generate'], {
@@ -120,6 +140,7 @@ function help() {
 }
 
 const COMMAND_TABLE = {
+  'install-env': installEnv,
   install: install,
   'docker-build': dockerBuild,
   help: help,
