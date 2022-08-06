@@ -48,8 +48,8 @@ jobs:
       with:
         node-version: 16
         cache: 'yarn'
-    - run: cp apps/api/.env.example apps/api/.env
     - run: yarn install --frozen-lockfile
+    - run: node tools.js install-env
     - run: yarn test
   
   build:
