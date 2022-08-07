@@ -12,6 +12,7 @@ import {
   Transaction,
 } from '@prisma/client';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import fastify from 'fastify';
 
 import dotenv from 'dotenv';
@@ -24,9 +25,9 @@ declare module 'fastify' {
 }
 
 class PrismaDelegateMock {
-  _data: any;
+  _data;
 
-  constructor(data: any = {}) {
+  constructor(data = {}) {
     this._data = data;
   }
 
@@ -57,59 +58,61 @@ class PrismaClientMock extends PrismaClient {
   get profile(): Prisma.ProfileDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._profile as any;
+    return this._profile as never;
   }
 
   get currency(): Prisma.CurrencyDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._currency as any;
+    return this._currency as never;
   }
 
   get transaction(): Prisma.TransactionDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._transaction as any;
+    return this._transaction as never;
   }
 
   get entry(): Prisma.EntryDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._entry as any;
+    return this._entry as never;
   }
 
   get entryType(): Prisma.EntryTypeDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._entryType as any;
+    return this._entryType as never;
   }
 
   get account(): Prisma.AccountDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._account as any;
+    return this._account as never;
   }
 
   get category(): Prisma.CategoryDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._category as any;
+    return this._category as never;
   }
 
   get profilesCategories(): Prisma.ProfilesCategoriesDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._profilesCategories as any;
+    return this._profilesCategories as never;
   }
 
   get tag(): Prisma.TagDelegate<
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   > {
-    return this._tag as any;
+    return this._tag as never;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async $connect() {}
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async $disconnect() {}
 }
 

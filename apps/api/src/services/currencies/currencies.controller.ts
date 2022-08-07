@@ -1,6 +1,7 @@
-import { FastifyPluginAsync } from 'fastify';
+import fastify, { FastifyPluginAsync } from 'fastify';
 
 import { Request, Reply } from 'schemas/currencies';
+import { to } from '../../utils/promise-simplify';
 
 import {
   replyCreated,
@@ -31,7 +32,7 @@ const findAll: DefaultRouteHandlerMethod<{
       },
     },
   });
-  replyOK(reply, allCurrencies);
+  await replyOK(reply, allCurrencies);
 };
 
 const addOne: DefaultRouteHandlerMethod<{
@@ -48,7 +49,7 @@ const addOne: DefaultRouteHandlerMethod<{
       separator: currency.separator,
     },
   });
-  replyCreated(reply, createdCurrency);
+  await replyCreated(reply, createdCurrency);
 };
 
 const findOne: DefaultRouteHandlerMethod<{
@@ -56,17 +57,21 @@ const findOne: DefaultRouteHandlerMethod<{
   Reply: Reply.TFindOne;
 }> = async function (request, reply) {
   const id = request.params.id;
-  try {
-    const currency = await this.prisma.currency.findUnique({
+
+  const [currency, err] = await to(
+    this.prisma.currency.findUnique({
       where: {
         id,
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
-    replyOK(reply, currency);
-  } catch (e) {
-    replyNotFound(reply, `Currency id ${id} was not found`);
+  if (currency) {
+    await replyOK(reply, currency);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Currency id ${id} was not found`);
   }
 };
 
@@ -77,8 +82,9 @@ const updateOne: DefaultRouteHandlerMethod<{
 }> = async function (request, reply) {
   const id = request.params.id;
   const currency = request.body;
-  try {
-    const updatedCurrency = await this.prisma.currency.update({
+
+  const [updatedCurrency, err] = await to(
+    this.prisma.currency.update({
       where: {
         id,
       },
@@ -89,11 +95,14 @@ const updateOne: DefaultRouteHandlerMethod<{
         decimal: currency.decimal,
         separator: currency.separator,
       },
-    });
+    })
+  );
 
-    replyOK(reply, updatedCurrency);
-  } catch (e) {
-    replyNotFound(reply, `Currency id ${id} was not found`);
+  if (updatedCurrency) {
+    await replyOK(reply, updatedCurrency);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Currency id ${id} was not found`);
   }
 };
 
@@ -102,20 +111,24 @@ const removeOne: DefaultRouteHandlerMethod<{
   Reply: Reply.TRemoveOne;
 }> = async function (request, reply) {
   const id = request.params.id;
-  try {
-    const deletedCurrency = await this.prisma.currency.delete({
+
+  const [deletedCurrency, err] = await to(
+    this.prisma.currency.delete({
       where: {
         id,
       },
-    });
+    })
+  );
 
-    replyOK(reply, deletedCurrency);
-  } catch (e) {
-    replyNotFound(reply, `Currency id ${id} was not found`);
+  if (deletedCurrency) {
+    await replyOK(reply, deletedCurrency);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Currency id ${id} was not found`);
   }
 };
 
-const controller: FastifyPluginAsync = async (fastify, options) => {
+const controller: FastifyPluginAsync = async (fastify) => {
   fastify.get(
     '/',
     {

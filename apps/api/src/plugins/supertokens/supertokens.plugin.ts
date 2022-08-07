@@ -78,9 +78,9 @@ supertokens.init({
   ],
 });
 
-const plugin: FastifyPluginAsync = fp(async (fastify, options) => {
+const plugin: FastifyPluginAsync = fp(async (fastify) => {
   await fastify.register(SuperTokensNodePlugin);
-  await fastify.setErrorHandler(SuperTokensNodeErrorHandler());
+  fastify.setErrorHandler(SuperTokensNodeErrorHandler());
 
   fastify.log.info(__filename);
 });

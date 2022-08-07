@@ -18,7 +18,7 @@ const server = fastify({
   },
 });
 
-(async () => {
+void (async () => {
   // Custom plugins
   await server.register(plugins);
 
@@ -26,7 +26,7 @@ const server = fastify({
   await server.register(services);
 
   // Listen
-  await server.listen(config.app.port, config.app.host, (err, address) => {
+  server.listen(config.app.port, config.app.host, (err) => {
     if (err) {
       console.error(err);
       process.exit(1);

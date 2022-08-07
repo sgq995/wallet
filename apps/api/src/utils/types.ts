@@ -9,7 +9,6 @@ import {
   RawReplyDefaultExpression,
   RawRequestDefaultExpression,
   RawServerDefault,
-  RouteHandlerMethod,
 } from 'fastify';
 import { RouteGenericInterface } from 'fastify/types/route';
 import { SessionRequest } from 'supertokens-node/framework/fastify';

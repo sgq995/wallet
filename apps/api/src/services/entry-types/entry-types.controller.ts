@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 
 import { Request, Reply } from 'schemas/entry-types';
+import { to } from '../../utils/promise-simplify';
 
 import { replyNotFound, replyOK } from '../../utils/response-builder';
 import { DefaultRouteHandlerMethod } from '../../utils/types';
@@ -23,7 +24,7 @@ const findAll: DefaultRouteHandlerMethod<{
       },
     },
   });
-  replyOK(reply, allTypes);
+  await replyOK(reply, allTypes);
 };
 
 const findOne: DefaultRouteHandlerMethod<{
@@ -31,22 +32,25 @@ const findOne: DefaultRouteHandlerMethod<{
   Reply: Reply.TFindOne;
 }> = async function (request, reply) {
   const id = request.params.id;
-  try {
-    const type = await this.prisma.entryType.findUnique({
+
+  const [type, err] = await to(
+    this.prisma.entryType.findUnique({
       where: {
         id,
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
-    replyOK(reply, type);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Type id ${id} was not found`);
+  if (type) {
+    await replyOK(reply, type);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Type id ${id} was not found`);
   }
 };
 
-const controller: FastifyPluginAsync = async (fastify, options) => {
+const controller: FastifyPluginAsync = async (fastify) => {
   fastify.get(
     '/',
     {

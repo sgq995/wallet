@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 
 import { Request, Reply } from 'schemas/categories';
+import { to } from '../../utils/promise-simplify';
 
 import {
   replyCreated,
@@ -27,7 +28,7 @@ const findAll: DefaultRouteHandlerMethod<{
       },
     },
   });
-  replyOK(reply, allCategories);
+  await replyOK(reply, allCategories);
 };
 
 const addOne: DefaultRouteHandlerMethod<{
@@ -40,7 +41,7 @@ const addOne: DefaultRouteHandlerMethod<{
       name: category.name,
     },
   });
-  replyCreated(reply, createdCategory);
+  await replyCreated(reply, createdCategory);
 };
 
 const findOne: DefaultRouteHandlerMethod<{
@@ -48,18 +49,21 @@ const findOne: DefaultRouteHandlerMethod<{
   Reply: Reply.TFindOne;
 }> = async function (request, reply) {
   const id = request.params.id;
-  try {
-    const category = await this.prisma.category.findUnique({
+
+  const [category, err] = await to(
+    this.prisma.category.findUnique({
       where: {
         id,
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
-    replyOK(reply, category);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Category id ${id} was not found`);
+  if (category) {
+    await replyOK(reply, category);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Category id ${id} was not found`);
   }
 };
 
@@ -70,20 +74,23 @@ const updateOne: DefaultRouteHandlerMethod<{
 }> = async function (request, reply) {
   const id = request.params.id;
   const category = request.body;
-  try {
-    const updatedCategory = await this.prisma.category.update({
+
+  const [updatedCategory, err] = await to(
+    this.prisma.category.update({
       where: {
         id,
       },
       data: {
         name: category.name,
       },
-    });
+    })
+  );
 
-    replyOK(reply, updatedCategory);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Category id ${id} was not found`);
+  if (updatedCategory) {
+    await replyOK(reply, updatedCategory);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Category id ${id} was not found`);
   }
 };
 
@@ -92,21 +99,24 @@ const removeOne: DefaultRouteHandlerMethod<{
   Reply: Reply.TRemoveOne;
 }> = async function (request, reply) {
   const id = request.params.id;
-  try {
-    const deletedCategory = await this.prisma.category.delete({
+
+  const [deletedCategory, err] = await to(
+    this.prisma.category.delete({
       where: {
         id,
       },
-    });
+    })
+  );
 
-    replyOK(reply, deletedCategory);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Category id ${id} was not found`);
+  if (deletedCategory) {
+    await replyOK(reply, deletedCategory);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Category id ${id} was not found`);
   }
 };
 
-const controller: FastifyPluginAsync = async (fastify, options) => {
+const controller: FastifyPluginAsync = async (fastify) => {
   fastify.get(
     '/',
     {

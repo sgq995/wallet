@@ -18,13 +18,19 @@ apps/*/lib
 apps/*/.next
 apps/*/.nyc_output
 
+# Do not copy test
+**/test
+**/__test__
+**/jest.config.js
+**/jest.setup.js
+
 # Do not copy docs
 **/docs
 
 # Do not copy .git
 **/.git
 **/.gitignore
-README.md
+**/README.md
 
 # Docker scripts
 docker-build.sh

@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 
@@ -10,11 +9,11 @@ import currencies from './currencies';
 
 const services: FastifyPluginAsync = fp(async (fastify, options) => {
   const prefix = '/v1';
-  fastify.register(entryTypes, { ...options, prefix: prefix });
-  fastify.register(accounts, { ...options, prefix: prefix });
-  fastify.register(categories, { ...options, prefix: prefix });
-  fastify.register(entries, { ...options, prefix: prefix });
-  fastify.register(currencies, { ...options, prefix: prefix });
+  await fastify.register(entryTypes, { ...options, prefix: prefix });
+  await fastify.register(accounts, { ...options, prefix: prefix });
+  await fastify.register(categories, { ...options, prefix: prefix });
+  await fastify.register(entries, { ...options, prefix: prefix });
+  await fastify.register(currencies, { ...options, prefix: prefix });
   fastify.log.info(__filename);
 });
 

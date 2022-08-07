@@ -1,8 +1,6 @@
 import {
   FastifyInstance,
   FastifyReply,
-  FastifyRequest,
-  HookHandlerDoneFunction,
   RawServerDefault,
   ContextConfigDefault,
   RawReplyDefaultExpression,
@@ -31,7 +29,7 @@ export interface preHandlerAsyncHookHandlerWithSession<
       RouteGeneric,
       ContextConfig
     >
-  ): Promise<unknown>;
+  ): void;
 }
 
 export function verifySessionHandler<

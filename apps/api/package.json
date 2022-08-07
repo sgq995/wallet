@@ -12,6 +12,7 @@
     "seed": "prisma db seed",
     "typescript": "tsc -p tsconfig.json",
     "babel": "babel build -d dist",
+    "lint": "eslint .",
     "test": "tap --ts --no-coverage"
   },
   "dependencies": {
@@ -31,6 +32,8 @@
     "@types/node": "^17.0.23",
     "@types/tap": "^15.0.7",
     "babelconfig": "*",
+    "eslint": "^8.21.0",
+    "eslintconfig": "*",
     "nodemon": "^2.0.15",
     "pino-pretty": "^7.6.1",
     "prisma": "^3.12.0",

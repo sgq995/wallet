@@ -17,10 +17,38 @@ function types() {
 function currencies() {
   return prisma.currency.createMany({
     data: [
-      { id: 1, precision: 2, symbol: '$', code: 'USD', decimal: '.', separator: ',' },
-      { id: 2, precision: 0, symbol: '¥', code: 'JPY', decimal: '.', separator: ',' },
-      { id: 3, precision: 2, symbol: '€', code: 'EUR', decimal: '.', separator: ',' },
-      { id: 4, precision: 2, symbol: '$', code: 'COP', decimal: '.', separator: ',' },
+      {
+        id: 1,
+        precision: 2,
+        symbol: '$',
+        code: 'USD',
+        decimal: '.',
+        separator: ',',
+      },
+      {
+        id: 2,
+        precision: 0,
+        symbol: '¥',
+        code: 'JPY',
+        decimal: '.',
+        separator: ',',
+      },
+      {
+        id: 3,
+        precision: 2,
+        symbol: '€',
+        code: 'EUR',
+        decimal: '.',
+        separator: ',',
+      },
+      {
+        id: 4,
+        precision: 2,
+        symbol: '$',
+        code: 'COP',
+        decimal: '.',
+        separator: ',',
+      },
     ],
   });
 }
@@ -35,6 +63,8 @@ main()
     console.error(e);
     process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect();
+  .finally(() => {
+    prisma.$disconnect().catch((reason) => {
+      console.error(reason);
+    });
   });

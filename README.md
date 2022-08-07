@@ -12,7 +12,7 @@ This [turborepo](https://turborepo.org) uses [Yarn](https://yarnpkg.com) as a pa
 - `web`: a [Next.js](https://nextjs.org) app
 - `ui`: a stub React component library shared by applications
 - `schemas`: a set of [TypeBox](https://github.com/sinclairzx81/typebox) schemas shared by applications
-- `config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `eslintconfig`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 - `babelconfig`: `babel` configurations
 

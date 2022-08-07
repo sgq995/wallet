@@ -2,7 +2,7 @@ import { SessionRequest } from 'supertokens-node/framework/fastify';
 import { SessionContainerInterface } from 'supertokens-node/recipe/session/types';
 
 class SessionContainerMock implements Partial<SessionContainerInterface> {
-  getUserId(userContext?: any): string {
+  getUserId(): string {
     return '';
   }
 }

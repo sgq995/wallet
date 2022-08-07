@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 
 import { Request, Reply } from 'schemas/accounts';
 import { getOrCreateProfileId } from '../../utils/profile-helper';
+import { to } from '../../utils/promise-simplify';
 
 import {
   replyCreated,
@@ -35,7 +36,7 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
       currency: true,
     },
   });
-  replyOK(reply, allAccounts);
+  await replyOK(reply, allAccounts);
 };
 
 const addOne: DefaultRouteHandlerMethodWithSession<{
@@ -55,7 +56,7 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
       currency: true,
     },
   });
-  replyCreated(reply, createdAccount);
+  await replyCreated(reply, createdAccount);
 };
 
 const findOne: DefaultRouteHandlerMethodWithSession<{
@@ -64,8 +65,9 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
 }> = async function (request, reply) {
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
-  try {
-    const account = await this.prisma.account.findFirst({
+
+  const [account, err] = await to(
+    this.prisma.account.findFirst({
       where: {
         AND: {
           id,
@@ -76,12 +78,14 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
         currency: true,
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
-    replyOK(reply, account);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Account id ${id} was not found`);
+  if (account) {
+    await replyOK(reply, account);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Account id ${id} was not found`);
   }
 };
 
@@ -93,8 +97,11 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   const id = request.params.id;
   const account = request.body;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
-  try {
-    await this.prisma.account.findFirst({
+
+  let data, err;
+
+  [data, err] = await to(
+    this.prisma.account.findFirst({
       where: {
         AND: {
           id,
@@ -102,23 +109,29 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
         },
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
-    const updatedAccount = await this.prisma.account.update({
-      where: {
-        id,
-      },
-      data: {
-        name: account.name,
-        balance: account.balance,
-        currencyId: account.currencyId,
-      },
-    });
+  if (!err) {
+    [data, err] = await to(
+      this.prisma.account.update({
+        where: {
+          id,
+        },
+        data: {
+          name: account.name,
+          balance: account.balance,
+          currencyId: account.currencyId,
+        },
+      })
+    );
+  }
 
-    replyOK(reply, updatedAccount);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Account id ${id} was not found`);
+  if (!err) {
+    await replyOK(reply, data);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Account id ${id} was not found`);
   }
 };
 
@@ -128,8 +141,11 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
 }> = async function (request, reply) {
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
-  try {
-    await this.prisma.account.findFirst({
+
+  let data, err;
+
+  [data, err] = await to(
+    this.prisma.account.findFirst({
       where: {
         AND: {
           id,
@@ -137,22 +153,28 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
         },
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
-    const deletedAccount = await this.prisma.account.delete({
-      where: {
-        id,
-      },
-    });
+  if (!err) {
+    [data, err] = await to(
+      this.prisma.account.delete({
+        where: {
+          id,
+        },
+      })
+    );
+  }
 
-    replyOK(reply, deletedAccount);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Account id ${id} was not found`);
+  if (!err) {
+    await replyOK(reply, data);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Account id ${id} was not found`);
   }
 };
 
-const controller: FastifyPluginAsync = async (fastify, options) => {
+const controller: FastifyPluginAsync = async (fastify) => {
   fastify.get(
     '/',
     {

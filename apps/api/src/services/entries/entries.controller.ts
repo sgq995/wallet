@@ -1,7 +1,9 @@
+import { Entry } from '@prisma/client';
 import { FastifyPluginAsync } from 'fastify';
 
 import { Reply, Request } from 'schemas/entries';
 import { getOrCreateProfileId } from '../../utils/profile-helper';
+import { to } from '../../utils/promise-simplify';
 
 import {
   replyCreated,
@@ -41,7 +43,7 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
         categoryId: query.categoryId,
         profileId,
         ...(query.cursor
-          ? { [query.cursor.key]: query.cursor.value }
+          ? { [query.cursor.key]: query.cursor.value as never }
           : undefined),
       },
     },
@@ -60,7 +62,7 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
       },
     },
   });
-  replyOK(reply, allEntries);
+  await replyOK(reply, allEntries);
 };
 
 const addOne: DefaultRouteHandlerMethodWithSession<{
@@ -121,7 +123,7 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
       },
     },
   });
-  replyCreated(reply, createdEntry);
+  await replyCreated(reply, createdEntry);
 };
 
 const findOne: DefaultRouteHandlerMethodWithSession<{
@@ -130,8 +132,9 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
 }> = async function (request, reply) {
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
-  try {
-    const entry = await this.prisma.entry.findFirst({
+
+  const [entry, err] = await to(
+    this.prisma.entry.findFirst({
       where: {
         AND: {
           id,
@@ -146,12 +149,14 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
         },
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
-    replyOK(reply, entry);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Entry with id ${id} not found`);
+  if (entry) {
+    await replyOK(reply, entry);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Entry with id ${id} not found`);
   }
 };
 
@@ -162,8 +167,11 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
 }> = async function (request, reply) {
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
-  try {
-    await this.prisma.entry.findFirst({
+
+  let data, err;
+
+  [data, err] = await to(
+    this.prisma.entry.findFirst({
       where: {
         AND: {
           id,
@@ -171,58 +179,64 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
         },
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
+  if (!err) {
     const entry = request.body;
     const transaction = entry.transaction;
 
-    const updatedEntry = await this.prisma.entry.update({
-      where: {
-        id,
-      },
-      data: {
-        description: entry.description,
-        date: entry.date,
-        transaction: {
-          update: {
-            units: transaction.units,
-            cents: transaction.cents,
-            currencyId: transaction.currencyId,
+    [data, err] = await to(
+      this.prisma.entry.update({
+        where: {
+          id,
+        },
+        data: {
+          description: entry.description,
+          date: entry.date,
+          transaction: {
+            update: {
+              units: transaction.units,
+              cents: transaction.cents,
+              currencyId: transaction.currencyId,
+            },
+          },
+          type: {
+            update: {
+              id: entry.typeId,
+            },
+          },
+          account: {
+            update: {
+              id: entry.accountId ?? undefined,
+            },
+            disconnect: entry.accountId === null,
+          },
+          category: {
+            update: {
+              id: entry.categoryId ?? undefined,
+            },
+            disconnect: entry.categoryId === null,
+          },
+          tag: {
+            update: {
+              id: entry.tagId ?? undefined,
+            },
+            disconnect: entry.tagId === null,
           },
         },
-        type: {
-          update: {
-            id: entry.typeId,
-          },
+        include: {
+          transaction: true,
         },
-        account: {
-          update: {
-            id: entry.accountId ?? undefined,
-          },
-          disconnect: entry.accountId === null,
-        },
-        category: {
-          update: {
-            id: entry.categoryId ?? undefined,
-          },
-          disconnect: entry.categoryId === null,
-        },
-        tag: {
-          update: {
-            id: entry.tagId ?? undefined,
-          },
-          disconnect: entry.tagId === null,
-        },
-      },
-      include: {
-        transaction: true,
-      },
-    });
+      })
+    );
+  }
 
-    replyOK(reply, updatedEntry);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Entry with id ${id} not found`);
+  if (!err) {
+    await replyOK(reply, data);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Entry with id ${id} not found`);
   }
 };
 
@@ -232,8 +246,11 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
 }> = async function (request, reply) {
   const id = request.params.id;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
-  try {
-    const foundEntry = await this.prisma.entry.findFirst({
+
+  let data, err;
+
+  [data, err] = await to(
+    this.prisma.entry.findFirst({
       where: {
         AND: {
           id,
@@ -241,8 +258,10 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
         },
       },
       rejectOnNotFound: true,
-    });
+    })
+  );
 
+  if (!err) {
     const deleteEntry = this.prisma.entry.delete({
       where: {
         id,
@@ -254,23 +273,27 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
 
     const deleteTransaction = this.prisma.transaction.delete({
       where: {
-        id: foundEntry.transactionId,
+        id: (data as unknown as Entry).transactionId,
       },
     });
 
-    const [deletedEntry] = await this.prisma.$transaction([
-      deleteEntry,
-      deleteTransaction,
-    ]);
+    const [deletedEntry, deleteError] = await to(
+      this.prisma.$transaction([deleteEntry, deleteTransaction])
+    );
 
-    replyOK(reply, deletedEntry);
-  } catch (e) {
-    this.log.error(e);
-    replyNotFound(reply, `Entry with id ${id} not found`);
+    data = deletedEntry?.[0];
+    err = deleteError;
+  }
+
+  if (!err) {
+    await replyOK(reply, data);
+  } else {
+    this.log.error(err);
+    await replyNotFound(reply, `Entry with id ${id} not found`);
   }
 };
 
-const controller: FastifyPluginAsync = async (fastify, options) => {
+const controller: FastifyPluginAsync = async (fastify) => {
   fastify.get(
     '/',
     {

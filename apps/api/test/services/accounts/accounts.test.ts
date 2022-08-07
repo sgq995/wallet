@@ -6,6 +6,7 @@ import { supertokensMock } from '../../../mocks/supertokens-node.mock';
 
 let app: FastifyInstance;
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const { PrismaPlugin } = tap.mock('../../../src/plugins/prisma', {
   ...createPrismaMock({
     profile: { id: 0, userId: '' },
@@ -21,17 +22,20 @@ const { PrismaPlugin } = tap.mock('../../../src/plugins/prisma', {
   }),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const AccountService = tap.mock('../../../src/services/accounts', {
   ...supertokensMock,
 });
 
 tap.before(async () => {
   app = fastify();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   await app.register(PrismaPlugin);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   await app.register(AccountService);
 });
 
-tap.test('should return the list of accounts', async () => {
+void tap.test('should return the list of accounts', async () => {
   const response = await app.inject().get('/accounts');
   tap.equal(response.statusCode, 200, 'status code');
   tap.equal(
