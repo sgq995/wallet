@@ -1,32 +1,125 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import ListItem from '@mui/material/ListItem';
+
+import { Reply } from 'schemas/entries';
+
 import { yyyyMMdd } from '../../utils/date-utils';
 
-import { useFindAllQuery, useRemoveOneMutation } from '../../hooks/entries';
+import {
+  useFindAllInfiniteQuery,
+  useFindAllQuery,
+  useRemoveOneMutation,
+} from '../../hooks/entries';
 
 import { Stack, List, CircularProgress, Typography, Box } from '../Material';
 import EntryItem from './EntryItem';
 import DeleteDialog from '../dialogs/DeleteDialog';
 import { transactionToAmount } from './utils';
 import { useSystemContext } from '../../contexts/system';
+import { useNotificationSystem } from '../../contexts/notifications';
 
 interface IEntryListProps {}
 
+function useIntersectionObserver(
+  // callback: IntersectionObserverCallback,
+  options?: IntersectionObserverInit
+): [(node: any) => void, boolean] {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+
+  const lastIntersectionNode = useRef(null);
+  const intersectionObserverRef = useRef(
+    new IntersectionObserver(([entry]) => {
+      setIsIntersecting(entry.isIntersecting);
+    }, options)
+  );
+
+  const ref = useCallback((node) => {
+    if (lastIntersectionNode.current) {
+      intersectionObserverRef.current.unobserve(lastIntersectionNode.current);
+      lastIntersectionNode.current = null;
+    }
+
+    if (node === null) {
+      return;
+    }
+
+    lastIntersectionNode.current = node;
+    intersectionObserverRef.current.observe(node);
+  }, []);
+
+  return [ref, isIntersecting];
+}
+
 export default function EntryList({}: IEntryListProps) {
   const { entryTypes } = useSystemContext();
+  const { error: notifyError } = useNotificationSystem();
 
   const {
     isLoading,
     isError,
-    data: body,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+    data,
     error,
-  } = useFindAllQuery({ sort: 'date', desc: true });
+  } = useFindAllInfiniteQuery({
+    sort: 'date',
+    desc: true,
+    // take: 1,
+  });
   const { mutate } = useRemoveOneMutation();
+
+  useEffect(() => {
+    if (isError) {
+      notifyError('Something goes wrong');
+    }
+  }, [isError, notifyError]);
+
+  const [observerRef, isIntersecting] = useIntersectionObserver(
+    // ([entry]) => {
+    //   if (entry.isIntersecting) {
+    //     fetchNextPage();
+    //   }
+    // },
+    {
+      root: null,
+      rootMargin: '0px',
+      threshold: 1.0,
+    }
+  );
+
+  const [keepFetching, setKeepFetching] = useState(false);
+  useEffect(() => {
+    if (hasNextPage && isIntersecting) {
+      setKeepFetching(true);
+    } else {
+      setKeepFetching(false);
+    }
+  }, [hasNextPage, isIntersecting]);
+  if (keepFetching && !isFetching) {
+    fetchNextPage();
+  }
+
+  // useEffect(() => {
+  //   if (keepFetching) {
+  //     fetchNextPage();
+  //   }
+  // }, [keepFetching, fetchNextPage]);
 
   const [id, setId] = useState(-1);
   const [open, setOpen] = useState(false);
 
+  const body = useMemo<Reply.TFindAllData['data']>(
+    () =>
+      data?.pages?.reduce((all, current) => {
+        return all.concat(current.data);
+      }, []) ?? [],
+    [data]
+  );
+
   const selectedEntry = useMemo(
-    () => body?.data.find(({ id: entryId }) => id === entryId),
+    () => body.find(({ id: entryId }) => id === entryId),
     [body, id]
   );
 
@@ -44,28 +137,26 @@ export default function EntryList({}: IEntryListProps) {
     setOpen(true);
   };
 
-  if (isLoading) {
-    return <CircularProgress />;
-  }
-
-  if (isError) {
-    return <>{error}</>;
-  }
-
-  if (body.data.length === 0) {
+  if (body.length === 0) {
     return <>Empty</>;
   }
 
   return (
     <>
       <List>
-        {body.data.map((props) => (
+        {body.map((props) => (
           <EntryItem
             {...props}
             key={props.id}
             onDelete={() => handleDeleteConfirm(props.id)}
           />
         ))}
+
+        <ListItem ref={observerRef}></ListItem>
+
+        <ListItem sx={{ justifyContent: 'center' }}>
+          {isLoading && <CircularProgress />}
+        </ListItem>
       </List>
 
       <DeleteDialog
