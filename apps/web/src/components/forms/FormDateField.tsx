@@ -166,7 +166,9 @@ export default function FormDateField({
     validator: dayValidator,
   });
 
-  const [dayList, setDayList] = useState<string[]>([]);
+  const [dayList, setDayList] = useState<string[]>(
+    new Array(31).fill(0).map((_, index) => (index + 1).toString())
+  );
 
   useEffect(() => {
     const yearNumber = year ? parseInt(year) : undefined;

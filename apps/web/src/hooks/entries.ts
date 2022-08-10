@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   useInfiniteQuery,
   useMutation,
@@ -68,10 +69,18 @@ export function useFindOneQuery(id: Request.TParams['id']) {
 }
 
 export function useUpdateOneMutation() {
+  const queryClient = useQueryClient();
+
   return useMutation(
     [key, 'updateOne'],
     ({ id, body }: { id: Request.TParams['id']; body: Request.TUpdateOne }) =>
-      entriesService.updateOne(id, body)
+      entriesService.updateOne(id, body),
+    {
+      onSuccess: (_, { id }) => {
+        queryClient.invalidateQueries([key, 'findAll']);
+        queryClient.invalidateQueries([key, 'findOne', id]);
+      },
+    }
   );
 }
 

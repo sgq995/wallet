@@ -1,5 +1,5 @@
 import { useNotificationSystem } from '../../contexts/notifications';
-import { useAddOneMutation } from '../../hooks/entries';
+import { useAddOneMutation, useUpdateOneMutation } from '../../hooks/entries';
 import {
   Form,
   FormAccountField,
@@ -13,10 +13,19 @@ import {
 } from '../forms';
 import { Stack } from '@mui/material';
 
-export default function EntryForm() {
+import type { TEntryModel } from 'schemas/entries';
+import { format } from '../../utils/date-utils';
+
+interface EntryFormProps {
+  entry?: TEntryModel;
+}
+
+export default function EntryForm({ entry }: EntryFormProps) {
   const { success: notifySuccess, error: notifyError } =
     useNotificationSystem();
-  const { mutate } = useAddOneMutation();
+
+  const { mutate: addOne } = useAddOneMutation();
+  const { mutate: updateOne } = useUpdateOneMutation();
 
   const handleSubmit = ({ data }: IFormState) => {
     const year = data['year'];
@@ -31,51 +40,92 @@ export default function EntryForm() {
     const accountId = parseInt(data['accountId']);
     const categoryId = parseInt(data['categoryId']);
 
-    mutate(
-      {
-        date,
-        typeId,
-        transaction: {
-          units,
-          cents,
-          currencyId,
+    if (entry) {
+      updateOne(
+        {
+          id: entry.id,
+          body: {
+            date,
+            typeId,
+            transaction: {
+              units,
+              cents,
+              currencyId,
+            },
+            description,
+            accountId,
+            categoryId,
+          },
         },
-        description,
-        accountId,
-        categoryId,
-      },
-      {
-        onSuccess: () => {
-          notifySuccess('Entry was created');
+        {
+          onSuccess: () => {
+            notifySuccess('Entry was updated');
+          },
+          onError: () => {
+            notifyError('Something goes wrong');
+          },
+        }
+      );
+    } else {
+      addOne(
+        {
+          date,
+          typeId,
+          transaction: {
+            units,
+            cents,
+            currencyId,
+          },
+          description,
+          accountId,
+          categoryId,
         },
-        onError: () => {
-          notifyError('Something goes wrong');
-        },
-      }
-    );
+        {
+          onSuccess: () => {
+            notifySuccess('Entry was created');
+          },
+          onError: () => {
+            notifyError('Something goes wrong');
+          },
+        }
+      );
+    }
   };
+
+  const currentDate = format(new Date())
+    .YYYY()
+    .hyphen()
+    .MM()
+    .hyphen()
+    .DD()
+    .toString();
+  const defaultDate = new Date(entry?.date ?? currentDate);
 
   return (
     <Form
       initialState={{
-        units: '0',
-        cents: '0',
-        account: '',
-        year: '',
-        month: '',
-        day: '',
+        year: defaultDate.getUTCFullYear().toString(),
+        month: (defaultDate.getUTCMonth() + 1).toString(),
+        day: defaultDate.getUTCDate().toString(),
+        type: entry?.typeId.toString() ?? '',
+        units: entry?.transaction.units.toString() ?? '0',
+        cents: entry?.transaction.cents.toString() ?? '0',
+        currency: entry?.transaction.currencyId.toString() ?? '',
+        description: entry?.description ?? '',
+        account: entry?.accountId?.toString() ?? '',
+        category: entry?.categoryId?.toString() ?? '',
       }}
     >
       <Stack direction="column" spacing={2}>
         <Stack direction="row" spacing={2}>
-          <FormDateField required fullWidth />
+          <FormDateField required={!entry} fullWidth />
         </Stack>
 
         <Stack direction="row" spacing={2}>
-          <FormAmountField required fullWidth />
+          <FormAmountField required={!entry} fullWidth />
         </Stack>
 
-        <FormEntryTypeField required fullWidth />
+        <FormEntryTypeField required={!entry} fullWidth />
 
         <FormDescriptionField fullWidth />
 
@@ -85,7 +135,7 @@ export default function EntryForm() {
 
         <FormSubmitButton
           disabledOnError
-          resetOnSubmit
+          resetOnSubmit={!entry}
           onClick={handleSubmit}
         />
       </Stack>

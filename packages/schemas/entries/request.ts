@@ -29,25 +29,18 @@ export const AddOne = Type.Intersect([
 export type TAddOne = Static<typeof AddOne>;
 
 export const UpdateOne = Type.Intersect([
+  Type.Partial(Type.Omit(EntryModel, ['id', 'transactionId', 'transaction'])),
   Type.Partial(
-    Type.Pick(EntryModel, [
-      'description',
-      'date',
-      'typeId',
-      'accountId',
-      'categoryId',
-      'tagId',
-    ])
+    Type.Object({
+      transaction: Type.Partial(
+        Type.Pick(EntryModel['properties']['transaction'], [
+          'units',
+          'cents',
+          'currencyId',
+        ])
+      ),
+    })
   ),
-  Type.Object({
-    transaction: Type.Partial(
-      Type.Pick(EntryModel['properties']['transaction'], [
-        'units',
-        'cents',
-        'currencyId',
-      ])
-    ),
-  }),
 ]);
 
 export type TUpdateOne = Static<typeof UpdateOne>;

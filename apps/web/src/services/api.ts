@@ -143,6 +143,10 @@ export class EndpointService<
     return this.request<TReplyUpdateOne>(`/${id}`, {
       ...init,
       method: 'PUT',
+      headers: {
+        ...(typeof init?.headers === 'object' ? init.headers : {}),
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(body),
     });
   };

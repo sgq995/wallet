@@ -12,12 +12,22 @@ import {
   useRemoveOneMutation,
 } from '../../hooks/entries';
 
-import { Stack, List, CircularProgress, Typography, Box } from '@mui/material';
+import {
+  Stack,
+  List,
+  CircularProgress,
+  Typography,
+  Box,
+  DialogTitle,
+  DialogContent,
+} from '@mui/material';
 import EntryItem from './EntryItem';
 import DeleteDialog from '../dialogs/DeleteDialog';
 import { transactionToAmount } from './utils';
 import { useSystemContext } from '../../contexts/system';
 import { useNotificationSystem } from '../../contexts/notifications';
+import ResponsiveDialog from '../dialogs/ResponsiveDialog';
+import EntryForm from './EntryForm';
 
 interface IEntryListProps {}
 
@@ -92,7 +102,8 @@ export default function EntryList({}: IEntryListProps) {
   }, [hasNextPage, isIntersecting, isFetching, fetchNextPage]);
 
   const [id, setId] = useState(-1);
-  const [open, setOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const body = useMemo<Reply.TFindAllData['data']>(
     () =>
@@ -108,17 +119,22 @@ export default function EntryList({}: IEntryListProps) {
   );
 
   const handleClose = () => {
-    setOpen(false);
+    setDeleteDialogOpen(false);
   };
 
-  const handleDelete = () => {
-    mutate(id);
-    setOpen(false);
-  };
-
-  const handleDeleteConfirm = (id) => {
+  const handleEdit = (id) => {
     setId(id);
-    setOpen(true);
+    setEditDialogOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    setId(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    mutate(id);
+    setDeleteDialogOpen(false);
   };
 
   if (body.length === 0) {
@@ -132,7 +148,8 @@ export default function EntryList({}: IEntryListProps) {
           <EntryItem
             {...props}
             key={props.id}
-            onDelete={() => handleDeleteConfirm(props.id)}
+            onEdit={() => handleEdit(props.id)}
+            onDelete={() => handleDelete(props.id)}
           />
         ))}
 
@@ -143,12 +160,24 @@ export default function EntryList({}: IEntryListProps) {
         </ListItem>
       </List>
 
+      <ResponsiveDialog
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+      >
+        <DialogTitle>New Data</DialogTitle>
+        <DialogContent>
+          <Box p={2}>
+            <EntryForm entry={selectedEntry} />
+          </Box>
+        </DialogContent>
+      </ResponsiveDialog>
+
       <DeleteDialog
         title="Delete Entry"
-        open={open}
+        open={deleteDialogOpen}
         onCancel={handleClose}
         onClose={handleClose}
-        onDelete={handleDelete}
+        onDelete={handleDeleteConfirm}
       >
         <Box mb={2}>
           <Typography variant="body1">

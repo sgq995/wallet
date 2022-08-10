@@ -193,36 +193,59 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
         },
         data: {
           description: entry.description,
-          date: entry.date,
-          transaction: {
-            update: {
-              units: transaction.units,
-              cents: transaction.cents,
-              currencyId: transaction.currencyId,
-            },
-          },
-          type: {
-            update: {
-              id: entry.typeId,
-            },
-          },
+          date: entry.date ? new Date(entry.date) : undefined,
+          ...(transaction
+            ? {
+                transaction: {
+                  update: {
+                    units: transaction?.units,
+                    cents: transaction?.cents,
+                    currencyId: transaction?.currencyId,
+                  },
+                },
+              }
+            : undefined),
+          ...(entry.typeId
+            ? {
+                type: {
+                  update: {
+                    id: entry.typeId,
+                  },
+                },
+              }
+            : undefined),
           account: {
-            update: {
-              id: entry.accountId ?? undefined,
-            },
-            disconnect: entry.accountId === null,
+            ...(entry.accountId
+              ? {
+                  update: {
+                    id: entry.accountId,
+                  },
+                }
+              : {
+                  disconnect: entry.accountId === null,
+                }),
           },
           category: {
-            update: {
-              id: entry.categoryId ?? undefined,
-            },
-            disconnect: entry.categoryId === null,
+            ...(entry.categoryId
+              ? {
+                  update: {
+                    id: entry.categoryId,
+                  },
+                }
+              : {
+                  disconnect: entry.categoryId === null,
+                }),
           },
           tag: {
-            update: {
-              id: entry.tagId ?? undefined,
-            },
-            disconnect: entry.tagId === null,
+            ...(entry.tagId
+              ? {
+                  update: {
+                    id: entry.tagId,
+                  },
+                }
+              : {
+                  disconnect: entry.tagId === null,
+                }),
           },
         },
         include: {

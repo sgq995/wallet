@@ -137,7 +137,7 @@ export default function LayoutNavigation() {
         </Fab>
       </Box>
 
-{/* TODO: fullScreen */}
+      {/* TODO: fullScreen */}
       <ResponsiveDialog open={isFormDialogOpen} onClose={handleClickClose}>
         {/* TODO: AppBar & Close Button */}
         <DialogTitle>New Data</DialogTitle>
