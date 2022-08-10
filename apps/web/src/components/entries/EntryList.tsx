@@ -12,7 +12,7 @@ import {
   useRemoveOneMutation,
 } from '../../hooks/entries';
 
-import { Stack, List, CircularProgress, Typography, Box } from '../Material';
+import { Stack, List, CircularProgress, Typography, Box } from '@mui/material';
 import EntryItem from './EntryItem';
 import DeleteDialog from '../dialogs/DeleteDialog';
 import { transactionToAmount } from './utils';
@@ -66,7 +66,6 @@ export default function EntryList({}: IEntryListProps) {
   } = useFindAllInfiniteQuery({
     sort: 'date',
     desc: true,
-    take: 2,
   });
   const { mutate } = useRemoveOneMutation();
 

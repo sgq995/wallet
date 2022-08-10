@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import { ButtonProps, DialogProps, useMediaQuery } from '@mui/material';
 
-import { Box, Button, DialogContent, DialogTitle } from '../Material';
+import { Box, Button, DialogContent, DialogTitle } from '@mui/material';
 import theme from '../../theme';
 import ResponsiveDialog from './ResponsiveDialog';
 

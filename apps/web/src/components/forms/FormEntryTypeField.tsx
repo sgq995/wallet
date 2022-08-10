@@ -19,7 +19,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from '../Material';
+} from '@mui/material';
 
 import { useFormController } from './hooks';
 

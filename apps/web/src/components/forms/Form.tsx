@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import type { BoxProps } from '@mui/material';
 
-import { Box } from '../Material';
+import { Box } from '@mui/material';
 
 import { FormContext } from './context';
 import { useFormState } from './hooks';

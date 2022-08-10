@@ -6,7 +6,7 @@ import type {
   SelectProps,
 } from '@mui/material';
 
-import { FormControl, InputLabel, MenuItem, Select } from '../Material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import { useFormController } from './hooks';
 

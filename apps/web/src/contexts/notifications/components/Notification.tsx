@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import type { AlertProps } from '@mui/material';
 
-import { Alert, Collapse } from '../../../components/Material';
+import { Alert, Collapse } from '@mui/material';
 
 export interface INotificationProps {
   id: number | string;

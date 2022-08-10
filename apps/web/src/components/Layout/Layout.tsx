@@ -6,7 +6,7 @@ import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyema
 
 import theme from '../../theme';
 
-import { Box, Container, CssBaseline, Stack, ThemeProvider } from '../Material';
+import { Box, Container, CssBaseline, Stack, ThemeProvider } from '@mui/material';
 import LayoutNavigation from './LayoutNavigation';
 import { useSessionContext } from 'supertokens-auth-react/recipe/session';
 

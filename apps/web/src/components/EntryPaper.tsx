@@ -6,7 +6,7 @@ import {
   Paper,
   Stack,
   Typography,
-} from '../components/Material';
+} from '@mui/material';
 import { yyyyMMdd } from '../utils/date-utils';
 import { DeleteIcon } from './IconsMaterial';
 

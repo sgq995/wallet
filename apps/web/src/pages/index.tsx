@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
 import EntryList from '../components/entries/EntryList';
 
-import { Typography } from '../components/Material';
+import { Typography } from '@mui/material';
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(

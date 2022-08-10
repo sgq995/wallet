@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import type { ButtonProps } from '@mui/material/Button';
 
-import { Button } from '../Material';
+import { Button } from '@mui/material';
 import { SaveIcon } from '../IconsMaterial';
 
 import { FormContext } from './context';

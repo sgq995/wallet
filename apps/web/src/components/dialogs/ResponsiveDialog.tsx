@@ -1,7 +1,7 @@
 import { DialogProps, useMediaQuery } from '@mui/material';
 
 import theme from '../../theme';
-import { Dialog } from '../Material';
+import { Dialog } from '@mui/material';
 
 interface IResponsiveDialogProps extends DialogProps {}
 

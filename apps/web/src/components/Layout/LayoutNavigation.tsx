@@ -16,7 +16,7 @@ import {
   Fab,
   Tab,
   Tabs,
-} from '../Material';
+} from '@mui/material';
 
 import {
   AccountsIcon,

@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from 'react';
 
 import Stack from '@mui/material/Stack';
 
-import { FormControl, TextField } from '../Material';
+import { FormControl, TextField } from '@mui/material';
 import SaveButton from '../SaveButton';
 import { useAddOneMutation } from '../../hooks/categories';
 

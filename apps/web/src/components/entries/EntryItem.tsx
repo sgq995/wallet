@@ -10,7 +10,7 @@ import {
   IconButton,
   ListItem,
   ListItemText,
-} from '../../components/Material';
+} from '@mui/material';
 import { DeleteIcon } from '../../components/IconsMaterial';
 
 import { yyyyMMdd } from '../../utils/date-utils';

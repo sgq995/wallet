@@ -11,7 +11,7 @@ import {
   FormSubmitButton,
   IFormState,
 } from '../forms';
-import { Stack } from '../Material';
+import { Stack } from '@mui/material';
 
 export default function EntryForm() {
   const { success: notifySuccess, error: notifyError } =

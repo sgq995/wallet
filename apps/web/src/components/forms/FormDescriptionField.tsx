@@ -1,6 +1,6 @@
 import type { FormControlProps, TextFieldProps } from '@mui/material';
 
-import { FormControl, TextField } from '../Material';
+import { FormControl, TextField } from '@mui/material';
 import { useFormController } from './hooks';
 
 interface IFormDescriptionFieldProps {
