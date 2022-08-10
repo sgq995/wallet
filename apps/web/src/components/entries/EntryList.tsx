@@ -66,7 +66,7 @@ export default function EntryList({}: IEntryListProps) {
   } = useFindAllInfiniteQuery({
     sort: 'date',
     desc: true,
-    // take: 1,
+    take: 2,
   });
   const { mutate } = useRemoveOneMutation();
 
@@ -76,36 +76,21 @@ export default function EntryList({}: IEntryListProps) {
     }
   }, [isError, notifyError]);
 
-  const [observerRef, isIntersecting] = useIntersectionObserver(
-    // ([entry]) => {
-    //   if (entry.isIntersecting) {
-    //     fetchNextPage();
-    //   }
-    // },
-    {
-      root: null,
-      rootMargin: '0px',
-      threshold: 1.0,
-    }
-  );
+  const [observerRef, isIntersecting] = useIntersectionObserver({
+    root: null,
+    rootMargin: '0px',
+    threshold: 1.0,
+  });
 
-  const [keepFetching, setKeepFetching] = useState(false);
   useEffect(() => {
-    if (hasNextPage && isIntersecting) {
-      setKeepFetching(true);
-    } else {
-      setKeepFetching(false);
+    if (isFetching) {
+      return;
     }
-  }, [hasNextPage, isIntersecting]);
-  if (keepFetching && !isFetching) {
-    fetchNextPage();
-  }
 
-  // useEffect(() => {
-  //   if (keepFetching) {
-  //     fetchNextPage();
-  //   }
-  // }, [keepFetching, fetchNextPage]);
+    if (hasNextPage && isIntersecting) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isIntersecting, isFetching, fetchNextPage]);
 
   const [id, setId] = useState(-1);
   const [open, setOpen] = useState(false);
