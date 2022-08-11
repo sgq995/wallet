@@ -62,7 +62,7 @@ jobs:
           ${{ runner.os }}-turbo-${{ hashFiles('**/turbo.json') }}-
     - run: yarn install --frozen-lockfile
     - run: node tools.js install-env
-    - run: yarn test --parallel
+    - run: yarn test
   
   build:
     runs-on: ubuntu-20.04
@@ -82,7 +82,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-turbo-${{ hashFiles('**/turbo.json') }}-
     - run: yarn install --frozen-lockfile
-    - run: yarn build --parallel
+    - run: yarn build
 
   docker-build:
     runs-on: ubuntu-20.04
