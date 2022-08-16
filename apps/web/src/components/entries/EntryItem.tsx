@@ -39,7 +39,14 @@ export default function EntryItem({
       button
       onClick={onEdit}
       secondaryAction={
-        <IconButton edge="end" aria-label="delete" onClick={onDelete}>
+        <IconButton
+          edge="end"
+          aria-label="delete"
+          onClick={(event) => {
+            event.stopPropagation();
+            onDelete(event);
+          }}
+        >
           <DeleteIcon color="error" />
         </IconButton>
       }
