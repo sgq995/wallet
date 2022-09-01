@@ -8,6 +8,11 @@ export interface IFormContext {
 }
 
 export const FormContext = createContext<IFormContext>({
-  state: { data: {}, error: {} },
-  dispatch: { change: () => {}, error: () => {}, reset: () => {} },
+  state: { data: {}, error: {}, parser: {} },
+  dispatch: {
+    change: () => {},
+    error: () => {},
+    reset: () => {},
+    setParser: () => {},
+  },
 });

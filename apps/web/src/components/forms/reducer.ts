@@ -10,10 +10,14 @@ export function reducer(state: IFormState, action: IFormAction): IFormState {
     case FormActionType.Error:
       return { ...state, error: { ...state.error, ...action.payload } };
 
+    case FormActionType.SetParser:
+      return { ...state, parser: { ...state.parser, ...action.payload } };
+
     case FormActionType.Reset:
       return {
         data: action.payload,
         error: getErrorFromInitialData(action.payload),
+        parser: state.parser,
       };
 
     default:

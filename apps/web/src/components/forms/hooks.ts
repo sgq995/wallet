@@ -1,6 +1,12 @@
-import { useCallback, useContext, useReducer } from 'react';
+import { useCallback, useContext, useEffect, useReducer } from 'react';
 
-import { IFormData, IFormDispatch, IFormError, IFormState } from './state';
+import {
+  IFormData,
+  IFormDispatch,
+  IFormError,
+  IFormParser,
+  IFormState,
+} from './state';
 import { FormActionType } from './actions';
 import { reducer } from './reducer';
 import { FormContext } from './context';
@@ -12,6 +18,7 @@ export function useFormState(
   const [state, dispatch] = useReducer(reducer, {
     data: initialState,
     error: getErrorFromInitialData(initialState),
+    parser: {},
   });
 
   const change = useCallback(
@@ -26,6 +33,12 @@ export function useFormState(
     []
   );
 
+  const setParser = useCallback(
+    (parser: IFormParser) =>
+      dispatch({ type: FormActionType.SetParser, payload: parser }),
+    []
+  );
+
   const reset = useCallback(
     () => dispatch({ type: FormActionType.Reset, payload: initialState }),
     [initialState]
@@ -34,6 +47,7 @@ export function useFormState(
   const formDispatch: IFormDispatch = {
     change,
     error,
+    setParser,
     reset,
   };
 
@@ -52,16 +66,26 @@ export interface IFormValidator {
   (value: string): boolean;
 }
 
-export interface IFormControllerOptions {
-  filter?: (value: string) => string;
-  validator?: (value: string) => boolean;
+export interface IFormParserFunction<T> {
+  (value: string): T;
 }
 
-export function useFormController(
+export interface IFormControllerOptions<T> {
+  filter?: (value: string) => string;
+  validator?: (value: string) => boolean;
+  parser?: (value: string) => T;
+}
+
+export function useFormController<T>(
   name: string,
-  options?: IFormControllerOptions
+  options?: IFormControllerOptions<T>
 ): [string, boolean, IOnChange] {
   const { state, dispatch } = useContext(FormContext);
+
+  useEffect(() => {
+    dispatch.setParser({ [name]: options?.parser });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const value = state.data[name] ?? '';
   const error = state.error[name] ?? false;

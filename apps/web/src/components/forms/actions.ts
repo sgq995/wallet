@@ -1,6 +1,7 @@
 export enum FormActionType {
   Change,
   Error,
+  SetParser,
   Reset,
 }
 
