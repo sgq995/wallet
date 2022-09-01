@@ -9,12 +9,24 @@ import {
   FormDescriptionField,
   FormEntryTypeField,
   FormSubmitButton,
-  IFormState,
 } from '../forms';
 import { Stack } from '@mui/material';
 
-import type { TEntryModel } from 'schemas/entries';
+import type { Request, TEntryModel } from 'schemas/entries';
 import { format } from '../../utils/date-utils';
+
+interface EntryFormData {
+  year: string;
+  month: string;
+  day: string;
+  type: number;
+  units: number;
+  cents: number;
+  currency: number;
+  description: string;
+  account: number | null;
+  category: number | null;
+}
 
 interface EntryFormProps {
   entry?: TEntryModel;
@@ -27,35 +39,43 @@ export default function EntryForm({ entry }: EntryFormProps) {
   const { mutate: addOne } = useAddOneMutation();
   const { mutate: updateOne } = useUpdateOneMutation();
 
-  const handleSubmit = ({ data }: IFormState) => {
-    const year = data['year'];
-    const month = data['month'].padStart(2, '0');
-    const day = data['day'].padStart(2, '0');
+  const handleSubmit = (data: EntryFormData) => {
+    const {
+      year,
+      month,
+      day,
+      type: typeId,
+      units,
+      cents,
+      currency: currencyId,
+      description,
+      account: accountId,
+      category: categoryId,
+    } = data;
     const date = `${year}-${month}-${day}`;
-    const typeId = parseInt(data['type']);
-    const units = parseInt(data['units']);
-    const cents = parseInt(data['cents']);
-    const currencyId = parseInt(data['currency']);
-    const description = data['description'];
-    const accountId = parseInt(data['accountId']);
-    const categoryId = parseInt(data['categoryId']);
 
     if (entry) {
+      const delta: Request.TUpdateOne = {
+        date: date !== entry?.date ? date : undefined,
+        typeId: typeId !== entry?.typeId ? typeId : undefined,
+        transaction: {
+          units: units !== entry?.transaction.units ? units : undefined,
+          cents: cents !== entry?.transaction.cents ? cents : undefined,
+          currencyId:
+            currencyId !== entry?.transaction.currencyId
+              ? currencyId
+              : undefined,
+        },
+        description:
+          description !== entry.description ? description : undefined,
+        accountId: accountId !== entry.accountId ? accountId : undefined,
+        categoryId: categoryId !== entry.categoryId ? categoryId : undefined,
+      };
+
       updateOne(
         {
           id: entry.id,
-          body: {
-            date,
-            typeId,
-            transaction: {
-              units,
-              cents,
-              currencyId,
-            },
-            description,
-            accountId,
-            categoryId,
-          },
+          body: delta,
         },
         {
           onSuccess: () => {

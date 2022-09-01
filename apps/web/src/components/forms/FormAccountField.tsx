@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 
 import { useFormController } from './hooks';
+import { parseIntOrNull } from './parsers';
 
 interface IFormAccountFieldProps {
   fullWidth?: FormControlProps['fullWidth'];
@@ -55,6 +56,7 @@ export default function FormAccountField({
 
   const [value, error, onChange] = useFormController(fieldName, {
     validator,
+    parser: parseIntOrNull,
   });
 
   const labelId = `${id}-label`;

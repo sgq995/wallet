@@ -67,15 +67,24 @@ export default function FormAmountField({
 
   const { currencies } = useSystemContext();
 
-  const [currency, currencyError, onCurrencyChange] =
-    useFormController(currencyFieldName);
+  const [currency, currencyError, onCurrencyChange] = useFormController(
+    currencyFieldName,
+    {
+      parser: parseInt,
+    }
+  );
 
   const [units, unitsError, onUnitsChange] = useFormController(unitsFieldName, {
     filter,
     validator,
+    parser: parseInt,
   });
 
-  const [cents, centsError, onCentsChange] = useFormController(centsFieldName);
+  const [cents, centsError, onCentsChange] = useFormController(centsFieldName, {
+    filter,
+    validator,
+    parser: parseInt,
+  });
 
   return (
     <>

@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 
 import { useFormController } from './hooks';
+import { parseIntOrNull } from './parsers';
 
 interface IFormCategoryFieldProps {
   fullWidth?: FormControlProps['fullWidth'];
@@ -37,7 +38,7 @@ export default function FormCategoryField({
   id,
   name,
 }: IFormCategoryFieldProps) {
-  const fieldName = name ?? 'Category';
+  const fieldName = name ?? 'category';
 
   const {
     isLoading,
@@ -55,6 +56,7 @@ export default function FormCategoryField({
 
   const [value, error, onChange] = useFormController(fieldName, {
     validator,
+    parser: parseIntOrNull,
   });
 
   const labelId = `${id}-label`;

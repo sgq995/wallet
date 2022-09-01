@@ -62,6 +62,7 @@ export default function FormEntryTypeField({
 
   const [value, error, onChange] = useFormController(fieldName, {
     validator,
+    parser: parseInt,
   });
 
   return (

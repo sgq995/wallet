@@ -9,6 +9,7 @@ import type {
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import { useFormController } from './hooks';
+import { createPadStartParser } from './parsers';
 
 const YEAR_LIST = new Array(new Date().getFullYear() - 2000 + 1)
   .fill(0)
@@ -90,6 +91,8 @@ function numberValidator(value: string) {
   return true;
 }
 
+const parseWithLeadingZero = createPadStartParser(2, '0');
+
 interface IFormDateFieldProps {
   fullWidth?: FormControlProps['fullWidth'];
   required?: FormControlProps['required'];
@@ -130,6 +133,7 @@ export default function FormDateField({
   });
   const [month, monthError, onMonthChange] = useFormController(monthFieldName, {
     validator: numberValidator,
+    parser: parseWithLeadingZero,
   });
 
   const dayValidator = useCallback(
@@ -164,6 +168,7 @@ export default function FormDateField({
 
   const [day, dayError, onDayChange] = useFormController(dayFieldName, {
     validator: dayValidator,
+    parser: parseWithLeadingZero,
   });
 
   const [dayList, setDayList] = useState<string[]>(
@@ -189,7 +194,7 @@ export default function FormDateField({
       MONTH_LIST[monthNumber - 1],
       yearNumber
     );
-    setDayList(
+    setDayList(() =>
       new Array(daysPerMonth).fill(0).map((_, index) => (index + 1).toString())
     );
   }, [month, year]);
