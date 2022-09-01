@@ -136,7 +136,7 @@ function dockerBuild() {
 }
 
 function help() {
-  console.table();
+  console.table(COMMAND_TABLE);
 }
 
 const COMMAND_TABLE = {
