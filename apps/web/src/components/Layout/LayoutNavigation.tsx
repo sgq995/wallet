@@ -56,16 +56,16 @@ const routes: Route[] = [
     label: 'Accounts',
     icon: <AccountsIcon />,
   },
-  {
-    path: '/balance_sheet',
-    label: 'Balance Sheet',
-    icon: <BalanceSheetIcon />,
-  },
-  {
-    path: '/cash_flow',
-    label: 'Cash Flow',
-    icon: <CashFlowIcon />,
-  },
+  // {
+  //   path: '/balance_sheet',
+  //   label: 'Balance Sheet',
+  //   icon: <BalanceSheetIcon />,
+  // },
+  // {
+  //   path: '/cash_flow',
+  //   label: 'Cash Flow',
+  //   icon: <CashFlowIcon />,
+  // },
 ];
 
 export default function LayoutNavigation() {
