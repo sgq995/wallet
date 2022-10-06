@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 
-import SuperTokensReact from 'supertokens-auth-react';
+import SuperTokensReact, { SuperTokensWrapper } from 'supertokens-auth-react';
 
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
@@ -23,13 +23,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <SystemContextProvider>
-          <NotificationSystemProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </NotificationSystemProvider>
-        </SystemContextProvider>
+        <SuperTokensWrapper>
+          <SystemContextProvider>
+            <NotificationSystemProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </NotificationSystemProvider>
+          </SystemContextProvider>
+        </SuperTokensWrapper>
       </Hydrate>
     </QueryClientProvider>
   );

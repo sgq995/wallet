@@ -1,11 +1,9 @@
 import { useState } from 'react';
 
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-import ThirdPartyEmailPassword, {
-  signOut,
-} from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
+import { signOut } from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
+import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
 import {
   BottomNavigation,
@@ -18,26 +16,12 @@ import {
   Tabs,
 } from '@mui/material';
 
-import {
-  AccountsIcon,
-  AddIcon,
-  BalanceSheetIcon,
-  CashFlowIcon,
-  HomeIcon,
-  LogoutIcon,
-} from '../IconsMaterial';
+import { AccountsIcon, AddIcon, HomeIcon, LogoutIcon } from '../IconsMaterial';
 
 import CategoryForm from '../CategoryForm';
 import AccountForm from '../AccountForm';
 import EntryForm from '../entries/EntryForm';
 import ResponsiveDialog from '../dialogs/ResponsiveDialog';
-
-const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
-  new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
-    (res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
-  ),
-  { ssr: false }
-);
 
 interface Route {
   path: string;
@@ -56,16 +40,6 @@ const routes: Route[] = [
     label: 'Accounts',
     icon: <AccountsIcon />,
   },
-  // {
-  //   path: '/balance_sheet',
-  //   label: 'Balance Sheet',
-  //   icon: <BalanceSheetIcon />,
-  // },
-  // {
-  //   path: '/cash_flow',
-  //   label: 'Cash Flow',
-  //   icon: <CashFlowIcon />,
-  // },
 ];
 
 export default function LayoutNavigation() {
@@ -123,13 +97,13 @@ export default function LayoutNavigation() {
         />
       ))}
 
-      <ThirdPartyEmailPasswordAuthNoSSR requireAuth={false}>
+      <SessionAuth>
         <BottomNavigationAction
           label="Logout"
           icon={<LogoutIcon />}
           onClick={handleOnLogout}
         />
-      </ThirdPartyEmailPasswordAuthNoSSR>
+      </SessionAuth>
 
       <Box paddingRight={2} sx={{ transform: 'translateY(-50%)' }}>
         <Fab color="primary" onClick={handleClickOpen}>

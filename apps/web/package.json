@@ -23,8 +23,8 @@
     "react-query": "^3.38.1",
     "real-cancellable-promise": "^1.1.1",
     "schemas": "*",
-    "supertokens-auth-react": "^0.21.0",
-    "supertokens-node": "^9.2.0",
+    "supertokens-auth-react": "^0.26.4",
+    "supertokens-node": "^12.0.3",
     "ui": "*"
   },
   "devDependencies": {

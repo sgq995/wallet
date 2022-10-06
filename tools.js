@@ -98,12 +98,38 @@ function installEnv() {
   });
 }
 
-function install() {
+function installDeps(args) {
+  if (!Array.isArray(args)) {
+    throw 'Invalid arguments';
+  }
+
+  if (args.length < 2) {
+    throw 'Please specify the path and dep';
+  }
+
+  const cwd = args[0];
+  const deps = args.slice(1);
+
+  spawnSync('yarn', ['add', ...deps], { stdio: 'inherit', cwd });
+}
+
+function installProject() {
   spawnSync('yarn', ['install'], { stdio: 'inherit' });
   spawnSync('npx', ['prisma', 'generate'], {
     stdio: 'inherit',
     cwd: path.join(__dirname, 'apps', 'api'),
   });
+}
+
+function install(args) {
+  if (Array.isArray(args)) {
+    installDeps(args);
+  } else if (!args) {
+    installEnv();
+    installProject();
+  } else {
+    throw new Error('Invalid arguments');
+  }
 }
 
 function dockerBuild() {
@@ -141,6 +167,7 @@ function help() {
 
 const COMMAND_TABLE = {
   'install-env': installEnv,
+  'install-deps': installDeps,
   install: install,
   'docker-build': dockerBuild,
   help: help,

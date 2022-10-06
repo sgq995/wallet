@@ -38,11 +38,13 @@ function useIntersectionObserver(
   const [isIntersecting, setIsIntersecting] = useState(false);
 
   const lastIntersectionNode = useRef(null);
-  const intersectionObserverRef = useRef(
-    new IntersectionObserver(([entry]) => {
+  const intersectionObserverRef = useRef<IntersectionObserver>(null);
+
+  useEffect(() => {
+    intersectionObserverRef.current = new IntersectionObserver(([entry]) => {
       setIsIntersecting(entry.isIntersecting);
-    }, options)
-  );
+    }, options);
+  }, []);
 
   const ref = useCallback((node) => {
     if (lastIntersectionNode.current) {

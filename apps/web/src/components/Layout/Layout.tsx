@@ -2,26 +2,31 @@ import { PropsWithChildren } from 'react';
 
 import dynamic from 'next/dynamic';
 
-import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
+import {
+  SessionAuth,
+  useSessionContext,
+} from 'supertokens-auth-react/recipe/session';
 
 import theme from '../../theme';
 
-import { Box, Container, CssBaseline, Stack, ThemeProvider } from '@mui/material';
+import {
+  Box,
+  Container,
+  CssBaseline,
+  Stack,
+  ThemeProvider,
+} from '@mui/material';
 import LayoutNavigation from './LayoutNavigation';
-import { useSessionContext } from 'supertokens-auth-react/recipe/session';
-
-const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
-  new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
-    (res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
-  ),
-  { ssr: false }
-);
 
 function NavigationBox() {
-  const { doesSessionExist } = useSessionContext();
+  const sessionContext = useSessionContext();
 
-  if (!doesSessionExist) {
+  if (sessionContext.loading) {
     return <></>;
+  } else if (sessionContext.loading === false) {
+    if (!sessionContext.doesSessionExist) {
+      return <></>;
+    }
   }
 
   return (
@@ -52,9 +57,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
       >
         <Container maxWidth="md">{children}</Container>
 
-        <ThirdPartyEmailPasswordAuthNoSSR requireAuth={false}>
-          <NavigationBox />
-        </ThirdPartyEmailPasswordAuthNoSSR>
+        <NavigationBox />
       </Box>
     </ThemeProvider>
   );

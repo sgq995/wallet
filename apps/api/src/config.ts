@@ -11,7 +11,7 @@ export default {
   },
   supertokens: {
     connectionURI:
-      process.env.SUPERTOKENS_CONNECTION_URI ?? 'http://supertokens:3567',
+      process.env.SUPERTOKENS_CONNECTION_URI ?? 'http://localhost:3567',
     appName: process.env.SUPERTOKENS_APP_NAME ?? 'Personal Budget',
     apiDomain: process.env.SUPERTOKENS_API_DOMAIN ?? 'http://localhost:5000',
     websiteDomain:

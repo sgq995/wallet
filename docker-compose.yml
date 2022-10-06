@@ -37,25 +37,5 @@ services:
     ports:
       - 3567:3567
 
-  webapp:
-    depends_on:
-      postgres:
-        condition: service_healthy
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: webapp
-    volumes:
-      - /usr/src/node_modules
-      - /usr/src/packages/config/node_modules
-      - /usr/src/packages/schemas/node_modules
-      - /usr/src/packages/ui/node_modules
-      - /usr/src/apps/api/node_modules
-      - /usr/src/apps/web/node_modules
-      - .:/usr/src
-    ports:
-      - 5000:5000
-      - 3000:3000
-
 volumes:
   pgdata:
