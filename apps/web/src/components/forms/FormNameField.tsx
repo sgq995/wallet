@@ -1,18 +1,18 @@
 import FormTextField, { IFormTextFieldProps } from './FormTextField';
 
-interface IFormDescriptionFieldProps {
+interface IFormNameFieldProps {
   fullWidth?: IFormTextFieldProps['fullWidth'];
   required?: IFormTextFieldProps['required'];
   id?: IFormTextFieldProps['id'];
   name?: IFormTextFieldProps['name'];
 }
 
-export default function FormDescriptionField({
+export default function FormNameField({
   fullWidth,
   required,
   id,
   name,
-}: IFormDescriptionFieldProps) {
+}: IFormNameFieldProps) {
   const fieldName = name ?? 'name';
 
   return (

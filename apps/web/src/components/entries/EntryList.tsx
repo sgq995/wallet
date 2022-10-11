@@ -29,7 +29,7 @@ import { useNotificationSystem } from '../../contexts/notifications';
 import ResponsiveDialog from '../dialogs/ResponsiveDialog';
 import EntryForm from './EntryForm';
 
-interface IEntryListProps {}
+export interface IEntryListProps {}
 
 function useIntersectionObserver(
   // callback: IntersectionObserverCallback,

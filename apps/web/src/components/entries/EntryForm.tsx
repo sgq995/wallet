@@ -1,5 +1,7 @@
-import { useNotificationSystem } from '../../contexts/notifications';
-import { useAddOneMutation, useUpdateOneMutation } from '../../hooks/entries';
+import { Stack } from '@mui/material';
+
+import type { Request, TEntryModel } from 'schemas/entries';
+
 import {
   Form,
   FormAccountField,
@@ -10,25 +12,49 @@ import {
   FormEntryTypeField,
   FormSubmitButton,
 } from '../forms';
-import { Stack } from '@mui/material';
 
-import type { Request, TEntryModel } from 'schemas/entries';
+import { useAddOneMutation, useUpdateOneMutation } from '../../hooks/entries';
+import { useNotificationSystem } from '../../contexts/notifications';
 import { format } from '../../utils/date-utils';
 
-interface EntryFormData {
-  year: string;
-  month: string;
-  day: string;
-  type: number;
-  units: number;
-  cents: number;
-  currency: number;
-  description: string;
-  account: number | null;
-  category: number | null;
+import { EntryFormData } from './EntryFormData';
+
+function getUpdateDelta(
+  data: EntryFormData,
+  entry?: TEntryModel
+): Request.TUpdateOne {
+  const {
+    year,
+    month,
+    day,
+    type: typeId,
+    units,
+    cents,
+    currency: currencyId,
+    description,
+    account: accountId,
+    category: categoryId,
+  } = data;
+  const date = `${year}-${month}-${day}`;
+
+  const delta: Request.TUpdateOne = {
+    date: date !== entry?.date ? date : undefined,
+    typeId: typeId !== entry?.typeId ? typeId : undefined,
+    transaction: {
+      units: units !== entry?.transaction.units ? units : undefined,
+      cents: cents !== entry?.transaction.cents ? cents : undefined,
+      currencyId:
+        currencyId !== entry?.transaction.currencyId ? currencyId : undefined,
+    },
+    description: description !== entry.description ? description : undefined,
+    accountId: accountId !== entry.accountId ? accountId : undefined,
+    categoryId: categoryId !== entry.categoryId ? categoryId : undefined,
+  };
+
+  return delta;
 }
 
-interface EntryFormProps {
+export interface EntryFormProps {
   entry?: TEntryModel;
 }
 
@@ -55,22 +81,7 @@ export default function EntryForm({ entry }: EntryFormProps) {
     const date = `${year}-${month}-${day}`;
 
     if (entry) {
-      const delta: Request.TUpdateOne = {
-        date: date !== entry?.date ? date : undefined,
-        typeId: typeId !== entry?.typeId ? typeId : undefined,
-        transaction: {
-          units: units !== entry?.transaction.units ? units : undefined,
-          cents: cents !== entry?.transaction.cents ? cents : undefined,
-          currencyId:
-            currencyId !== entry?.transaction.currencyId
-              ? currencyId
-              : undefined,
-        },
-        description:
-          description !== entry.description ? description : undefined,
-        accountId: accountId !== entry.accountId ? accountId : undefined,
-        categoryId: categoryId !== entry.categoryId ? categoryId : undefined,
-      };
+      const delta = getUpdateDelta(data, entry);
 
       updateOne(
         {

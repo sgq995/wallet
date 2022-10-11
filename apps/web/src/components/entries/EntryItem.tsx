@@ -15,7 +15,7 @@ import { useSystemContext } from '../../contexts/system';
 
 import theme from '../../theme';
 
-interface IEntryItemProps extends TEntryModel {
+export interface IEntryItemProps extends TEntryModel {
   onEdit: MouseEventHandler<HTMLDivElement>;
   onDelete: IconButtonProps['onClick'];
 }
