@@ -20,7 +20,7 @@ import { AccountsIcon, AddIcon, HomeIcon, LogoutIcon } from '../IconsMaterial';
 
 import { AccountForm } from '../accounts';
 import { CategoryForm } from '../categories';
-import EntryForm from '../entries/EntryForm';
+import { EntryForm } from '../entries';
 import ResponsiveDialog from '../dialogs/ResponsiveDialog';
 
 interface Route {

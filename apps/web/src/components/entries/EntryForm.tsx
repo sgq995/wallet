@@ -58,7 +58,7 @@ export interface EntryFormProps {
   entry?: TEntryModel;
 }
 
-export default function EntryForm({ entry }: EntryFormProps) {
+export const EntryForm: React.FC<EntryFormProps> = ({ entry }) => {
   const { success: notifySuccess, error: notifyError } =
     useNotificationSystem();
 
@@ -172,4 +172,4 @@ export default function EntryForm({ entry }: EntryFormProps) {
       </Stack>
     </Form>
   );
-}
+};

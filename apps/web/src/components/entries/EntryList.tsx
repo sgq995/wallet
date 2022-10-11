@@ -8,7 +8,6 @@ import { yyyyMMdd } from '../../utils/date-utils';
 
 import {
   useFindAllInfiniteQuery,
-  useFindAllQuery,
   useRemoveOneMutation,
 } from '../../hooks/entries';
 
@@ -21,15 +20,15 @@ import {
   DialogTitle,
   DialogContent,
 } from '@mui/material';
-import EntryItem from './EntryItem';
+
 import DeleteDialog from '../dialogs/DeleteDialog';
 import { transactionToAmount } from './utils';
 import { useSystemContext } from '../../contexts/system';
 import { useNotificationSystem } from '../../contexts/notifications';
 import ResponsiveDialog from '../dialogs/ResponsiveDialog';
-import EntryForm from './EntryForm';
 
-export interface IEntryListProps {}
+import { EntryForm } from './EntryForm';
+import { EntryItem } from './EntryItem';
 
 function useIntersectionObserver(
   // callback: IntersectionObserverCallback,
@@ -63,7 +62,9 @@ function useIntersectionObserver(
   return [ref, isIntersecting];
 }
 
-export default function EntryList({}: IEntryListProps) {
+export interface IEntryListProps {}
+
+export const EntryList: React.FC<IEntryListProps> = ({}) => {
   const { entryTypes } = useSystemContext();
   const { error: notifyError } = useNotificationSystem();
 
@@ -206,4 +207,4 @@ export default function EntryList({}: IEntryListProps) {
       </DeleteDialog>
     </>
   );
-}
+};

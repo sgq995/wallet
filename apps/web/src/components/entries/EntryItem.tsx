@@ -20,14 +20,14 @@ export interface IEntryItemProps extends TEntryModel {
   onDelete: IconButtonProps['onClick'];
 }
 
-export default function EntryItem({
+export const EntryItem: React.FC<IEntryItemProps> = ({
   typeId,
   description,
   transaction,
   date,
   onEdit,
   onDelete,
-}: IEntryItemProps) {
+}) => {
   const hasInset = useMediaQuery(theme.breakpoints.up('sm'));
 
   const { entryTypes } = useSystemContext();
@@ -70,4 +70,4 @@ export default function EntryItem({
       />
     </ListItem>
   );
-}
+};
