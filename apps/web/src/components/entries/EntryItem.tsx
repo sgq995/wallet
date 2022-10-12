@@ -15,23 +15,21 @@ import { useSystemContext } from '../../contexts/system';
 
 import theme from '../../theme';
 
-export interface IEntryItemProps extends TEntryModel {
+export interface IEntryItemProps {
+  entry: TEntryModel;
   onEdit: MouseEventHandler<HTMLDivElement>;
   onDelete: IconButtonProps['onClick'];
 }
 
 export const EntryItem: React.FC<IEntryItemProps> = ({
-  typeId,
-  description,
-  transaction,
-  date,
+  entry,
   onEdit,
   onDelete,
 }) => {
   const hasInset = useMediaQuery(theme.breakpoints.up('sm'));
 
   const { entryTypes } = useSystemContext();
-  const typeName = entryTypes.find(({ id }) => id === typeId)?.name;
+  const typeName = entryTypes.find(({ id }) => id === entry.typeId)?.name;
 
   return (
     <ListItem
@@ -53,19 +51,19 @@ export const EntryItem: React.FC<IEntryItemProps> = ({
       divider
     >
       <Hidden smDown>
-        <ListItemText sx={{ flexGrow: 0 }} secondary={yyyyMMdd(date)} />
+        <ListItemText sx={{ flexGrow: 0 }} secondary={yyyyMMdd(entry.date)} />
       </Hidden>
       <ListItemText
         sx={{ minWidth: '60%', maxWidth: '60%', width: '60%' }}
         inset={hasInset}
-        primary={description}
+        primary={entry.description}
         secondary={typeName}
       />
       <ListItemText
         inset
-        primary={transactionToAmount(transaction)}
+        primary={transactionToAmount(entry.transaction)}
         primaryTypographyProps={{ variant: 'body2' }}
-        secondary={transaction.currency.code}
+        secondary={entry.transaction.currency.code}
         secondaryTypographyProps={{ variant: 'body2' }}
       />
     </ListItem>

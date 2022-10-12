@@ -21,7 +21,7 @@ import { AccountsIcon, AddIcon, HomeIcon, LogoutIcon } from '../IconsMaterial';
 import { AccountForm } from '../accounts';
 import { CategoryForm } from '../categories';
 import { EntryForm } from '../entries';
-import ResponsiveDialog from '../dialogs/ResponsiveDialog';
+import { ResponsiveDialog } from '../dialogs/ResponsiveDialog';
 
 interface Route {
   path: string;

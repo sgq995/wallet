@@ -1,71 +1,25 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import ListItem from '@mui/material/ListItem';
+import { List, ListItem, CircularProgress, Box, Button } from '@mui/material';
 
-import { Reply } from 'schemas/entries';
+import { Reply, TEntryModel } from 'schemas/entries';
 
-import { yyyyMMdd } from '../../utils/date-utils';
+import { useNotificationSystem } from '../../contexts/notifications';
 
 import {
   useFindAllInfiniteQuery,
   useRemoveOneMutation,
 } from '../../hooks/entries';
+import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
 
-import {
-  Stack,
-  List,
-  CircularProgress,
-  Typography,
-  Box,
-  DialogTitle,
-  DialogContent,
-} from '@mui/material';
-
-import DeleteDialog from '../dialogs/DeleteDialog';
-import { transactionToAmount } from './utils';
-import { useSystemContext } from '../../contexts/system';
-import { useNotificationSystem } from '../../contexts/notifications';
-import ResponsiveDialog from '../dialogs/ResponsiveDialog';
-
-import { EntryForm } from './EntryForm';
 import { EntryItem } from './EntryItem';
-
-function useIntersectionObserver(
-  // callback: IntersectionObserverCallback,
-  options?: IntersectionObserverInit
-): [(node: any) => void, boolean] {
-  const [isIntersecting, setIsIntersecting] = useState(false);
-
-  const lastIntersectionNode = useRef(null);
-  const intersectionObserverRef = useRef<IntersectionObserver>(null);
-
-  useEffect(() => {
-    intersectionObserverRef.current = new IntersectionObserver(([entry]) => {
-      setIsIntersecting(entry.isIntersecting);
-    }, options);
-  }, []);
-
-  const ref = useCallback((node) => {
-    if (lastIntersectionNode.current) {
-      intersectionObserverRef.current.unobserve(lastIntersectionNode.current);
-      lastIntersectionNode.current = null;
-    }
-
-    if (node === null) {
-      return;
-    }
-
-    lastIntersectionNode.current = node;
-    intersectionObserverRef.current.observe(node);
-  }, []);
-
-  return [ref, isIntersecting];
-}
+import { EntryDeleteDialog } from './EntryDeleteDialog';
+import { EntryEditDialog } from './EntryEditDialog';
+import { InfiniteList } from '../infinite-list';
 
 export interface IEntryListProps {}
 
 export const EntryList: React.FC<IEntryListProps> = ({}) => {
-  const { entryTypes } = useSystemContext();
   const { error: notifyError } = useNotificationSystem();
 
   const {
@@ -88,22 +42,6 @@ export const EntryList: React.FC<IEntryListProps> = ({}) => {
     }
   }, [isError, notifyError]);
 
-  const [observerRef, isIntersecting] = useIntersectionObserver({
-    root: null,
-    rootMargin: '0px',
-    threshold: 1.0,
-  });
-
-  useEffect(() => {
-    if (isFetching) {
-      return;
-    }
-
-    if (hasNextPage && isIntersecting) {
-      fetchNextPage();
-    }
-  }, [hasNextPage, isIntersecting, isFetching, fetchNextPage]);
-
   const [id, setId] = useState(-1);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -117,7 +55,7 @@ export const EntryList: React.FC<IEntryListProps> = ({}) => {
   );
 
   const selectedEntry = useMemo(
-    () => body.find(({ id: entryId }) => id === entryId),
+    () => body.find(({ id: entryId }) => id === entryId) ?? ({} as TEntryModel),
     [body, id]
   );
 
@@ -130,81 +68,60 @@ export const EntryList: React.FC<IEntryListProps> = ({}) => {
     setEditDialogOpen(true);
   };
 
-  const handleDelete = (id) => {
-    setId(id);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = () => {
+  const handleDelete = () => {
     mutate(id);
     setDeleteDialogOpen(false);
   };
 
+  const handleDeleteConfirm = (id) => {
+    setId(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleLoadMore = () => {
+    fetchNextPage();
+  };
+
   if (body.length === 0) {
-    return <>Empty</>;
+    return (
+      <Box display="flex" justifyContent="center">
+        <Button>Add Entry</Button>
+      </Box>
+    );
   }
 
   return (
     <>
-      <List>
-        {body.map((props) => (
-          <EntryItem
-            {...props}
-            key={props.id}
-            onEdit={() => handleEdit(props.id)}
-            onDelete={() => handleDelete(props.id)}
-          />
-        ))}
-
-        <ListItem ref={observerRef}></ListItem>
-
-        <ListItem sx={{ justifyContent: 'center' }}>
-          {isLoading && <CircularProgress />}
-        </ListItem>
-      </List>
-
-      <ResponsiveDialog
-        open={editDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
+      <InfiniteList
+        list={body}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        hasNextPage={hasNextPage}
+        onLoadMore={handleLoadMore}
       >
-        <DialogTitle>New Data</DialogTitle>
-        <DialogContent>
-          <Box p={2}>
-            <EntryForm entry={selectedEntry} />
-          </Box>
-        </DialogContent>
-      </ResponsiveDialog>
+        {(entry: TEntryModel) => (
+          <EntryItem
+            entry={entry}
+            key={entry.id}
+            onEdit={() => handleEdit(entry.id)}
+            onDelete={() => handleDeleteConfirm(entry.id)}
+          />
+        )}
+      </InfiniteList>
 
-      <DeleteDialog
-        title="Delete Entry"
-        open={deleteDialogOpen}
+      <EntryEditDialog
+        entry={selectedEntry}
+        isOpen={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+      />
+
+      <EntryDeleteDialog
+        entry={selectedEntry}
+        isOpen={deleteDialogOpen}
         onCancel={handleClose}
         onClose={handleClose}
-        onDelete={handleDeleteConfirm}
-      >
-        <Box mb={2}>
-          <Typography variant="body1">
-            Are you sure you want to delete?
-          </Typography>
-        </Box>
-
-        <Stack spacing={2}>
-          <Typography variant="body2">
-            {entryTypes.find(({ id }) => id === selectedEntry?.typeId)?.name}
-          </Typography>
-
-          <Typography variant="body2">{selectedEntry?.description}</Typography>
-
-          <Stack direction="row" justifyContent="space-between">
-            <Typography sx={{ fontWeight: 'bold' }} variant="body2">
-              {yyyyMMdd(selectedEntry?.date)}
-            </Typography>
-            <Typography sx={{ fontWeight: 'bold' }} variant="body2">
-              {transactionToAmount(selectedEntry?.transaction)}
-            </Typography>
-          </Stack>
-        </Stack>
-      </DeleteDialog>
+        onDelete={handleDelete}
+      />
     </>
   );
 };
