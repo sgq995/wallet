@@ -1,12 +1,18 @@
 import { PropsWithChildren } from 'react';
 
-import { ButtonProps, DialogProps, useMediaQuery } from '@mui/material';
+import {
+  ButtonProps,
+  DialogProps,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
 
 import { Box, Button, DialogContent, DialogTitle } from '@mui/material';
 import theme from '../../theme';
-import ResponsiveDialog from './ResponsiveDialog';
+import { ResponsiveDialog } from './ResponsiveDialog';
 
-interface IDeleteDialogProps {
+export interface IDeleteDialogProps {
   open: DialogProps['open'];
   title: string;
   onClose: DialogProps['onClose'];
@@ -14,14 +20,14 @@ interface IDeleteDialogProps {
   onDelete: ButtonProps['onClick'];
 }
 
-export default function DeleteDialog({
+export const DeleteDialog: React.FC<PropsWithChildren<IDeleteDialogProps>> = ({
   open,
   title,
   onClose,
   onCancel,
   onDelete,
   children,
-}: PropsWithChildren<IDeleteDialogProps>) {
+}) => {
   const isXs = useMediaQuery(theme.breakpoints.down('xs'));
 
   return (
@@ -33,7 +39,13 @@ export default function DeleteDialog({
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        {children}
+        <Box mb={2}>
+          <Typography variant="body1">
+            Are you sure you want to delete?
+          </Typography>
+        </Box>
+
+        <Stack spacing={2}>{children}</Stack>
 
         <Box mt={2} display="flex" flexDirection="row" justifyContent="end">
           <Button onClick={onCancel}>CANCEL</Button>
@@ -44,4 +56,4 @@ export default function DeleteDialog({
       </DialogContent>
     </ResponsiveDialog>
   );
-}
+};
