@@ -13,7 +13,7 @@ export default function FormDescriptionField({
   id,
   name,
 }: IFormDescriptionFieldProps) {
-  const fieldName = name ?? 'name';
+  const fieldName = name ?? 'description';
 
   return (
     <FormTextField
@@ -21,7 +21,7 @@ export default function FormDescriptionField({
       required={required}
       id={id}
       name={fieldName}
-      label="Name"
+      label="Description"
     />
   );
 }
