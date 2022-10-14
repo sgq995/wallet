@@ -6,7 +6,6 @@ import { EntryModel } from './model';
 export const Params = Type.Required(Type.Pick(EntryModel, ['id']));
 
 export type TParams = Static<typeof Params>;
-const a = Type.KeyOf(EntryModel);
 
 export const Query = CreateQuery(EntryModel);
 

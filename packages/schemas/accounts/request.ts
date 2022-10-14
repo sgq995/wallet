@@ -1,4 +1,5 @@
 import { Static, Type } from '@sinclair/typebox';
+import { CreateQuery } from '../helpers/models';
 
 import { AccountModel } from './model';
 
@@ -6,7 +7,7 @@ export const Params = Type.Required(Type.Pick(AccountModel, ['id']));
 
 export type TParams = Static<typeof Params>;
 
-export const Query = Type.Partial(AccountModel);
+export const Query = CreateQuery(AccountModel);
 
 export type TQuery = Static<typeof Query>;
 
