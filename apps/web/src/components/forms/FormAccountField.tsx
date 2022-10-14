@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import type {
   FormControlProps,
@@ -84,7 +84,7 @@ export default function FormAccountField({
             }
           >
             <MenuItem value="">None</MenuItem>
-            {response?.data.map(({ id, name }) => (
+            {response?.data?.map(({ id, name }) => (
               <MenuItem key={id} value={name}>
                 {name}
               </MenuItem>

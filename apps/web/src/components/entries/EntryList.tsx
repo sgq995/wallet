@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { List, ListItem, CircularProgress, Box, Button } from '@mui/material';
+import {
+  List,
+  ListItem,
+  CircularProgress,
+  Box,
+  Button,
+  Typography,
+} from '@mui/material';
 
 import { Reply, TEntryModel } from 'schemas/entries';
 
@@ -81,6 +88,15 @@ export const EntryList: React.FC<IEntryListProps> = ({}) => {
   const handleLoadMore = () => {
     fetchNextPage();
   };
+
+  if (isError) {
+    return (
+      <Box display="flex" justifyContent="center" flexDirection="column">
+        <Typography variant="body2">Something goes wrong</Typography>
+        <Button>Retry</Button>
+      </Box>
+    );
+  }
 
   if (body.length === 0) {
     return (

@@ -4,13 +4,6 @@ import { TAccountModel } from 'schemas/accounts/model';
 import { Form, FormAmountField, FormSubmitButton } from '../forms';
 import FormNameField from '../forms/FormNameField';
 
-export interface AccountFormData {
-  name: string;
-  units: number;
-  cents: number;
-  currency: number;
-}
-
 export interface AccountFormProps {
   account?: TAccountModel;
 }
@@ -19,7 +12,7 @@ export const AccountForm: React.FC<AccountFormProps> = ({ account }) => {
   const isNewAccount = !account;
 
   return (
-    <Form initialState={{ name: '' }}>
+    <Form initialState={{ name: '', units: '0', cents: '', currency: '' }}>
       <Stack direction="column" spacing={2}>
         <FormNameField required={isNewAccount} fullWidth />
 

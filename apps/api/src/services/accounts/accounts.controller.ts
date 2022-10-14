@@ -12,13 +12,22 @@ import {
 import { DefaultRouteHandlerMethodWithSession } from '../../utils/types';
 import { verifySessionHandler } from '../../utils/verify-session-handler';
 
+// TODO: Move this to configuration
+const MAX_ALLOWED_TAKE = 10;
+
 const findAll: DefaultRouteHandlerMethodWithSession<{
   Querystring: Request.TQuery;
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
   const query = request.query;
+  const take = Math.min(
+    request.query.take ?? MAX_ALLOWED_TAKE,
+    MAX_ALLOWED_TAKE
+  );
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   const allAccounts = await this.prisma.account.findMany({
+    skip: query.skip,
+    take: take,
     where: {
       AND: {
         id: query.id,

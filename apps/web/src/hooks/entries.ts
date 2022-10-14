@@ -13,7 +13,7 @@ export const key = 'entries';
 
 export function useFindAllInfiniteQuery(query?: Request.TQuery) {
   return useInfiniteQuery<Reply.TFindAllData, Reply.TFindAllError>(
-    [key, 'findAll', query],
+    [key, 'infiniteFindAll', query],
     ({ signal, pageParam }) =>
       entriesService.findAll({ ...query, ...pageParam }, { signal }),
     {
