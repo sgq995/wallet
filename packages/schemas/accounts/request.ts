@@ -11,16 +11,32 @@ export const Query = CreateQuery(AccountModel);
 
 export type TQuery = Static<typeof Query>;
 
-export const AddOne = Type.Pick(AccountModel, [
-  'name',
-  'balance',
-  'currencyId',
+export const AddOne = Type.Intersect([
+  Type.Pick(AccountModel, ['name']),
+  Type.Object({
+    transaction: Type.Pick(AccountModel['properties']['transaction'], [
+      'units',
+      'cents',
+      'currencyId',
+    ]),
+  }),
 ]);
 
 export type TAddOne = Static<typeof AddOne>;
 
 export const UpdateOne = Type.Intersect([
-  Type.Partial(Type.Pick(AccountModel, ['name', 'balance', 'currencyId'])),
+  Type.Partial(Type.Omit(AccountModel, ['id', 'transactionId', 'transaction'])),
+  Type.Partial(
+    Type.Object({
+      transaction: Type.Partial(
+        Type.Pick(AccountModel['properties']['transaction'], [
+          'units',
+          'cents',
+          'currencyId',
+        ])
+      ),
+    })
+  ),
 ]);
 
 export type TUpdateOne = Static<typeof UpdateOne>;

@@ -1,15 +1,13 @@
 import { Static, Type } from '@sinclair/typebox';
-import { CurrencyModel } from '../currencies/model';
 
 import { Id } from '../custom-types/id';
+import { TransactionModel } from '../transactions/model';
 
 export const AccountModel = Type.Object({
   id: Id(),
   name: Type.String(),
-  balance: Type.Number(),
-  // profileId: Id(),
-  currency: Type.Optional(CurrencyModel),
-  currencyId: Id(),
+  transaction: Type.Optional(TransactionModel),
+  transactionId: Id(),
 });
 
 export type TAccountModel = Static<typeof AccountModel>;

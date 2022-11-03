@@ -17,7 +17,6 @@ export const EntryModel = Type.Object({
   accountId: Nullable(Id()),
   categoryId: Nullable(Id()),
   tagId: Nullable(Id()),
-  // profileId: Id(),
 });
 
 export type TEntryModel = Static<typeof EntryModel>;

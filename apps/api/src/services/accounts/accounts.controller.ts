@@ -36,13 +36,15 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
               contains: query.name,
             }
           : query.name,
-        balance: query.balance,
-        currencyId: query.currencyId,
         profileId,
       },
     },
     include: {
-      currency: true,
+      transaction: {
+        include: {
+          currency: true,
+        },
+      },
     },
   });
   await replyOK(reply, allAccounts);
@@ -53,16 +55,30 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
   const account = request.body;
+  const transaction = account.transaction;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   const createdAccount = await this.prisma.account.create({
     data: {
       name: account.name,
-      balance: account.balance,
-      currencyId: account.currencyId,
-      profileId,
+      transaction: {
+        create: {
+          units: transaction.units,
+          cents: transaction.cents,
+          currencyId: transaction.currencyId,
+        },
+      },
+      profile: {
+        connect: {
+          id: profileId,
+        },
+      },
     },
     include: {
-      currency: true,
+      transaction: {
+        include: {
+          currency: true,
+        },
+      },
     },
   });
   await replyCreated(reply, createdAccount);
@@ -84,7 +100,11 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
         },
       },
       include: {
-        currency: true,
+        transaction: {
+          include: {
+            currency: true,
+          },
+        },
       },
       rejectOnNotFound: true,
     })
@@ -104,7 +124,6 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TUpdateOne;
 }> = async function (request, reply) {
   const id = request.params.id;
-  const account = request.body;
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
 
   let data, err;
@@ -122,6 +141,9 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   );
 
   if (!err) {
+    const account = request.body;
+    const transaction = account.transaction;
+
     [data, err] = await to(
       this.prisma.account.update({
         where: {
@@ -129,8 +151,20 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
         },
         data: {
           name: account.name,
-          balance: account.balance,
-          currencyId: account.currencyId,
+          ...(transaction
+            ? {
+                transaction: {
+                  update: {
+                    units: transaction?.units,
+                    cents: transaction?.cents,
+                    currencyId: transaction?.currencyId,
+                  },
+                },
+              }
+            : undefined),
+        },
+        include: {
+          transaction: true,
         },
       })
     );
