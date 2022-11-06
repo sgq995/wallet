@@ -14,9 +14,12 @@ export const method: TFormActionMethod = <T>(
 ) => {
   return {
     ...state,
-    controlledValues: {
-      ...state.controlledValues,
-      [payload.name]: payload.value,
+    controlled: {
+      ...state.controlled,
+      values: {
+        ...state.controlled?.values,
+        [payload.name]: payload.value,
+      },
     },
   };
 };

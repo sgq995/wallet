@@ -23,6 +23,8 @@ function reducerFactory(actionsMap: TFormActionMap): TFormReducer {
 }
 
 export const reducer: TFormReducer = reducerFactory({
+  [types.setError]: methods.setError,
+  [types.setIsValid]: methods.setIsValid,
   [types.setValue]: methods.setValue,
   [types.reset]: methods.reset,
 });
