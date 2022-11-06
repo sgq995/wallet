@@ -24,7 +24,7 @@ export interface IUseControlledFormComponentOptions<T>
   name: string;
 }
 
-export function useControlledFormComponent<T, E>(
+export function useControlledFormComponent<T = string, E = unknown>(
   options: IUseControlledFormComponentOptions<T>
 ) {
   const { name } = options;

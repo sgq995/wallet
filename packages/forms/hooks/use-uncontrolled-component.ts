@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   getFormLogicOptions,
   IUseFormLogicOptions,
@@ -7,7 +7,7 @@ import {
 
 interface IUseUncontrolledComponentOptions<T> extends IUseFormLogicOptions<T> {}
 
-export function useUncontrolledComponent<T = string, E = unknown, R = unknown>(
+export function useUncontrolledComponent<R = unknown, T = string, E = unknown>(
   options?: IUseUncontrolledComponentOptions<T>
 ) {
   const ref = useRef<R>();

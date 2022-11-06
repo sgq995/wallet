@@ -6,8 +6,8 @@ export const method: TFormActionMethod<IFormAction> = (state) => {
   if (state.defaultValues) {
     const defaultValues = state.defaultValues;
 
-    if (state.controlledValues) {
-      const controlledValues = state.controlledValues;
+    if (state.controlled?.values) {
+      const controlledValues = state.controlled.values;
       const defaultControlledValues = Object.keys(defaultValues).reduce<
         Record<string, any>
       >((values, name) => {
@@ -17,8 +17,8 @@ export const method: TFormActionMethod<IFormAction> = (state) => {
         return values;
       }, {});
 
-      state.controlledValues = {
-        ...state.controlledValues,
+      state.controlled.values = {
+        ...state.controlled.values,
         ...defaultControlledValues,
       };
     }

@@ -11,12 +11,17 @@ import {
   type as setValueType,
 } from './controlled/set-value';
 import { method as resetMethod, type as resetType } from './reset';
+import {
+  method as setRefMethod,
+  type as setRefType,
+} from './uncontrolled/set-ref';
 
 export const types = {
   setError: setErrorType,
   setIsValid: setIsValidType,
   setValue: setValueType,
   reset: resetType,
+  setRef: setRefType,
 };
 
 export const methods = {
@@ -24,4 +29,5 @@ export const methods = {
   setIsValid: setIsValidMethod,
   setValue: setValueMethod,
   reset: resetMethod,
+  setRef: setRefMethod,
 };
