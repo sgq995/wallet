@@ -9,68 +9,21 @@ import {
 
 import { RouteGenericInterface } from 'fastify/types/route';
 
-export function replyOK<
-  T,
-  RawServer extends RawServerBase = RawServerDefault,
-  RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,
-  RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>,
-  RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  ContextConfig = ContextConfigDefault
->(
-  reply: FastifyReply<
-    RawServer,
-    RawRequest,
-    RawReply,
-    RouteGeneric,
-    ContextConfig
-  >,
-  data: T
-) {
+export function replyOK<T>(reply: FastifyReply, data: T) {
   return reply.status(200).send({
     statusCode: 200,
     data,
   });
 }
 
-export function replyCreated<
-  T,
-  RawServer extends RawServerBase = RawServerDefault,
-  RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,
-  RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>,
-  RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  ContextConfig = ContextConfigDefault
->(
-  reply: FastifyReply<
-    RawServer,
-    RawRequest,
-    RawReply,
-    RouteGeneric,
-    ContextConfig
-  >,
-  data: T
-) {
+export function replyCreated<T>(reply: FastifyReply, data: T) {
   return reply.status(201).send({
     statusCode: 201,
     data,
   });
 }
 
-export function replyNotFound<
-  RawServer extends RawServerBase = RawServerDefault,
-  RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,
-  RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>,
-  RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  ContextConfig = ContextConfigDefault
->(
-  reply: FastifyReply<
-    RawServer,
-    RawRequest,
-    RawReply,
-    RouteGeneric,
-    ContextConfig
-  >,
-  message: string
-) {
+export function replyNotFound(reply: FastifyReply, message: string) {
   return reply.status(404).send({
     statusCode: 404,
     error: 'Not Found',
@@ -78,22 +31,7 @@ export function replyNotFound<
   });
 }
 
-export function replyForbidden<
-  RawServer extends RawServerBase = RawServerDefault,
-  RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,
-  RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>,
-  RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  ContextConfig = ContextConfigDefault
->(
-  reply: FastifyReply<
-    RawServer,
-    RawRequest,
-    RawReply,
-    RouteGeneric,
-    ContextConfig
-  >,
-  message: string
-) {
+export function replyForbidden(reply: FastifyReply, message: string) {
   return reply.status(403).send({
     statusCode: 403,
     error: 'Forbidden',

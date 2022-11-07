@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { signOut } from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
-import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
 import {
   BottomNavigation,
@@ -12,6 +11,7 @@ import {
   DialogContent,
   DialogTitle,
   Fab,
+  Stack,
   Tab,
   Tabs,
 } from '@mui/material';
@@ -82,30 +82,25 @@ export default function LayoutNavigation() {
   };
 
   return (
-    <BottomNavigation
-      showLabels
-      sx={{ flexGrow: 1 }}
-      value={route}
-      onChange={handleOnChange}
-    >
-      {routes.map((route) => (
-        <BottomNavigationAction
-          key={route.path}
-          label={route.label}
-          icon={route.icon}
-          onMouseOver={(event) => router.prefetch(route.path)}
-        />
-      ))}
+    <Stack direction="row" justifyContent="center" sx={{ flexGrow: 1 }}>
+      <BottomNavigation showLabels value={route} onChange={handleOnChange}>
+        {routes.map((route) => (
+          <BottomNavigationAction
+            key={route.path}
+            label={route.label}
+            icon={route.icon}
+            onMouseOver={(event) => router.prefetch(route.path)}
+          />
+        ))}
 
-      <SessionAuth>
         <BottomNavigationAction
           label="Logout"
           icon={<LogoutIcon />}
           onClick={handleOnLogout}
         />
-      </SessionAuth>
+      </BottomNavigation>
 
-      <Box paddingRight={2} sx={{ transform: 'translateY(-50%)' }}>
+      <Box sx={{ transform: 'translateY(-50%)' }}>
         <Fab color="primary" onClick={handleClickOpen}>
           <AddIcon />
         </Fab>
@@ -138,6 +133,6 @@ export default function LayoutNavigation() {
           </Box>
         </DialogContent>
       </ResponsiveDialog>
-    </BottomNavigation>
+    </Stack>
   );
 }

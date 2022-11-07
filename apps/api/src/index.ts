@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import fastify, { FastifyServerOptions } from 'fastify';
 // import fp from 'fastify-plugin';
 
 import plugins from './plugins';
@@ -6,16 +6,24 @@ import services from './services';
 
 import config from './config';
 
-const server = fastify({
-  logger: {
-    prettyPrint:
-      process.env.NODE_ENV === 'development'
-        ? {
-            translateTime: 'HH:MM:ss Z',
-            ignore: 'pid,hostname',
-          }
-        : false,
+const envToLogger: Record<string, FastifyServerOptions['logger']> = {
+  development: {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
+      },
+    },
   },
+  production: true,
+  test: false,
+};
+
+const env = process.env.NODE_ENV ?? 'default';
+
+const server = fastify({
+  logger: envToLogger[env] ?? true,
 });
 
 void (async () => {
