@@ -1,8 +1,7 @@
 import { Stack } from '@mui/material';
 import { TCategoryModel } from 'schemas/categories/model';
 
-import { Form, FormSubmitButton } from '../forms';
-import FormNameField from '../forms/FormNameField';
+import { Form, FormNameField, FormSubmitButton } from '../forms';
 
 export interface CategoryFormData {
   name: string;
@@ -16,7 +15,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ account }) => {
   const isNewAccount = !account;
 
   return (
-    <Form initialState={{ name: '' }}>
+    <Form defaultValues={{ name: '' }}>
       <Stack direction="column" spacing={2}>
         <FormNameField required={isNewAccount} fullWidth />
 

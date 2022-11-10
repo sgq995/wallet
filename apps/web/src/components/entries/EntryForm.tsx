@@ -35,7 +35,14 @@ function getUpdateDelta(
     account: accountId,
     category: categoryId,
   } = data;
-  const date = `${year}-${month}-${day}`;
+  // const date = `${year}-${month}-${day}`;
+  const date = format(new Date(year, month, day))
+    .YYYY()
+    .hyphen()
+    .MM()
+    .hyphen()
+    .DD()
+    .toString();
 
   const delta: Request.TUpdateOne = {
     date: date !== entry?.date ? date : undefined,
@@ -78,7 +85,15 @@ export const EntryForm: React.FC<EntryFormProps> = ({ entry }) => {
       account: accountId,
       category: categoryId,
     } = data;
-    const date = `${year}-${month}-${day}`;
+
+    const date = format(new Date(year, month, day))
+      .YYYY()
+      .hyphen()
+      .MM()
+      .hyphen()
+      .DD()
+      .toString();
+    // const date = `${year}-${month}-${day}`;
 
     if (entry) {
       const delta = getUpdateDelta(data, entry);
@@ -134,17 +149,17 @@ export const EntryForm: React.FC<EntryFormProps> = ({ entry }) => {
 
   return (
     <Form
-      initialState={{
-        year: defaultDate.getUTCFullYear().toString(),
-        month: (defaultDate.getUTCMonth() + 1).toString(),
-        day: defaultDate.getUTCDate().toString(),
-        type: entry?.typeId.toString() ?? '',
-        units: entry?.transaction.units.toString() ?? '0',
-        cents: entry?.transaction.cents.toString() ?? '0',
-        currency: entry?.transaction.currencyId.toString() ?? '',
+      defaultValues={{
+        year: defaultDate.getUTCFullYear(),
+        month: defaultDate.getUTCMonth(),
+        day: defaultDate.getUTCDate(),
+        type: entry?.typeId ?? '',
+        units: entry?.transaction.units ?? 0,
+        cents: entry?.transaction.cents ?? 0,
+        currency: entry?.transaction.currencyId ?? '',
         description: entry?.description ?? '',
-        account: entry?.accountId?.toString() ?? '',
-        category: entry?.categoryId?.toString() ?? '',
+        account: entry?.accountId ?? '',
+        category: entry?.categoryId ?? '',
       }}
     >
       <Stack direction="column" spacing={2}>

@@ -5,15 +5,14 @@ import type {
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import { useFormController } from './hooks';
-import { createPadStartParser } from './parsers';
+import { numberValidator, useControlledFormComponent } from 'forms';
+import { toInteger } from 'lodash';
 
 const YEAR_LIST = new Array(new Date().getFullYear() - 2000 + 1)
   .fill(0)
-  .map((_, index) => (2000 + index).toString());
+  .map((_, index) => 2000 + index);
 
 const MONTH_LIST = [
   'Jan',
@@ -77,23 +76,9 @@ function getDaysPerMonth(month: string, year?: number): number {
   }
 }
 
-function filter(value: string) {
-  return value.replaceAll(/[^0-9]/g, '');
-}
+// const parseWithLeadingZero = createPadStartParser(2, '0');
 
-function numberValidator(value: string) {
-  const asNumber = parseInt(value);
-
-  if (isNaN(asNumber)) {
-    return false;
-  }
-
-  return true;
-}
-
-const parseWithLeadingZero = createPadStartParser(2, '0');
-
-interface IFormDateFieldProps {
+export interface IFormDateFieldProps {
   fullWidth?: FormControlProps['fullWidth'];
   required?: FormControlProps['required'];
   id?: SelectProps['id'];
@@ -106,7 +91,7 @@ interface IFormDateFieldProps {
   yearName?: SelectProps['name'];
 }
 
-export default function FormDateField({
+export function FormDateField({
   fullWidth,
   required,
   id,
@@ -128,36 +113,31 @@ export default function FormDateField({
   const monthLabelId = `${monthId ?? `${defaultId}month`}-label`;
   const dayLabelId = `${dayId ?? `${defaultId}day`}-label`;
 
-  const [year, yearError, onYearChange] = useFormController(yearFieldName, {
+  const {
+    value: year,
+    onChange: onYearChange,
+    isValid: isValidYear,
+  } = useControlledFormComponent({
+    name: yearFieldName,
     validator: numberValidator,
   });
-  const [month, monthError, onMonthChange] = useFormController(monthFieldName, {
+  const {
+    value: month,
+    onChange: onMonthChange,
+    isValid: isValidMonth,
+  } = useControlledFormComponent({
+    name: monthFieldName,
     validator: numberValidator,
-    parser: parseWithLeadingZero,
   });
 
   const dayValidator = useCallback(
-    (value: string) => {
-      const yearNumber = year ? parseInt(year) : undefined;
-      if (typeof yearNumber === 'undefined') {
-        return false;
-      }
-
-      const monthNumber = month ? parseInt(month) : undefined;
-      if (typeof monthNumber === 'undefined') {
-        return false;
-      }
-
+    (value: number) => {
       if (!numberValidator(value)) {
         return false;
       }
 
-      const valueNumber = parseInt(value);
-      const daysPerMonth = getDaysPerMonth(
-        MONTH_LIST[monthNumber - 1],
-        yearNumber
-      );
-      if (valueNumber < 1 && daysPerMonth < valueNumber) {
+      const daysPerMonth = getDaysPerMonth(MONTH_LIST[month], year);
+      if (value < 1 && daysPerMonth < value) {
         return false;
       }
 
@@ -166,9 +146,13 @@ export default function FormDateField({
     [year, month]
   );
 
-  const [day, dayError, onDayChange] = useFormController(dayFieldName, {
+  const {
+    value: day,
+    onChange: onDayChange,
+    isValid: isValidDay,
+  } = useControlledFormComponent({
+    name: dayFieldName,
     validator: dayValidator,
-    parser: parseWithLeadingZero,
   });
 
   const [dayList, setDayList] = useState<string[]>(
@@ -176,24 +160,11 @@ export default function FormDateField({
   );
 
   useEffect(() => {
-    const yearNumber = year ? parseInt(year) : undefined;
-    if (typeof yearNumber === 'undefined') {
+    if (month < 0 && MONTH_LIST.length <= month) {
       return;
     }
 
-    const monthNumber = month ? parseInt(month) : undefined;
-    if (typeof monthNumber === 'undefined') {
-      return;
-    }
-
-    if (monthNumber < 1 && MONTH_LIST.length < monthNumber) {
-      return;
-    }
-
-    const daysPerMonth = getDaysPerMonth(
-      MONTH_LIST[monthNumber - 1],
-      yearNumber
-    );
+    const daysPerMonth = getDaysPerMonth(MONTH_LIST[month], year);
     setDayList(() =>
       new Array(daysPerMonth).fill(0).map((_, index) => (index + 1).toString())
     );
@@ -201,7 +172,11 @@ export default function FormDateField({
 
   return (
     <>
-      <FormControl required={required} fullWidth={fullWidth} error={yearError}>
+      <FormControl
+        required={required}
+        fullWidth={fullWidth}
+        error={!isValidYear}
+      >
         <InputLabel id={yearLabelId}>Year</InputLabel>
         <Select
           id={yearId}
@@ -210,8 +185,8 @@ export default function FormDateField({
           label="Year"
           variant="outlined"
           value={year}
-          onChange={({ target: { value } }: SelectChangeEvent<string>) => {
-            onYearChange(value);
+          onChange={({ target: { value } }: SelectChangeEvent<number>) => {
+            onYearChange(toInteger(value));
           }}
         >
           {YEAR_LIST.map((year) => (
@@ -222,7 +197,11 @@ export default function FormDateField({
         </Select>
       </FormControl>
 
-      <FormControl required={required} fullWidth={fullWidth} error={monthError}>
+      <FormControl
+        required={required}
+        fullWidth={fullWidth}
+        error={!isValidMonth}
+      >
         <InputLabel id={monthLabelId}>Month</InputLabel>
         <Select
           id={monthId}
@@ -231,19 +210,23 @@ export default function FormDateField({
           label="Month"
           variant="outlined"
           value={month}
-          onChange={({ target: { value } }: SelectChangeEvent<string>) => {
-            onMonthChange(value);
+          onChange={({ target: { value } }: SelectChangeEvent<number>) => {
+            onMonthChange(toInteger(value));
           }}
         >
           {MONTH_LIST.map((month, index) => (
-            <MenuItem key={month} value={(index + 1).toString()}>
+            <MenuItem key={month} value={index}>
               {month}
             </MenuItem>
           ))}
         </Select>
       </FormControl>
 
-      <FormControl required={required} fullWidth={fullWidth} error={dayError}>
+      <FormControl
+        required={required}
+        fullWidth={fullWidth}
+        error={!isValidDay}
+      >
         <InputLabel id={dayLabelId}>Day</InputLabel>
         <Select
           id={dayId}
@@ -252,8 +235,8 @@ export default function FormDateField({
           label="Day"
           variant="outlined"
           value={day}
-          onChange={({ target: { value } }: SelectChangeEvent<string>) => {
-            onDayChange(value);
+          onChange={({ target: { value } }: SelectChangeEvent<number>) => {
+            onDayChange(toInteger(value));
           }}
         >
           {dayList.map((day) => (

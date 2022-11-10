@@ -55,6 +55,7 @@ export function useAddOneMutation() {
       entriesService.addOne(body) as Promise<Reply.TAddOneData>,
     {
       onSuccess: () => {
+        queryClient.invalidateQueries([key, 'infiniteFindAll']);
         queryClient.invalidateQueries([key, 'findAll']);
       },
     }
@@ -76,6 +77,7 @@ export function useUpdateOneMutation() {
       entriesService.updateOne(id, body),
     {
       onSuccess: (_, { id }) => {
+        queryClient.invalidateQueries([key, 'infiniteFindAll']);
         queryClient.invalidateQueries([key, 'findAll']);
         queryClient.invalidateQueries([key, 'findOne', id]);
       },
@@ -91,6 +93,7 @@ export function useRemoveOneMutation() {
     (id: Request.TParams['id']) => entriesService.removeOne(id),
     {
       onSuccess: () => {
+        queryClient.invalidateQueries([key, 'infiniteFindAll']);
         queryClient.invalidateQueries([key, 'findAll']);
       },
     }

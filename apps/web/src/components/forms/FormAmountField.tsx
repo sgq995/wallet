@@ -3,8 +3,6 @@ import type {
   SelectChangeEvent,
   TextFieldProps,
 } from '@mui/material';
-import { useSystemContext } from '../../contexts/system';
-
 import {
   FormControl,
   InputLabel,
@@ -12,27 +10,13 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { useFormController } from './hooks';
 
-function filter(value: string) {
-  if (value === '') {
-    return '0';
-  }
+import { numberValidator, useControlledFormComponent } from 'forms';
+import { toInteger } from 'lodash';
 
-  return value.replaceAll(/[^0-9]/g, '').replaceAll(/^0/g, '');
-}
+import { useSystemContext } from '../../contexts/system';
 
-function validator(value: string) {
-  const asNumber = parseFloat(value);
-
-  if (isNaN(asNumber)) {
-    return false;
-  }
-
-  return true;
-}
-
-interface IFormAmountFieldProps {
+export interface IFormAmountFieldProps {
   fullWidth?: FormControlProps['fullWidth'];
   required?: TextFieldProps['required'];
   id?: TextFieldProps['id'];
@@ -45,7 +29,7 @@ interface IFormAmountFieldProps {
   centsName?: TextFieldProps['name'];
 }
 
-export default function FormAmountField({
+export function FormAmountField({
   fullWidth,
   required,
   id,
@@ -67,23 +51,31 @@ export default function FormAmountField({
 
   const { currencies } = useSystemContext();
 
-  const [currency, currencyError, onCurrencyChange] = useFormController(
-    currencyFieldName,
-    {
-      parser: parseInt,
-    }
-  );
-
-  const [units, unitsError, onUnitsChange] = useFormController(unitsFieldName, {
-    filter,
-    validator,
-    parser: parseInt,
+  const {
+    value: currency,
+    onChange: onCurrencyChange,
+    isValid: isValidCurrency,
+  } = useControlledFormComponent<number>({
+    name: currencyFieldName,
+    validator: numberValidator,
   });
 
-  const [cents, centsError, onCentsChange] = useFormController(centsFieldName, {
-    filter,
-    validator,
-    parser: parseInt,
+  const {
+    value: units,
+    onChange: onUnitsChange,
+    isValid: isValidUnits,
+  } = useControlledFormComponent<number>({
+    name: unitsFieldName,
+    validator: numberValidator,
+  });
+
+  const {
+    value: cents,
+    onChange: onCentsChange,
+    isValid: isValidCents,
+  } = useControlledFormComponent<number>({
+    name: centsFieldName,
+    validator: numberValidator,
   });
 
   return (
@@ -91,7 +83,7 @@ export default function FormAmountField({
       <FormControl
         required={required}
         fullWidth={fullWidth}
-        error={currencyError}
+        error={!isValidCurrency}
       >
         <InputLabel id={currencyLabelId}>Currency</InputLabel>
         <Select
@@ -101,8 +93,8 @@ export default function FormAmountField({
           label="Currency"
           variant="outlined"
           value={currency}
-          onChange={({ target: { value } }: SelectChangeEvent<string>) => {
-            onCurrencyChange(value);
+          onChange={({ target: { value } }: SelectChangeEvent<number>) => {
+            onCurrencyChange(toInteger(value));
           }}
         >
           {currencies?.map(({ id, code, symbol }) => (
@@ -113,7 +105,7 @@ export default function FormAmountField({
         </Select>
       </FormControl>
 
-      <FormControl fullWidth={fullWidth} error={unitsError}>
+      <FormControl fullWidth={fullWidth} error={!isValidUnits}>
         <TextField
           required={required}
           inputMode="numeric"
@@ -122,11 +114,11 @@ export default function FormAmountField({
           label="Units"
           variant="outlined"
           value={units}
-          onChange={({ target: { value } }) => onUnitsChange(value)}
+          onChange={({ target: { value } }) => onUnitsChange(parseInt(value))}
         />
       </FormControl>
 
-      <FormControl fullWidth={fullWidth} error={centsError}>
+      <FormControl fullWidth={fullWidth} error={!isValidCents}>
         <TextField
           required={required}
           inputMode="numeric"
@@ -135,7 +127,7 @@ export default function FormAmountField({
           label="Cents"
           variant="outlined"
           value={cents}
-          onChange={({ target: { value } }) => onCentsChange(value)}
+          onChange={({ target: { value } }) => onCentsChange(parseInt(value))}
         />
       </FormControl>
     </>

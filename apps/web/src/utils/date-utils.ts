@@ -96,6 +96,6 @@ class DateFormatter {
   }
 }
 
-export function format(date: Date) {
+export function format(date?: Date) {
   return new DateFormatter(date);
 }

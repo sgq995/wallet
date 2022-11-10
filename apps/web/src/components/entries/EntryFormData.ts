@@ -1,7 +1,7 @@
 export interface EntryFormData {
-  year: string;
-  month: string;
-  day: string;
+  year: number;
+  month: number;
+  day: number;
   type: number;
   units: number;
   cents: number;

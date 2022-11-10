@@ -4,29 +4,29 @@ import type { BoxProps } from '@mui/material';
 
 import { Box } from '@mui/material';
 
-import { FormContext } from './context';
-import { useFormState } from './hooks';
-import { IFormData } from './state';
+import { FormProvider, IFormProviderProps } from 'forms';
 
 export interface IFormProps
   extends BoxProps<
     'form',
-    { initialState?: IFormData; onSubmit?: HTMLFormElement['onsubmit'] }
-  > {}
+    {
+      onSubmit?: HTMLFormElement['onsubmit'];
+    }
+  > {
+  defaultValues?: IFormProviderProps['defaultValues'];
+}
 
-export default function Form({
-  initialState,
+export function Form({
+  defaultValues,
   onSubmit,
   children,
   ...props
 }: PropsWithChildren<IFormProps>) {
-  const [state, dispatch] = useFormState(initialState);
-
   return (
-    <FormContext.Provider value={{ state, dispatch }}>
+    <FormProvider defaultValues={defaultValues}>
       <Box component="form" onSubmit={onSubmit} {...props}>
         {children}
       </Box>
-    </FormContext.Provider>
+    </FormProvider>
   );
 }

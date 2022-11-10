@@ -1,7 +1,7 @@
 import type { FormControlProps, TextFieldProps } from '@mui/material';
 
 import { FormControl, TextField } from '@mui/material';
-import { useFormController } from './hooks';
+import { useControlledFormComponent } from 'forms';
 
 export interface IFormTextFieldProps {
   fullWidth?: FormControlProps['fullWidth'];
@@ -11,7 +11,7 @@ export interface IFormTextFieldProps {
   label: TextFieldProps['label'];
 }
 
-export default function FormTextField({
+export function FormTextField({
   fullWidth,
   required,
   id,
@@ -20,10 +20,12 @@ export default function FormTextField({
 }: IFormTextFieldProps) {
   const fieldName = name;
 
-  const [value, error, onChange] = useFormController(fieldName);
+  const { value, onChange, isValid } = useControlledFormComponent({
+    name: fieldName,
+  });
 
   return (
-    <FormControl fullWidth={fullWidth} error={error}>
+    <FormControl fullWidth={fullWidth} error={!isValid}>
       <TextField
         required={required}
         id={id}

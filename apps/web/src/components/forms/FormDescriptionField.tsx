@@ -1,13 +1,13 @@
-import FormTextField, { IFormTextFieldProps } from './FormTextField';
+import { FormTextField, IFormTextFieldProps } from './FormTextField';
 
-interface IFormDescriptionFieldProps {
+export interface IFormDescriptionFieldProps {
   fullWidth?: IFormTextFieldProps['fullWidth'];
   required?: IFormTextFieldProps['required'];
   id?: IFormTextFieldProps['id'];
   name?: IFormTextFieldProps['name'];
 }
 
-export default function FormDescriptionField({
+export function FormDescriptionField({
   fullWidth,
   required,
   id,

@@ -5,15 +5,6 @@ import type {
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-
-import { useFindAllQuery } from '../../hooks/categories';
-
-import AsyncViewer, {
-  AsyncData,
-  AsyncError,
-  AsyncLoading,
-} from '../AsyncViewer';
-
 import {
   CircularProgress,
   FormControl,
@@ -22,17 +13,24 @@ import {
   Select,
 } from '@mui/material';
 
-import { useFormController } from './hooks';
-import { parseIntOrNull } from './parsers';
+import { useFindAllQuery } from '../../hooks/categories';
 
-interface IFormCategoryFieldProps {
+import AsyncViewer, {
+  AsyncData,
+  AsyncError,
+  AsyncLoading,
+} from '../AsyncViewer';
+import { useControlledFormComponent } from 'forms';
+import { toInteger } from 'lodash';
+
+export interface IFormCategoryFieldProps {
   fullWidth?: FormControlProps['fullWidth'];
   required?: FormControlProps['required'];
   id?: SelectProps['id'];
   name?: SelectProps['name'];
 }
 
-export default function FormCategoryField({
+export function FormCategoryField({
   fullWidth,
   required,
   id,
@@ -48,21 +46,21 @@ export default function FormCategoryField({
   } = useFindAllQuery();
 
   const validator = useCallback(
-    (value: string) => {
-      return !!response?.data.some(({ name }) => value === name);
+    (value: number) => {
+      return !!response?.data.some(({ id }) => value === id);
     },
     [response]
   );
 
-  const [value, error, onChange] = useFormController(fieldName, {
+  const { value, onChange, isValid } = useControlledFormComponent<number>({
+    name: fieldName,
     validator,
-    parser: parseIntOrNull,
   });
 
   const labelId = `${id}-label`;
 
   return (
-    <FormControl required={required} fullWidth={fullWidth} error={error}>
+    <FormControl required={required} fullWidth={fullWidth} error={!isValid}>
       <AsyncViewer isLoading={isLoading} isError={isError}>
         <AsyncLoading>
           <CircularProgress />
@@ -79,13 +77,13 @@ export default function FormCategoryField({
             label="Category"
             variant="outlined"
             value={value}
-            onChange={({ target: { value } }: SelectChangeEvent<string>) =>
-              onChange(value)
+            onChange={({ target: { value } }: SelectChangeEvent<number>) =>
+              onChange(toInteger(value))
             }
           >
             <MenuItem value="">None</MenuItem>
             {response?.data.map(({ id, name }) => (
-              <MenuItem key={id} value={name}>
+              <MenuItem key={id} value={id}>
                 {name}
               </MenuItem>
             ))}
