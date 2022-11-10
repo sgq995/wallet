@@ -1,4 +1,3 @@
-import produce from 'immer';
 import { TFormActionMethod, TFormEvent } from '../../action';
 import { IFormState } from '../../state';
 

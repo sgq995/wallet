@@ -4,7 +4,9 @@
   "main": "index.ts",
   "types": "index.ts",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "immer": "^9.0.16"
+  },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

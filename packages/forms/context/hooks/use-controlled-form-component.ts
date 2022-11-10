@@ -8,16 +8,25 @@ import { FormContext } from '../context';
 import { event } from '../event';
 import { IFormState } from '../state';
 
-function getControlledFormValue(state: IFormState, name: string) {
+function getControlledFormValue<T>(
+  state: IFormState,
+  name: string
+): T | undefined {
   return state.controlled?.values?.[name] ?? state.defaultValues?.[name];
 }
 
-function getControlledFormError(state: IFormState, name: string) {
+function getControlledFormError<E>(
+  state: IFormState,
+  name: string
+): E | undefined {
   return state.controlled?.error?.[name];
 }
 
 function getControlledFormIsValid(state: IFormState, name: string) {
-  return state.controlled?.isValid?.[name];
+  return (
+    state.controlled?.isValid?.[name] ??
+    typeof state.defaultValues?.[name] !== undefined
+  );
 }
 export interface IUseControlledFormComponentOptions<T>
   extends IUseFormLogicOptions<T> {
@@ -30,8 +39,8 @@ export function useControlledFormComponent<T = string, E = unknown>(
   const { name } = options;
 
   const { state, dispatch } = useContext(FormContext);
-  const value = getControlledFormValue(state, name);
-  const error = getControlledFormError(state, name);
+  const value = getControlledFormValue<T>(state, name);
+  const error = getControlledFormError<E>(state, name);
   const isValid = getControlledFormIsValid(state, name);
 
   const formLogic = useFormLogic<T, E>(getFormLogicOptions(options));
