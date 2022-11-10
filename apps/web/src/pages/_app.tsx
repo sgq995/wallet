@@ -5,7 +5,13 @@ import dynamic from 'next/dynamic';
 
 import SuperTokensReact, { SuperTokensWrapper } from 'supertokens-auth-react';
 
-import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
+import {
+  dehydrate,
+  DehydratedState,
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query';
 
 import { frontendConfig } from '../config/frontendConfig';
 import { SystemContextProvider } from '../contexts/system';
@@ -17,7 +23,10 @@ if (typeof window !== 'undefined') {
   SuperTokensReact.init(frontendConfig());
 }
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({
+  Component,
+  pageProps,
+}: AppProps<{ dehydratedState: DehydratedState }>) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (

@@ -25,27 +25,19 @@ import { SessionRequest } from 'supertokens-node/framework/fastify';
 export type FastifyRequestWithSession<
   RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
   RawServer extends RawServerBase = RawServerDefault,
-  RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,
-  ContextConfig = ContextConfigDefault
-> = FastifyRequest<RouteGeneric, RawServer, RawRequest, ContextConfig> &
+  RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>
+> = FastifyRequest<RouteGeneric, RawServer, RawRequest> &
   Pick<SessionRequest, 'session'>;
 
 export type DefaultRouteHandlerMethod<
   RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
   RawServer extends RawServerBase = RawServerDefault,
   RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,
-  RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>,
-  ContextConfig = ContextConfigDefault
+  RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>
 > = (
   this: FastifyInstance<RawServer, RawRequest, RawReply>,
-  request: FastifyRequest<RouteGeneric, RawServer, RawRequest, ContextConfig>,
-  reply: FastifyReply<
-    RawServer,
-    RawRequest,
-    RawReply,
-    RouteGeneric,
-    ContextConfig
-  >
+  request: FastifyRequest<RouteGeneric, RawServer, RawRequest>,
+  reply: FastifyReply<RawServer, RawRequest, RawReply, RouteGeneric>
 ) => void | Promise<RouteGeneric['Reply'] | void>;
 
 export type DefaultRouteHandlerMethodWithSession<
@@ -56,12 +48,7 @@ export type DefaultRouteHandlerMethodWithSession<
   ContextConfig = ContextConfigDefault
 > = (
   this: FastifyInstance<RawServer, RawRequest, RawReply>,
-  request: FastifyRequestWithSession<
-    RouteGeneric,
-    RawServer,
-    RawRequest,
-    ContextConfig
-  >,
+  request: FastifyRequestWithSession<RouteGeneric, RawServer, RawRequest>,
   reply: FastifyReply<
     RawServer,
     RawRequest,

@@ -29,7 +29,7 @@ function useNotify(
       };
       setNotifications([...notifications, notification]);
     },
-    [notifications, setNotifications]
+    [notifications, setNotifications, severity]
   );
 }
 
