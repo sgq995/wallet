@@ -18,7 +18,7 @@
     "firebase": "^9.6.10",
     "forms": "*",
     "lodash": "^4.17.21",
-    "next": "12.3.2",
+    "next": "^13.0.3",
     "nextjs-cors": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
