@@ -1,33 +1,23 @@
 import { IRepository } from '../models/repository.model';
+import { applyToMany } from './apply-to-many.helper';
+import { applyToOne } from './apply-to-one.helper';
 
 export class Creator<
   Entity,
   TEntity extends Entity,
   Repository extends IRepository<Entity, TEntity>
 > {
-  constructor(protected _repository: Repository) {}
+  private create: Repository['create'];
 
-  async createOne(account: TEntity): Promise<TEntity> {
-    try {
-      const result = await this._repository.create(account);
-      if (Array.isArray(result)) {
-        return result[0];
-      }
-      return result;
-    } catch (e) {
-      throw e;
-    }
+  constructor(protected _repository: Repository) {
+    this.create = this._repository.create.bind(this._repository);
   }
 
-  async createMany(accounts: TEntity[]): Promise<TEntity[]> {
-    try {
-      const result = await this._repository.create(accounts);
-      if (Array.isArray(result)) {
-        return result;
-      }
-      return [result];
-    } catch (e) {
-      throw e;
-    }
+  async createOne(entity: TEntity): Promise<TEntity> {
+    return applyToOne(this.create, entity);
+  }
+
+  async createMany(entities: TEntity[]): Promise<TEntity[]> {
+    return applyToMany(this.create, entities);
   }
 }
