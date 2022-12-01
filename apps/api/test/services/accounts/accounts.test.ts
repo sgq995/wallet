@@ -11,9 +11,10 @@ const { PrismaPlugin } = tap.mock('../../../src/plugins/prisma', {
   ...createPrismaMock({
     profile: { id: 0, userId: '' },
     account: {
-      balance: 0,
+      transactionId: 0,
+      // balance: 0,
       createdAt: new Date(),
-      currencyId: 0,
+      // currencyId: 0,
       id: 0,
       name: '',
       profileId: 0,

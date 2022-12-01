@@ -4,7 +4,7 @@ dotenv.config();
 export default {
   app: {
     host: process.env.APP_HOST ?? '0.0.0.0',
-    port: process.env.APP_PORT ?? 5000,
+    port: process.env.APP_PORT ? parseInt(process.env.APP_PORT) : 5000,
   },
   cors: {
     origin: process.env.CORS_ORIGIN?.split(',') ?? 'http://localhost:3000',

@@ -22,23 +22,29 @@ const envToLogger: Record<string, FastifyServerOptions['logger']> = {
 
 const env = process.env.NODE_ENV ?? 'default';
 
-const server = fastify({
+const app = fastify({
   logger: envToLogger[env] ?? true,
 });
 
 void (async () => {
   // Custom plugins
-  await server.register(plugins);
+  await app.register(plugins);
 
-  // Custom services
-  await server.register(services);
+  // Endpoints
+  await app.register(services);
 
   // Listen
-  server.listen(config.app.port, config.app.host, (err) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
+  app.listen(
+    {
+      port: config.app.port,
+      host: config.app.host,
+    },
+    (err) => {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+      app.log.info(app.printRoutes({ commonPrefix: false }));
     }
-    server.log.info(server.printRoutes({ commonPrefix: false }));
-  });
+  );
 })();

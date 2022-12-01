@@ -10,7 +10,7 @@ import { PrismaPlugin } from './prisma';
 
 import config from '../config';
 
-const services: FastifyPluginAsync = fp(async (fastify) => {
+const plugins: FastifyPluginAsync = fp(async (fastify) => {
   await fastify.register(cors, {
     origin: config.cors.origin,
     allowedHeaders: ['Content-Type', ...SuperTokens.getAllCORSHeaders()],
@@ -22,4 +22,4 @@ const services: FastifyPluginAsync = fp(async (fastify) => {
   fastify.log.info(__filename);
 });
 
-export default services;
+export default plugins;
