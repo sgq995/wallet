@@ -15,7 +15,7 @@ import {
 
 import { useAddOneMutation, useUpdateOneMutation } from '../../hooks/entries';
 import { useNotificationSystem } from '../../contexts/notifications';
-import { format } from '../../utils/date-utils';
+import { format } from '../../utilities/date.utility';
 
 import { EntryFormData } from './EntryFormData';
 

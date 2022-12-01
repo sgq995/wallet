@@ -1,5 +1,5 @@
 import config from '../config';
-import { objectToUrlSearchParams } from '../utils/url-utils';
+import { objectToUrlSearchParams } from '../utilities/url.utility';
 
 const BASE_URL = config.app.apiBaseUrl;
 
