@@ -2,7 +2,7 @@ import fastify, { FastifyServerOptions } from 'fastify';
 // import fp from 'fastify-plugin';
 
 import plugins from './plugins';
-import services from './services';
+import services from './services/v1';
 
 import config from './config';
 

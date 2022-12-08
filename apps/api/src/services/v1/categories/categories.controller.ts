@@ -1,15 +1,15 @@
 import { FastifyPluginAsync } from 'fastify';
 
 import { Request, Reply } from 'schemas/categories';
-import { to } from '../../utils/promise-simplify';
+import { to } from '../../../utils/promise-simplify';
 
 import {
   replyCreated,
   replyNotFound,
   replyOK,
-} from '../../utils/response-builder';
-import { DefaultRouteHandlerMethod } from '../../utils/types';
-import { verifySessionHandler } from '../../utils/verify-session-handler';
+} from '../../../utils/response-builder';
+import { DefaultRouteHandlerMethod } from '../../../utils/types';
+import { verifySessionHandler } from '../../../utils/verify-session-handler';
 
 const findAll: DefaultRouteHandlerMethod<{
   Querystring: Request.TQuery;
