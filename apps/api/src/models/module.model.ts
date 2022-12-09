@@ -14,8 +14,8 @@ export class AppModule {
   }
 }
 
-export interface IAsyncModule {
-  init(): Promise<void>;
+export abstract class AsyncAppModule extends AppModule {
+  abstract init(): Promise<void>;
 
-  destroy(): Promise<void>;
+  abstract destroy(): Promise<void>;
 }

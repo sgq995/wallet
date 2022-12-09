@@ -1,9 +1,20 @@
 import { AppModule } from './models/module.model';
 
+type TDependency = unknown;
+type TDefinition = unknown;
+
 export class ModuleSolver {
   private _modules: AppModule[] = [];
-  private _loadedDeps: any[] = [];
-  private _definitions: any[] = [];
+  private _loaded: TDependency[] = [];
+  private _definitions: TDefinition[] = [];
+
+  get modules() {
+    return this._modules;
+  }
+
+  get definitions() {
+    return this._definitions;
+  }
 
   async resolve(modules: typeof AppModule[]): Promise<void> {
     let modulesCount = 0;
@@ -23,9 +34,7 @@ export class ModuleSolver {
       modulesCount += 1;
 
       const requiredDeps = mod.dependencies();
-      const isReady = requiredDeps.every((dep) =>
-        this._loadedDeps.includes(dep)
-      );
+      const isReady = requiredDeps.every((dep) => this._loaded.includes(dep));
       if (!isReady) {
         modules.push(mod);
         continue;
@@ -41,7 +50,7 @@ export class ModuleSolver {
       this._modules.push(instance);
       this._definitions.push(...instance.definitions());
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      this._loadedDeps.push(...mod.provides());
+      this._loaded.push(...mod.provides());
 
       modulesCount = 0;
       modulesLeft = modules.length;
