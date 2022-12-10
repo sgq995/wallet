@@ -22,7 +22,7 @@ void tap.test('ModuleSolver', (t) => {
     const feature = new Feature();
 
     class ModuleA extends AppModule {
-      static provides(): any[] {
+      static provides(): unknown[] {
         return [Feature];
       }
 
@@ -32,7 +32,7 @@ void tap.test('ModuleSolver', (t) => {
     }
 
     class ModuleB extends AppModule {
-      static dependencies(): any[] {
+      static dependencies(): unknown[] {
         return [Feature];
       }
     }
@@ -51,11 +51,11 @@ void tap.test('ModuleSolver', (t) => {
     class FeatureB {}
 
     class ModuleA extends AppModule {
-      static dependencies(): any[] {
+      static dependencies(): unknown[] {
         return [FeatureB];
       }
 
-      static provides(): any[] {
+      static provides(): unknown[] {
         return [FeatureA];
       }
 
@@ -65,11 +65,11 @@ void tap.test('ModuleSolver', (t) => {
     }
 
     class ModuleB extends AppModule {
-      static dependencies(): any[] {
+      static dependencies(): unknown[] {
         return [FeatureA];
       }
 
-      static provides(): any[] {
+      static provides(): unknown[] {
         return [FeatureB];
       }
 

@@ -25,6 +25,7 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
     request.query.take ?? MAX_ALLOWED_TAKE,
     MAX_ALLOWED_TAKE
   );
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   const allEntries = await this.prisma.entry.findMany({
     skip: query.skip,
@@ -71,6 +72,7 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
 }> = async function (request, reply) {
   const entry = request.body;
   const transaction = entry.transaction;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
   const createdEntry = await this.prisma.entry.create({
     data: {
@@ -131,6 +133,7 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TFindOne;
 }> = async function (request, reply) {
   const id = request.params.id;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
 
   const [entry, err] = await to(
@@ -166,6 +169,7 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TUpdateOne;
 }> = async function (request, reply) {
   const id = request.params.id;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
 
   let data, err;
@@ -268,6 +272,7 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
   Reply: Reply.TRemoveOne;
 }> = async function (request, reply) {
   const id = request.params.id;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
 
   let data, err;

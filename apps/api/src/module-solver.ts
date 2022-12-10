@@ -33,7 +33,8 @@ export class ModuleSolver {
 
       modulesCount += 1;
 
-      const requiredDeps = mod.dependencies();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const requiredDeps: any[] = mod.dependencies();
       const isReady = requiredDeps.every((dep) => this._loaded.includes(dep));
       if (!isReady) {
         modules.push(mod);

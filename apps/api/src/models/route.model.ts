@@ -1,15 +1,15 @@
 export type TResolveOrUnknown<T> = [T] extends [undefined] ? unknown : T;
 
-export type TReplyDefault = any;
+export type TReplyDefault = unknown;
 
 export interface IReply<Data = TReplyDefault> {
   status: number;
   data?: Data;
 }
 
-export type TRouteParamsDefault = any;
-export type TRouteQueryDefault = any;
-export type TRouteBodyDefault = any;
+export type TRouteParamsDefault = unknown;
+export type TRouteQueryDefault = unknown;
+export type TRouteBodyDefault = unknown;
 
 export interface IRouteArgs {
   Params: TRouteParamsDefault;

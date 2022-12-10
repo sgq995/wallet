@@ -1,13 +1,4 @@
-import {
-  ContextConfigDefault,
-  FastifyReply,
-  RawReplyDefaultExpression,
-  RawRequestDefaultExpression,
-  RawServerBase,
-  RawServerDefault,
-} from 'fastify';
-
-import { RouteGenericInterface } from 'fastify/types/route';
+import { FastifyReply } from 'fastify';
 
 export function replyOK<T>(reply: FastifyReply, data: T) {
   return reply.status(200).send({

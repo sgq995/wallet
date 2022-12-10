@@ -1,11 +1,14 @@
 export class AppModule {
-  constructor(...args: any[]) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(..._args: unknown[]) {
+    // args
+  }
 
-  static dependencies(): any[] {
+  static dependencies(): unknown[] {
     return [];
   }
 
-  static provides(): any[] {
+  static provides(): unknown[] {
     return [];
   }
 
