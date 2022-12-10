@@ -27,7 +27,6 @@ model Currency {
   decimal      String        @default(".") @db.Char(1)
   separator    String        @default(",") @db.Char(1)
   transactions Transaction[]
-  accounts     Account[]
 }
 
 model Transaction {
@@ -39,6 +38,7 @@ model Transaction {
   currency   Currency @relation(fields: [currencyId], references: [id])
   currencyId Int
   entry      Entry?
+  account    Account?
 }
 
 model Entry {
@@ -70,16 +70,15 @@ model EntryType {
 }
 
 model Account {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  name       String   @db.VarChar(255)
-  balance    Float    @default(0)
-  entries    Entry[]
-  profile    Profile  @relation(fields: [profileId], references: [id])
-  profileId  Int
-  currency   Currency @relation(fields: [currencyId], references: [id])
-  currencyId Int
+  id            Int         @id @default(autoincrement())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  name          String      @db.VarChar(255)
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId Int         @unique
+  entries       Entry[]
+  profile       Profile     @relation(fields: [profileId], references: [id])
+  profileId     Int
 }
 
 model Category {

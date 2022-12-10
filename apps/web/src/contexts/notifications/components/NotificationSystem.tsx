@@ -1,4 +1,4 @@
-import { Box, Stack } from '../../../components/Material';
+import { Box, Stack } from '@mui/material';
 
 import Notification, { INotificationProps } from './Notification';
 

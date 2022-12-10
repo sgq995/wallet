@@ -23,7 +23,7 @@ function useDataQuery<TData = unknown, TError = unknown>(
         payload: (response as any).data,
       });
     }
-  }, [response]);
+  }, [response, dispatch, type]);
 
   return { isLoading };
 }

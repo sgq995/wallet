@@ -1,9 +1,17 @@
+import { useCallback } from 'react';
+
 import type {
   FormControlProps,
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-import { useCallback } from 'react';
+import {
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from '@mui/material';
 
 import { useFindAllQuery } from '../../hooks/entry-types';
 
@@ -12,25 +20,17 @@ import AsyncViewer, {
   AsyncError,
   AsyncLoading,
 } from '../AsyncViewer';
+import { useControlledFormComponent } from 'forms';
+import { toInteger } from 'lodash';
 
-import {
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '../Material';
-
-import { useFormController } from './hooks';
-
-interface IFormEntryTypeFieldProps {
+export interface IFormEntryTypeFieldProps {
   fullWidth?: FormControlProps['fullWidth'];
   required?: FormControlProps['required'];
   id?: SelectProps['id'];
   name?: SelectProps['name'];
 }
 
-export default function FormEntryTypeField({
+export function FormEntryTypeField({
   fullWidth,
   required,
   id,
@@ -48,24 +48,19 @@ export default function FormEntryTypeField({
   } = useFindAllQuery();
 
   const validator = useCallback(
-    (value: string) => {
-      const valueNumber = parseInt(value);
-
-      if (isNaN(valueNumber)) {
-        return false;
-      }
-
-      return !!response?.data.some(({ id }) => valueNumber === id);
+    (value: number) => {
+      return !!response?.data.some(({ id }) => value === id);
     },
     [response]
   );
 
-  const [value, error, onChange] = useFormController(fieldName, {
+  const { value, onChange, isValid } = useControlledFormComponent<number>({
+    name: fieldName,
     validator,
   });
 
   return (
-    <FormControl required={required} fullWidth={fullWidth} error={error}>
+    <FormControl required={required} fullWidth={fullWidth} error={!isValid}>
       <AsyncViewer isLoading={isLoading} isError={isError}>
         <AsyncLoading>
           <CircularProgress />
@@ -82,8 +77,8 @@ export default function FormEntryTypeField({
             label="Type"
             variant="outlined"
             value={value}
-            onChange={({ target: { value } }: SelectChangeEvent<string>) =>
-              onChange(value)
+            onChange={({ target: { value } }: SelectChangeEvent<number>) =>
+              onChange(toInteger(value))
             }
           >
             {response?.data.map(({ id, name }) => (

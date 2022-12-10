@@ -6,8 +6,8 @@ import {
   Paper,
   Stack,
   Typography,
-} from '../components/Material';
-import { yyyyMMdd } from '../utils/date-utils';
+} from '@mui/material';
+import { yyyyMMdd } from '../utilities/date.utility';
 import { DeleteIcon } from './IconsMaterial';
 
 interface EntryPaperProps {

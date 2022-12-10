@@ -1,5 +1,5 @@
 import config from '../config';
-import { objectToUrlSearchParams } from '../utils/url-utils';
+import { objectToUrlSearchParams } from '../utilities/url.utility';
 
 const BASE_URL = config.app.apiBaseUrl;
 
@@ -143,6 +143,10 @@ export class EndpointService<
     return this.request<TReplyUpdateOne>(`/${id}`, {
       ...init,
       method: 'PUT',
+      headers: {
+        ...(typeof init?.headers === 'object' ? init.headers : {}),
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(body),
     });
   };

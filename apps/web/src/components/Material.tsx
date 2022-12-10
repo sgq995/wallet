@@ -108,9 +108,18 @@ export const IconButton = dynamic(() => import('@mui/material/IconButton'));
 
 export const InputLabel = dynamic(() => import('@mui/material/InputLabel'));
 
-export const List = dynamic(() => import('@mui/material/List'));
+export const List = dynamic(async () => {
+  await import('@mui/material/ListItemText');
+  await import('@mui/material/ListItem');
 
-export const DynamicListItem = dynamic(() => import('@mui/material/ListItem'));
+  return import('@mui/material/List');
+});
+
+export const DynamicListItem = dynamic(async () => {
+  await import('@mui/material/ListItemText');
+
+  return import('@mui/material/ListItem');
+});
 
 export const ListItem = <D extends ElementType, P>(
   props: ListItemProps<D, P>

@@ -1,4 +1,4 @@
-import { yyyyMMdd } from '../../src/utils/date-utils';
+import { yyyyMMdd } from '../../src/utilities/date.utility';
 
 describe('date-utils', () => {
   it('should return formatted date as string', () => {

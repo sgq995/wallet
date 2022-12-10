@@ -1,16 +1,13 @@
-import type { FormControlProps, TextFieldProps } from '@mui/material';
+import { FormTextField, IFormTextFieldProps } from './FormTextField';
 
-import { FormControl, TextField } from '../Material';
-import { useFormController } from './hooks';
-
-interface IFormDescriptionFieldProps {
-  fullWidth?: FormControlProps['fullWidth'];
-  required?: TextFieldProps['required'];
-  id?: TextFieldProps['id'];
-  name?: TextFieldProps['name'];
+export interface IFormDescriptionFieldProps {
+  fullWidth?: IFormTextFieldProps['fullWidth'];
+  required?: IFormTextFieldProps['required'];
+  id?: IFormTextFieldProps['id'];
+  name?: IFormTextFieldProps['name'];
 }
 
-export default function FormDescriptionField({
+export function FormDescriptionField({
   fullWidth,
   required,
   id,
@@ -18,20 +15,13 @@ export default function FormDescriptionField({
 }: IFormDescriptionFieldProps) {
   const fieldName = name ?? 'description';
 
-  const [value, error, onChange] = useFormController(fieldName);
-
   return (
-    <FormControl fullWidth={fullWidth} error={error}>
-      <TextField
-        required={required}
-        id={id}
-        name={name}
-        label="Description"
-        variant="outlined"
-        multiline
-        value={value}
-        onChange={({ target: { value } }) => onChange(value)}
-      />
-    </FormControl>
+    <FormTextField
+      fullWidth={fullWidth}
+      required={required}
+      id={id}
+      name={fieldName}
+      label="Description"
+    />
   );
 }

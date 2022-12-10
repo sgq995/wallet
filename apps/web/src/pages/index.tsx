@@ -1,31 +1,15 @@
-import dynamic from 'next/dynamic';
+import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
-import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
-import EntryList from '../components/entries/EntryList';
+import { Typography } from '@mui/material';
 
-import { Typography } from '../components/Material';
+import { EntryList } from '../components/entries/EntryList';
 
-const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
-  new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
-    (res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
-  ),
-  { ssr: false }
-);
-
-function Home() {
+export default function Home() {
   return (
-    <>
+    <SessionAuth>
       <Typography variant="h1">Home</Typography>
 
       <EntryList />
-    </>
-  );
-}
-
-export default function ProtectedHome() {
-  return (
-    <ThirdPartyEmailPasswordAuthNoSSR>
-      <Home />
-    </ThirdPartyEmailPasswordAuthNoSSR>
+    </SessionAuth>
   );
 }

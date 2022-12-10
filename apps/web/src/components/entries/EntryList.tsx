@@ -1,103 +1,143 @@
-import { useMemo, useState } from 'react';
-import { yyyyMMdd } from '../../utils/date-utils';
+import { useEffect, useMemo, useState } from 'react';
 
-import { useFindAllQuery, useRemoveOneMutation } from '../../hooks/entries';
+import {
+  List,
+  ListItem,
+  CircularProgress,
+  Box,
+  Button,
+  Typography,
+} from '@mui/material';
 
-import { Stack, List, CircularProgress, Typography, Box } from '../Material';
-import EntryItem from './EntryItem';
-import DeleteDialog from '../dialogs/DeleteDialog';
-import { transactionToAmount } from './utils';
-import { useSystemContext } from '../../contexts/system';
+import { Reply, TEntryModel } from 'schemas/entries';
 
-interface IEntryListProps {}
+import { useNotificationSystem } from '../../contexts/notifications';
 
-export default function EntryList({}: IEntryListProps) {
-  const { entryTypes } = useSystemContext();
+import {
+  useFindAllInfiniteQuery,
+  useRemoveOneMutation,
+} from '../../hooks/entries';
+import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
+
+import { EntryItem } from './EntryItem';
+import { EntryDeleteDialog } from './EntryDeleteDialog';
+import { EntryEditDialog } from './EntryEditDialog';
+import { InfiniteList } from '../infinite-list';
+
+export interface IEntryListProps {}
+
+export const EntryList: React.FC<IEntryListProps> = ({}) => {
+  const { error: notifyError } = useNotificationSystem();
 
   const {
     isLoading,
     isError,
-    data: body,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+    data,
     error,
-  } = useFindAllQuery({ sort: 'date', desc: true });
+  } = useFindAllInfiniteQuery({
+    sort: 'date',
+    desc: true,
+  });
   const { mutate } = useRemoveOneMutation();
 
+  useEffect(() => {
+    if (isError) {
+      notifyError('Something goes wrong');
+    }
+  }, [isError, notifyError]);
+
   const [id, setId] = useState(-1);
-  const [open, setOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const body = useMemo<Reply.TFindAllData['data']>(
+    () =>
+      data?.pages?.reduce((all, current) => {
+        return all.concat(current.data);
+      }, []) ?? [],
+    [data]
+  );
 
   const selectedEntry = useMemo(
-    () => body?.data.find(({ id: entryId }) => id === entryId),
+    () => body.find(({ id: entryId }) => id === entryId) ?? ({} as TEntryModel),
     [body, id]
   );
 
   const handleClose = () => {
-    setOpen(false);
+    setDeleteDialogOpen(false);
+  };
+
+  const handleEdit = (id) => {
+    setId(id);
+    setEditDialogOpen(true);
   };
 
   const handleDelete = () => {
     mutate(id);
-    setOpen(false);
+    setDeleteDialogOpen(false);
   };
 
   const handleDeleteConfirm = (id) => {
     setId(id);
-    setOpen(true);
+    setDeleteDialogOpen(true);
   };
 
-  if (isLoading) {
-    return <CircularProgress />;
-  }
+  const handleLoadMore = () => {
+    fetchNextPage();
+  };
 
   if (isError) {
-    return <>{error}</>;
+    return (
+      <Box display="flex" justifyContent="center" flexDirection="column">
+        <Typography variant="body2">Something goes wrong</Typography>
+        <Button>Retry</Button>
+      </Box>
+    );
   }
 
-  if (body.data.length === 0) {
-    return <>Empty</>;
+  if (body.length === 0) {
+    return (
+      <Box display="flex" justifyContent="center">
+        <Button>Add Entry</Button>
+      </Box>
+    );
   }
 
   return (
     <>
-      <List>
-        {body.data.map((props) => (
+      <InfiniteList
+        list={body}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        hasNextPage={hasNextPage}
+        onLoadMore={handleLoadMore}
+      >
+        {(entry: TEntryModel) => (
           <EntryItem
-            {...props}
-            key={props.id}
-            onDelete={() => handleDeleteConfirm(props.id)}
+            entry={entry}
+            key={entry.id}
+            onEdit={() => handleEdit(entry.id)}
+            onDelete={() => handleDeleteConfirm(entry.id)}
           />
-        ))}
-      </List>
+        )}
+      </InfiniteList>
 
-      <DeleteDialog
-        title="Delete Entry"
-        open={open}
+      <EntryEditDialog
+        entry={selectedEntry}
+        isOpen={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+      />
+
+      <EntryDeleteDialog
+        entry={selectedEntry}
+        isOpen={deleteDialogOpen}
         onCancel={handleClose}
         onClose={handleClose}
         onDelete={handleDelete}
-      >
-        <Box mb={2}>
-          <Typography variant="body1">
-            Are you sure you want to delete?
-          </Typography>
-        </Box>
-
-        <Stack spacing={2}>
-          <Typography variant="body2">
-            {entryTypes.find(({ id }) => id === selectedEntry?.typeId)?.name}
-          </Typography>
-
-          <Typography variant="body2">{selectedEntry?.description}</Typography>
-
-          <Stack direction="row" justifyContent="space-between">
-            <Typography sx={{ fontWeight: 'bold' }} variant="body2">
-              {yyyyMMdd(selectedEntry?.date)}
-            </Typography>
-            <Typography sx={{ fontWeight: 'bold' }} variant="body2">
-              {transactionToAmount(selectedEntry?.transaction)}
-            </Typography>
-          </Stack>
-        </Stack>
-      </DeleteDialog>
+      />
     </>
   );
-}
+};

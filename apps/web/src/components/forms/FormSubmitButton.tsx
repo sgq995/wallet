@@ -1,34 +1,36 @@
-import { useContext } from 'react';
-
-import type { ButtonProps } from '@mui/material/Button';
-
-import { Button } from '../Material';
+import { Button } from '@mui/material';
+import {
+  useFormDataSelector,
+  useFormResetEvent,
+  useFormValidityCheck,
+} from 'forms';
 import { SaveIcon } from '../IconsMaterial';
 
-import { FormContext } from './context';
-import { IFormState } from './state';
-
-interface IFormSubmitButtonProps {
-  onClick?: (state: IFormState) => void;
+export interface IFormSubmitButtonProps<T> {
+  onClick?: (state: T) => void;
   disabledOnError?: boolean;
   resetOnSubmit?: boolean;
 }
 
-export default function FormSubmitButton({
+export function FormSubmitButton<T>({
   onClick,
   disabledOnError,
   resetOnSubmit,
-}: IFormSubmitButtonProps) {
-  const { state, dispatch } = useContext(FormContext);
+}: IFormSubmitButtonProps<T>) {
+  const getData = useFormDataSelector();
+  const validValues = useFormValidityCheck();
+  const reset = useFormResetEvent();
 
   const isDisabled =
-    disabledOnError && Object.values(state.error).some((value) => value);
+    disabledOnError && Object.values(validValues).some((isValid) => !isValid);
 
   const handleClick = () => {
-    onClick?.(state);
+    const data: any = getData();
+
+    onClick?.(data);
 
     if (resetOnSubmit) {
-      dispatch.reset();
+      reset();
     }
   };
 

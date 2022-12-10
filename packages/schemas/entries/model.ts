@@ -10,14 +10,13 @@ export const EntryModel = Type.Object({
   transaction: Type.Optional(TransactionModel),
   transactionId: Id(),
   date: Type.String({
-    description: 'yyyy-MM-DD',
+    description: 'YYYY-MM-DD',
     pattern: '\\d{4}-\\d{2}-\\d{2}',
   }),
   typeId: Id(),
   accountId: Nullable(Id()),
   categoryId: Nullable(Id()),
   tagId: Nullable(Id()),
-  // profileId: Id(),
 });
 
 export type TEntryModel = Static<typeof EntryModel>;

@@ -1,0 +1,7 @@
+.eslintrc.js
+**/*.js
+build/
+dist/
+node_modules/
+.turbo/
+.nyc_output/

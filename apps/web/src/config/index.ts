@@ -1,4 +1,4 @@
-export default {
+const config = {
   app: {
     apiBaseUrl:
       process.env.NEXT_PUBLIC_APP_API_BASE_URL ?? 'http://localhost:5000',
@@ -30,3 +30,5 @@ export default {
     },
   },
 };
+
+export default config;

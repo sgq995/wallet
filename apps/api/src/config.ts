@@ -4,14 +4,14 @@ dotenv.config();
 export default {
   app: {
     host: process.env.APP_HOST ?? '0.0.0.0',
-    port: process.env.APP_PORT ?? 5000,
+    port: process.env.APP_PORT ? parseInt(process.env.APP_PORT) : 5000,
   },
   cors: {
     origin: process.env.CORS_ORIGIN?.split(',') ?? 'http://localhost:3000',
   },
   supertokens: {
     connectionURI:
-      process.env.SUPERTOKENS_CONNECTION_URI ?? 'http://supertokens:3567',
+      process.env.SUPERTOKENS_CONNECTION_URI ?? 'http://localhost:3567',
     appName: process.env.SUPERTOKENS_APP_NAME ?? 'Personal Budget',
     apiDomain: process.env.SUPERTOKENS_API_DOMAIN ?? 'http://localhost:5000',
     websiteDomain:

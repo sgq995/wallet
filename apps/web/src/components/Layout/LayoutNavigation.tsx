@@ -1,11 +1,8 @@
 import { useState } from 'react';
 
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-import ThirdPartyEmailPassword, {
-  signOut,
-} from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
+import { signOut } from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
 
 import {
   BottomNavigation,
@@ -14,30 +11,17 @@ import {
   DialogContent,
   DialogTitle,
   Fab,
+  Stack,
   Tab,
   Tabs,
-} from '../Material';
+} from '@mui/material';
 
-import {
-  AccountsIcon,
-  AddIcon,
-  BalanceSheetIcon,
-  CashFlowIcon,
-  HomeIcon,
-  LogoutIcon,
-} from '../IconsMaterial';
+import { AccountsIcon, AddIcon, HomeIcon, LogoutIcon } from '../IconsMaterial';
 
-import CategoryForm from '../CategoryForm';
-import AccountForm from '../AccountForm';
-import EntryForm from '../entries/EntryForm';
-import ResponsiveDialog from '../dialogs/ResponsiveDialog';
-
-const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
-  new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>(
-    (res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
-  ),
-  { ssr: false }
-);
+import { AccountForm } from '../accounts';
+import { CategoryForm } from '../categories';
+import { EntryForm } from '../entries';
+import { ResponsiveDialog } from '../dialogs/ResponsiveDialog';
 
 interface Route {
   path: string;
@@ -55,16 +39,6 @@ const routes: Route[] = [
     path: '/accounts',
     label: 'Accounts',
     icon: <AccountsIcon />,
-  },
-  {
-    path: '/balance_sheet',
-    label: 'Balance Sheet',
-    icon: <BalanceSheetIcon />,
-  },
-  {
-    path: '/cash_flow',
-    label: 'Cash Flow',
-    icon: <CashFlowIcon />,
   },
 ];
 
@@ -108,36 +82,31 @@ export default function LayoutNavigation() {
   };
 
   return (
-    <BottomNavigation
-      showLabels
-      sx={{ flexGrow: 1 }}
-      value={route}
-      onChange={handleOnChange}
-    >
-      {routes.map((route) => (
-        <BottomNavigationAction
-          key={route.path}
-          label={route.label}
-          icon={route.icon}
-          onMouseOver={(event) => router.prefetch(route.path)}
-        />
-      ))}
+    <Stack direction="row" justifyContent="center" sx={{ flexGrow: 1 }}>
+      <BottomNavigation showLabels value={route} onChange={handleOnChange}>
+        {routes.map((route) => (
+          <BottomNavigationAction
+            key={route.path}
+            label={route.label}
+            icon={route.icon}
+            onMouseOver={(event) => router.prefetch(route.path)}
+          />
+        ))}
 
-      <ThirdPartyEmailPasswordAuthNoSSR requireAuth={false}>
         <BottomNavigationAction
           label="Logout"
           icon={<LogoutIcon />}
           onClick={handleOnLogout}
         />
-      </ThirdPartyEmailPasswordAuthNoSSR>
+      </BottomNavigation>
 
-      <Box paddingRight={2} sx={{ transform: 'translateY(-50%)' }}>
+      <Box sx={{ transform: 'translateY(-50%)' }}>
         <Fab color="primary" onClick={handleClickOpen}>
           <AddIcon />
         </Fab>
       </Box>
 
-{/* TODO: fullScreen */}
+      {/* TODO: fullScreen */}
       <ResponsiveDialog open={isFormDialogOpen} onClose={handleClickClose}>
         {/* TODO: AppBar & Close Button */}
         <DialogTitle>New Data</DialogTitle>
@@ -151,7 +120,6 @@ export default function LayoutNavigation() {
           </Box>
           <Box p={2}>
             <Box sx={{ display: selectedForm === 0 ? 'block' : 'none' }}>
-              {/* <EntryForm /> */}
               <EntryForm />
             </Box>
 
@@ -165,6 +133,6 @@ export default function LayoutNavigation() {
           </Box>
         </DialogContent>
       </ResponsiveDialog>
-    </BottomNavigation>
+    </Stack>
   );
 }

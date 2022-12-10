@@ -1,4 +1,4 @@
-import { NumberOptions, Type } from '@sinclair/typebox';
+import { NumericOptions, Type } from '@sinclair/typebox';
 
-export const Id = (options?: NumberOptions) =>
+export const Id = (options?: NumericOptions) =>
   Type.Number({ minimum: 1, ...options });

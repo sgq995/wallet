@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { Backdrop, CircularProgress } from '../../../components/Material';
+import { Backdrop, CircularProgress } from '@mui/material';
 
 import { useSystemState } from '../state';
 import { SystemContext } from '../SystemContext';
