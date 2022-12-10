@@ -8,7 +8,7 @@ import SuperTokens from 'supertokens-node';
 import { SuperTokensPlugin } from './supertokens';
 import { PrismaPlugin } from './prisma';
 
-import config from '../config';
+import config from '../../config';
 
 const plugins: FastifyPluginAsync = fp(async (fastify) => {
   await fastify.register(cors, {

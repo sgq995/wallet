@@ -1,5 +1,7 @@
 import fastify, { FastifyInstance, FastifyServerOptions } from 'fastify';
 import config from './config';
+import plugins from './legacy/plugins';
+import services from './legacy/services/v1';
 import { IController } from './models/controller.model';
 import { IFramework } from './models/framework.model';
 import { AsyncAppModule } from './models/module.model';
@@ -20,25 +22,6 @@ const envToLogger: Record<string, FastifyServerOptions['logger']> = {
 };
 
 const env = process.env.NODE_ENV ?? 'default';
-
-const app = fastify({
-  logger: envToLogger[env] ?? true,
-});
-
-async function runApp() {
-  try {
-    // TODO: register routes
-
-    await app.listen({ host: config.app.host, port: config.app.port });
-
-    app.log.info(app.printRoutes({ commonPrefix: false }));
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
-}
-
-// export { app, runApp };
 
 export class FastifyFramework implements IFramework {
   private _instance: FastifyInstance = fastify({
@@ -108,10 +91,15 @@ export class FastifyFramework implements IFramework {
 
   async listen() {
     try {
+      await this._instance.register(plugins);
+
+      await this._instance.register(services);
+
       await this._instance.listen({
         host: config.app.host,
         port: config.app.port,
       });
+      
       this._instance.log.info(
         this._instance.printRoutes({ commonPrefix: false })
       );

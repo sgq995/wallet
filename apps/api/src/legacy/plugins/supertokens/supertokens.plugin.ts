@@ -10,7 +10,7 @@ import Session from 'supertokens-node/recipe/session';
 import { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 
-import config from '../../config';
+import config from '../../../config';
 
 supertokens.init({
   framework: 'fastify',
