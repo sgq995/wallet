@@ -1,8 +1,15 @@
+export type TResolveOrUnknown<T> = [T] extends [undefined] ? unknown : T;
+
+export type TReplyDefault = any;
+
+export interface IReply<Data = TReplyDefault> {
+  status: number;
+  data?: Data;
+}
+
 export type TRouteParamsDefault = any;
 export type TRouteQueryDefault = any;
 export type TRouteBodyDefault = any;
-
-export type TResolveOrUnknown<T> = [T] extends [undefined] ? unknown : T;
 
 export interface IRouteArgs {
   Params: TRouteParamsDefault;
@@ -19,8 +26,12 @@ export interface IRouteHandlerArgs<
 }
 
 export interface IRouteGenericHandler {
-  <Reply = unknown>(): Reply | never;
-  <Request extends IRouteArgs = IRouteArgs, Reply = unknown>(
+  <Data, Reply extends IReply<Data> = IReply<Data>>(): Reply | never;
+  <
+    Data,
+    Request extends IRouteArgs = IRouteArgs,
+    Reply extends IReply<Data> = IReply<Data>
+  >(
     args: IRouteHandlerArgs<Request>
   ): Reply | never;
 }

@@ -1,6 +1,8 @@
 import { IRoute } from './route.model';
 
 export interface IController {
+  prefix?: string;
+
   routes(): IRoute[];
 }
 

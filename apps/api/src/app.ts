@@ -1,9 +1,7 @@
-import { AccountsModule } from './accounts/accounts.module';
 import { IController, isController } from './models/controller.model';
 import { IFramework } from './models/framework.model';
-import { AppModule } from './models/module.model';
+import { AppModule, AsyncAppModule } from './models/module.model';
 import { ModuleSolver } from './module-solver';
-import { PrismaModule } from './prisma/prisma.module';
 
 export class App {
   private _moduleSolver: ModuleSolver = new ModuleSolver();
@@ -11,13 +9,15 @@ export class App {
   constructor(private _framework: IFramework) {}
 
   modules(): typeof AppModule[] {
-    return [AccountsModule, PrismaModule];
+    return [];
   }
 
   async start() {
     await this._moduleSolver.resolve(this.modules());
 
-    const modules: AppModule[] = this._moduleSolver.modules;
+    const modules: AsyncAppModule[] = this._moduleSolver.modules.filter(
+      (mod): mod is AsyncAppModule => mod instanceof AsyncAppModule
+    );
     await Promise.all(modules.map((mod) => this._framework.register(mod)));
 
     const controllers: IController[] =

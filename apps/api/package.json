@@ -4,15 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "build": "run-s typescript babel",
-    "start": "node dist/index.js",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
     "migrate:dev": "prisma migrate dev",
     "seed": "prisma db seed",
     "typescript": "tsc -p tsconfig.json",
     "babel": "babel build -d dist",
     "lint": "eslint .",
-    "test": "tap --ts --no-coverage"
+    "test": "cross-env NODE_ENV=test tap --ts --no-coverage"
   },
   "dependencies": {
     "@fastify/cors": "^8.1.1",
@@ -31,6 +31,7 @@
     "@types/node": "^18.11.9",
     "@types/tap": "^15.0.7",
     "babelconfig": "*",
+    "cross-env": "^7.0.3",
     "eslint": "^8.26.0",
     "eslintconfig": "*",
     "nodemon": "^2.0.20",
