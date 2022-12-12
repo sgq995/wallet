@@ -1,6 +1,6 @@
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
-import { TObject, TSchema, Type } from '@sinclair/typebox';
-import fastify, { FastifyInstance, FastifyServerOptions } from 'fastify';
+import { TSchema, Type } from '@sinclair/typebox';
+import fastify, { FastifyServerOptions } from 'fastify';
 import config from './config';
 import plugins from './legacy/plugins';
 import services from './legacy/services/v1';
@@ -89,6 +89,7 @@ export class FastifyFramework implements IFramework {
                 const { status, data } = route.handler({
                   params: request.params,
                   query: request.query,
+                  headers: request.headers,
                   body: request.body,
                 });
 

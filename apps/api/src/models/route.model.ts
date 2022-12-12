@@ -1,47 +1,52 @@
+import { TSchema } from '@sinclair/typebox';
 import { HttpStatus } from '../utilities/http.utility';
 
-export type TResolveOrUnknown<T> = [T] extends [undefined] ? unknown : T;
+type UndefinedToUnknown<T> = [T] extends [undefined] ? unknown : T;
 
-export type TReplyDefault = unknown;
+export type THttpVerb = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
-export interface IReply<Data = TReplyDefault> {
+type TParamsDefault = unknown;
+type TQueryDefault = unknown;
+type THeadersDefault = unknown;
+type TBodyDefault = unknown;
+
+export interface IRequestType {
+  Params?: TParamsDefault;
+  Query?: TQueryDefault;
+  Headers?: THeadersDefault;
+  Body?: TBodyDefault;
+}
+
+export interface IRequest<Request extends IRequestType = IRequestType> {
+  params: UndefinedToUnknown<Request['Params']>;
+  query: UndefinedToUnknown<Request['Query']>;
+  headers: UndefinedToUnknown<Request['Headers']>;
+  body: UndefinedToUnknown<Request['Body']>;
+}
+
+type TReplyDefault = unknown;
+
+export interface IReplyType {
+  Reply?: TReplyDefault;
+}
+
+export interface IReply<Reply extends IReplyType = IReplyType> {
   status: HttpStatus;
-  data?: Data;
+  data: UndefinedToUnknown<Reply['Reply']>;
 }
 
-export type TRouteParamsDefault = unknown;
-export type TRouteQueryDefault = unknown;
-export type TRouteBodyDefault = unknown;
+export interface IRouteArgs extends IRequestType, IReplyType {}
 
-export interface IRouteArgs {
-  Params: TRouteParamsDefault;
-  Query: TRouteQueryDefault;
-  Body: TRouteBodyDefault;
-}
-
-export interface IRequest<Args extends Partial<IRouteArgs> = IRouteArgs> {
-  params: TResolveOrUnknown<Args['Params']>;
-  query: TResolveOrUnknown<Args['Query']>;
-  body: TResolveOrUnknown<Args['Body']>;
-}
-
-export interface IRouteHandler {
-  <Data = unknown, Reply extends IReply<Data> = IReply<Data>>(): Reply | never;
-  <
-    Data = unknown,
-    Request extends IRouteArgs = IRouteArgs,
-    Reply extends IReply<Data> = IReply<Data>
-  >(
-    args: IRequest<Request>
-  ): Reply | never;
-}
+export type TRouteHandler<RouteArgs extends IRouteArgs = IRouteArgs> = (
+  args: IRequest<RouteArgs>
+) => IReply<RouteArgs> | never;
 
 export interface ISchemaType {
-  Params: unknown;
-  Query: unknown;
-  Headers: unknown;
-  Body: unknown;
-  Reply: unknown;
+  Params?: TSchema;
+  Query?: TSchema;
+  Headers?: Record<string, TSchema>;
+  Body?: TSchema;
+  Reply?: Record<number, TSchema>;
 }
 
 export interface IRouteSchema<SchemaType extends ISchemaType = ISchemaType> {
@@ -52,9 +57,9 @@ export interface IRouteSchema<SchemaType extends ISchemaType = ISchemaType> {
   reply?: SchemaType['Reply'];
 }
 
-export interface IRoute {
+export interface IRoute<RouteArgs extends IRouteArgs = IRouteArgs> {
   endpoint: string;
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
-  handler: IRouteHandler;
+  method: THttpVerb;
+  handler: TRouteHandler<RouteArgs>;
   schema?: IRouteSchema;
 }
