@@ -1,13 +1,24 @@
-const HTTP_STATUS_MAP: Record<number, string> = {
-  200: 'OK',
-  201: 'Created',
-  403: 'Forbidden',
-  404: 'Not Found',
-  500: 'Internal Server Error',
-  501: 'Not Implemented',
+export enum HttpStatus {
+  Ok = 200,
+  Created = 201,
+
+  Forbidden = 403,
+  NotFound = 404,
+
+  InternalServerError = 500,
+  NotImplemented = 501,
+}
+
+const HTTP_STATUS_MAP: Record<HttpStatus, string> = {
+  [HttpStatus.Ok]: 'OK',
+  [HttpStatus.Created]: 'Created',
+  [HttpStatus.Forbidden]: 'Forbidden',
+  [HttpStatus.NotFound]: 'Not Found',
+  [HttpStatus.InternalServerError]: 'Internal Server Error',
+  [HttpStatus.NotImplemented]: 'Not Implemented',
 };
 
-export function httpStatusToString(status: number) {
+export function httpStatusToString(status: HttpStatus) {
   return HTTP_STATUS_MAP[status];
 }
 

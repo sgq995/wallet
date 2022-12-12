@@ -1,9 +1,11 @@
+import { HttpStatus } from '../utilities/http.utility';
+
 export type TResolveOrUnknown<T> = [T] extends [undefined] ? unknown : T;
 
 export type TReplyDefault = unknown;
 
 export interface IReply<Data = TReplyDefault> {
-  status: number;
+  status: HttpStatus;
   data?: Data;
 }
 
@@ -17,27 +19,42 @@ export interface IRouteArgs {
   Body: TRouteBodyDefault;
 }
 
-export interface IRouteHandlerArgs<
-  Args extends Partial<IRouteArgs> = IRouteArgs
-> {
+export interface IRequest<Args extends Partial<IRouteArgs> = IRouteArgs> {
   params: TResolveOrUnknown<Args['Params']>;
   query: TResolveOrUnknown<Args['Query']>;
   body: TResolveOrUnknown<Args['Body']>;
 }
 
-export interface IRouteGenericHandler {
-  <Data, Reply extends IReply<Data> = IReply<Data>>(): Reply | never;
+export interface IRouteHandler {
+  <Data = unknown, Reply extends IReply<Data> = IReply<Data>>(): Reply | never;
   <
-    Data,
+    Data = unknown,
     Request extends IRouteArgs = IRouteArgs,
     Reply extends IReply<Data> = IReply<Data>
   >(
-    args: IRouteHandlerArgs<Request>
+    args: IRequest<Request>
   ): Reply | never;
+}
+
+export interface ISchemaType {
+  Params: unknown;
+  Query: unknown;
+  Headers: unknown;
+  Body: unknown;
+  Reply: unknown;
+}
+
+export interface IRouteSchema<SchemaType extends ISchemaType = ISchemaType> {
+  params?: SchemaType['Params'];
+  query?: SchemaType['Query'];
+  headers?: SchemaType['Headers'];
+  body?: SchemaType['Body'];
+  reply?: SchemaType['Reply'];
 }
 
 export interface IRoute {
   endpoint: string;
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
-  handler: IRouteGenericHandler;
+  handler: IRouteHandler;
+  schema?: IRouteSchema;
 }

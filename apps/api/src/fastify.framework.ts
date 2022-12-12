@@ -1,3 +1,5 @@
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { TObject, TSchema, Type } from '@sinclair/typebox';
 import fastify, { FastifyInstance, FastifyServerOptions } from 'fastify';
 import config from './config';
 import plugins from './legacy/plugins';
@@ -5,7 +7,11 @@ import services from './legacy/services/v1';
 import { IController } from './models/controller.model';
 import { IFramework } from './models/framework.model';
 import { AsyncAppModule } from './models/module.model';
-import { HttpError, httpStatusToString } from './utilities/http.utility';
+import {
+  HttpError,
+  HttpStatus,
+  httpStatusToString,
+} from './utilities/http.utility';
 
 const envToLogger: Record<string, FastifyServerOptions['logger']> = {
   development: {
@@ -24,9 +30,9 @@ const envToLogger: Record<string, FastifyServerOptions['logger']> = {
 const env = process.env.NODE_ENV ?? 'default';
 
 export class FastifyFramework implements IFramework {
-  private _instance: FastifyInstance = fastify({
+  private _instance = fastify({
     logger: envToLogger[env] ?? true,
-  });
+  }).withTypeProvider<TypeBoxTypeProvider>();
 
   async register(module: AsyncAppModule): Promise<void> {
     await this._instance.register(async (app) => {
@@ -45,6 +51,38 @@ export class FastifyFramework implements IFramework {
           app.route({
             method: route.method,
             url: route.endpoint,
+            schema: {
+              params: route.schema?.params,
+              querystring: route.schema?.query,
+              headers: route.schema?.headers,
+              body: route.schema?.body,
+              response: route.schema?.reply
+                ? Object.keys(route.schema.reply).reduce((schemas, key) => {
+                    const status = parseInt(key);
+                    const reply: Record<number, TSchema> = route.schema
+                      ?.reply as Record<number, TSchema>;
+                    const schema: TSchema = reply?.[status];
+                    return {
+                      ...schemas,
+                      [status]: Type.Object({
+                        status: Type.String(),
+                        ...(200 <= status && status < 300
+                          ? {
+                              data: schema,
+                            }
+                          : {
+                              error: Type.Union([
+                                schema,
+                                Type.Object({
+                                  message: Type.String(),
+                                }),
+                              ]),
+                            }),
+                      }),
+                    };
+                  }, {})
+                : undefined,
+            },
             handler(request, reply) {
               try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -69,8 +107,8 @@ export class FastifyFramework implements IFramework {
                 }
 
                 if (err instanceof Error) {
-                  return reply.status(500).send({
-                    status: httpStatusToString(500),
+                  return reply.status(HttpStatus.InternalServerError).send({
+                    status: httpStatusToString(HttpStatus.InternalServerError),
                     error: {
                       message: err.message,
                     },
@@ -99,7 +137,7 @@ export class FastifyFramework implements IFramework {
         host: config.app.host,
         port: config.app.port,
       });
-      
+
       this._instance.log.info(
         this._instance.printRoutes({ commonPrefix: false })
       );
