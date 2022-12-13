@@ -38,6 +38,7 @@ model Cash {
   currencyId Int
 }
 
+// Legacy
 model LegacyTransaction {
   id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
@@ -66,7 +67,7 @@ model Entry {
   categoryId    Int?
   profile       Profile?          @relation(fields: [profileId], references: [id])
   profileId     Int
-  tag           Tag?              @relation(fields: [tagId], references: [id])
+  tag           LegacyTag?        @relation(fields: [tagId], references: [id])
   tagId         Int?
 }
 
@@ -108,7 +109,7 @@ model ProfilesCategories {
   @@id([profileId, categoryId], name: "profileCategoryId")
 }
 
-model Tag {
+model LegacyTag {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
