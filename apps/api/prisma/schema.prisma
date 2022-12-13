@@ -12,11 +12,11 @@ datasource db {
 // }
 
 model Profile {
-  id                Int                  @id @default(autoincrement())
-  userId            String               @unique
-  entries           Entry[]
-  accounts          Account[]
-  profileCategories ProfilesCategories[]
+  id                      Int                        @id @default(autoincrement())
+  userId                  String                     @unique
+  entries                 Entry[]
+  accounts                Account[]
+  legacyProfileCategories LegacyProfilesCategories[]
 }
 
 model Currency {
@@ -63,7 +63,7 @@ model Entry {
   typeId        Int
   account       Account?          @relation(fields: [accountId], references: [id])
   accountId     Int?
-  category      Category?         @relation(fields: [categoryId], references: [id])
+  category      LegacyCategory?   @relation(fields: [categoryId], references: [id])
   categoryId    Int?
   profile       Profile?          @relation(fields: [profileId], references: [id])
   profileId     Int
@@ -91,22 +91,23 @@ model Account {
   profileId     Int
 }
 
-model Category {
-  id                Int                  @id @default(autoincrement())
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
-  name              String               @db.VarChar(255)
+model LegacyCategory {
+  id                Int                        @id @default(autoincrement())
+  createdAt         DateTime                   @default(now())
+  updatedAt         DateTime                   @updatedAt
+  name              String                     @db.VarChar(255)
   entries           Entry[]
-  profileCategories ProfilesCategories[]
+  profileCategories LegacyProfilesCategories[]
 }
 
-model ProfilesCategories {
-  profile    Profile?  @relation(fields: [profileId], references: [id])
+model LegacyProfilesCategories {
+  profile    Profile?        @relation(fields: [profileId], references: [id])
   profileId  Int
-  category   Category? @relation(fields: [categoryId], references: [id])
+  category   LegacyCategory? @relation(fields: [categoryId], references: [id])
   categoryId Int
 
   @@id([profileId, categoryId], name: "profileCategoryId")
+  @@map("ProfilesCategories")
 }
 
 model LegacyTag {

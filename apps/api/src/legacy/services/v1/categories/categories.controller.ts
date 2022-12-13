@@ -16,7 +16,7 @@ const findAll: DefaultRouteHandlerMethod<{
   Reply: Reply.TFindAll;
 }> = async function (request, reply) {
   const query = request.query;
-  const allCategories = await this.prisma.category.findMany({
+  const allCategories = await this.prisma.legacyCategory.findMany({
     where: {
       AND: {
         id: query.id,
@@ -35,10 +35,10 @@ const addOne: DefaultRouteHandlerMethod<{
   Body: Request.TAddOne;
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
-  const category = request.body;
-  const createdCategory = await this.prisma.category.create({
+  const legacyCategory = request.body;
+  const createdCategory = await this.prisma.legacyCategory.create({
     data: {
-      name: category.name,
+      name: legacyCategory.name,
     },
   });
   await replyCreated(reply, createdCategory);
@@ -50,8 +50,8 @@ const findOne: DefaultRouteHandlerMethod<{
 }> = async function (request, reply) {
   const id = request.params.id;
 
-  const [category, err] = await to(
-    this.prisma.category.findUnique({
+  const [legacyCategory, err] = await to(
+    this.prisma.legacyCategory.findUnique({
       where: {
         id,
       },
@@ -59,8 +59,8 @@ const findOne: DefaultRouteHandlerMethod<{
     })
   );
 
-  if (category) {
-    await replyOK(reply, category);
+  if (legacyCategory) {
+    await replyOK(reply, legacyCategory);
   } else {
     this.log.error(err);
     await replyNotFound(reply, `Category id ${id} was not found`);
@@ -73,15 +73,15 @@ const updateOne: DefaultRouteHandlerMethod<{
   Reply: Reply.TUpdateOne;
 }> = async function (request, reply) {
   const id = request.params.id;
-  const category = request.body;
+  const legacyCategory = request.body;
 
   const [updatedCategory, err] = await to(
-    this.prisma.category.update({
+    this.prisma.legacyCategory.update({
       where: {
         id,
       },
       data: {
-        name: category.name,
+        name: legacyCategory.name,
       },
     })
   );
@@ -101,7 +101,7 @@ const removeOne: DefaultRouteHandlerMethod<{
   const id = request.params.id;
 
   const [deletedCategory, err] = await to(
-    this.prisma.category.delete({
+    this.prisma.legacyCategory.delete({
       where: {
         id,
       },
