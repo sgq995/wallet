@@ -26,7 +26,7 @@ const findAll: DefaultRouteHandlerMethodWithSession<{
   );
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
-  const allAccounts = await this.prisma.account.findMany({
+  const allAccounts = await this.prisma.legacyAccount.findMany({
     skip: query.skip,
     take: take,
     where: {
@@ -55,13 +55,13 @@ const addOne: DefaultRouteHandlerMethodWithSession<{
   Body: Request.TAddOne;
   Reply: Reply.TAddOne;
 }> = async function (request, reply) {
-  const account = request.body;
-  const transaction = account.transaction;
+  const legacyAccount = request.body;
+  const transaction = legacyAccount.transaction;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
-  const createdAccount = await this.prisma.account.create({
+  const createdAccount = await this.prisma.legacyAccount.create({
     data: {
-      name: account.name,
+      name: legacyAccount.name,
       transaction: {
         create: {
           units: transaction.units,
@@ -94,8 +94,8 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const profileId = await getOrCreateProfileId(request.session!, this.prisma);
 
-  const [account, err] = await to(
-    this.prisma.account.findFirst({
+  const [legacyAccount, err] = await to(
+    this.prisma.legacyAccount.findFirst({
       where: {
         AND: {
           id,
@@ -113,8 +113,8 @@ const findOne: DefaultRouteHandlerMethodWithSession<{
     })
   );
 
-  if (account) {
-    await replyOK(reply, account);
+  if (legacyAccount) {
+    await replyOK(reply, legacyAccount);
   } else {
     this.log.error(err);
     await replyNotFound(reply, `Account id ${id} was not found`);
@@ -133,7 +133,7 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   let data, err;
 
   [data, err] = await to(
-    this.prisma.account.findFirst({
+    this.prisma.legacyAccount.findFirst({
       where: {
         AND: {
           id,
@@ -145,16 +145,16 @@ const updateOne: DefaultRouteHandlerMethodWithSession<{
   );
 
   if (!err) {
-    const account = request.body;
-    const transaction = account.transaction;
+    const legacyAccount = request.body;
+    const transaction = legacyAccount.transaction;
 
     [data, err] = await to(
-      this.prisma.account.update({
+      this.prisma.legacyAccount.update({
         where: {
           id,
         },
         data: {
-          name: account.name,
+          name: legacyAccount.name,
           ...(transaction
             ? {
                 transaction: {
@@ -193,7 +193,7 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
   let data, err;
 
   [data, err] = await to(
-    this.prisma.account.findFirst({
+    this.prisma.legacyAccount.findFirst({
       where: {
         AND: {
           id,
@@ -206,7 +206,7 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
 
   if (!err) {
     [data, err] = await to(
-      this.prisma.account.delete({
+      this.prisma.legacyAccount.delete({
         where: {
           id,
         },

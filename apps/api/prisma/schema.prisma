@@ -15,7 +15,7 @@ model Profile {
   id                      Int                        @id @default(autoincrement())
   userId                  String                     @unique
   entries                 Entry[]
-  accounts                Account[]
+  accounts                LegacyAccount[]
   legacyProfileCategories LegacyProfilesCategories[]
 }
 
@@ -40,15 +40,15 @@ model Cash {
 
 // Legacy
 model LegacyTransaction {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id         Int            @id @default(autoincrement())
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
   units      Int
   cents      Int
-  currency   Currency @relation(fields: [currencyId], references: [id])
+  currency   Currency       @relation(fields: [currencyId], references: [id])
   currencyId Int
   entry      Entry?
-  account    Account?
+  account    LegacyAccount?
 }
 
 model Entry {
@@ -61,7 +61,7 @@ model Entry {
   date          DateTime          @db.Date
   type          EntryType?        @relation(fields: [typeId], references: [id])
   typeId        Int
-  account       Account?          @relation(fields: [accountId], references: [id])
+  account       LegacyAccount?    @relation(fields: [accountId], references: [id])
   accountId     Int?
   category      LegacyCategory?   @relation(fields: [categoryId], references: [id])
   categoryId    Int?
@@ -79,7 +79,7 @@ model EntryType {
   @@map("AccountType")
 }
 
-model Account {
+model LegacyAccount {
   id            Int               @id @default(autoincrement())
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
