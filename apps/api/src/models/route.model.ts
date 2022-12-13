@@ -1,5 +1,6 @@
-import { TSchema } from '@sinclair/typebox';
+import { Static, TSchema } from '@sinclair/typebox';
 import { HttpStatus } from '../utilities/http.utility';
+import { Paging } from '../utilities/schema.utility';
 
 type UndefinedToUnknown<T> = [T] extends [undefined] ? unknown : T;
 
@@ -25,14 +26,17 @@ export interface IRequest<Request extends IRequestType = IRequestType> {
 }
 
 type TReplyDefault = unknown;
+type TPagingDefault = Static<typeof Paging>;
 
 export interface IReplyType {
   Reply?: TReplyDefault;
+  Paging?: TPagingDefault;
 }
 
 export interface IReply<Reply extends IReplyType = IReplyType> {
   status: HttpStatus;
   data: UndefinedToUnknown<Reply['Reply']>;
+  paging?: TPagingDefault;
 }
 
 export interface IRouteArgs extends IRequestType, IReplyType {}
@@ -47,6 +51,7 @@ export interface ISchemaType {
   Headers?: Record<string, TSchema>;
   Body?: TSchema;
   Reply?: Record<number, TSchema>;
+  Paging?: TPagingDefault;
 }
 
 export interface IRouteSchema<SchemaType extends ISchemaType = ISchemaType> {
@@ -55,6 +60,7 @@ export interface IRouteSchema<SchemaType extends ISchemaType = ISchemaType> {
   headers?: SchemaType['Headers'];
   body?: SchemaType['Body'];
   reply?: SchemaType['Reply'];
+  paging?: SchemaType['Paging'];
 }
 
 export interface IRoute<RouteArgs extends IRouteArgs = IRouteArgs> {
