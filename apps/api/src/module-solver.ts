@@ -22,7 +22,7 @@ export class ModuleSolver {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      const mod = modules.pop();
+      const mod = modules.shift();
       if (typeof mod === 'undefined') {
         break;
       }

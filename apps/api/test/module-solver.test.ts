@@ -17,34 +17,71 @@ void tap.test('ModuleSolver', (t) => {
     t.end();
   });
 
-  void t.test('should load dependencies before module', async (t) => {
-    class Feature {}
-    const feature = new Feature();
+  void t.test(
+    'should load dependencies before the module if modules are ordered',
+    async (t) => {
+      console.group('ordered');
+      class Feature {}
+      const feature = new Feature();
 
-    class ModuleA extends AppModule {
-      static provides(): unknown[] {
-        return [Feature];
+      class ModuleA extends AppModule {
+        static provides(): unknown[] {
+          return [Feature];
+        }
+
+        definitions(): unknown[] {
+          return [feature];
+        }
       }
 
-      definitions(): unknown[] {
-        return [feature];
+      class ModuleB extends AppModule {
+        static dependencies(): unknown[] {
+          return [Feature];
+        }
       }
+
+      const modules: typeof AppModule[] = [ModuleA, ModuleB];
+      const solver = new ModuleSolver();
+
+      t.setTimeout(10);
+
+      await t.resolves(solver.resolve(modules));
+      t.end();
+      console.groupEnd();
     }
+  );
 
-    class ModuleB extends AppModule {
-      static dependencies(): unknown[] {
-        return [Feature];
+  void t.test(
+    'should load dependencies before module if modules are unordered',
+    async (t) => {
+      class Feature {}
+      const feature = new Feature();
+
+      class ModuleA extends AppModule {
+        static provides(): unknown[] {
+          return [Feature];
+        }
+
+        definitions(): unknown[] {
+          return [feature];
+        }
       }
+
+      class ModuleB extends AppModule {
+        static dependencies(): unknown[] {
+          return [Feature];
+        }
+      }
+
+      const modules: typeof AppModule[] = [ModuleB, ModuleA];
+      const solver = new ModuleSolver();
+
+      t.setTimeout(10);
+
+      await t.resolves(solver.resolve(modules));
+      t.end();
     }
-
-    const modules: typeof AppModule[] = [ModuleB, ModuleA];
-    const solver = new ModuleSolver();
-
-    t.setTimeout(10);
-
-    await t.resolves(solver.resolve(modules));
-    t.end();
-  });
+  );
 
   void t.test('should detect circular dependencies', async (t) => {
     class FeatureA {}
