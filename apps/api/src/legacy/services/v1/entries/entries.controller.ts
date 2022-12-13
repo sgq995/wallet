@@ -299,7 +299,7 @@ const removeOne: DefaultRouteHandlerMethodWithSession<{
       },
     });
 
-    const deleteTransaction = this.prisma.transaction.delete({
+    const deleteTransaction = this.prisma.legacyTransaction.delete({
       where: {
         id: (data as unknown as Entry).transactionId,
       },

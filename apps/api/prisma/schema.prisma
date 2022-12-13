@@ -20,16 +20,25 @@ model Profile {
 }
 
 model Currency {
-  id           Int           @id @default(autoincrement())
-  precision    Int           @default(2)
-  symbol       String        @db.VarChar(10)
-  code         String        @db.Char(3)
-  decimal      String        @default(".") @db.Char(1)
-  separator    String        @default(",") @db.Char(1)
-  transactions Transaction[]
+  id                 Int                 @id @default(autoincrement())
+  precision          Int                 @default(2)
+  symbol             String              @db.VarChar(10)
+  code               String              @db.Char(3)
+  decimal            String              @default(".") @db.Char(1)
+  separator          String              @default(",") @db.Char(1)
+  legacyTransactions LegacyTransaction[]
+  cash               Cash[]
 }
 
-model Transaction {
+model Cash {
+  id         Int      @id @default(autoincrement())
+  units      Int      @default(0)
+  cents      Int      @default(0)
+  currency   Currency @relation(fields: [currencyId], references: [id])
+  currencyId Int
+}
+
+model LegacyTransaction {
   id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -42,22 +51,22 @@ model Transaction {
 }
 
 model Entry {
-  id            Int         @id @default(autoincrement())
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  description   String?     @db.VarChar(255)
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId Int         @unique
-  date          DateTime    @db.Date
-  type          EntryType?  @relation(fields: [typeId], references: [id])
+  id            Int               @id @default(autoincrement())
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  description   String?           @db.VarChar(255)
+  transaction   LegacyTransaction @relation(fields: [transactionId], references: [id])
+  transactionId Int               @unique
+  date          DateTime          @db.Date
+  type          EntryType?        @relation(fields: [typeId], references: [id])
   typeId        Int
-  account       Account?    @relation(fields: [accountId], references: [id])
+  account       Account?          @relation(fields: [accountId], references: [id])
   accountId     Int?
-  category      Category?   @relation(fields: [categoryId], references: [id])
+  category      Category?         @relation(fields: [categoryId], references: [id])
   categoryId    Int?
-  profile       Profile?    @relation(fields: [profileId], references: [id])
+  profile       Profile?          @relation(fields: [profileId], references: [id])
   profileId     Int
-  tag           Tag?        @relation(fields: [tagId], references: [id])
+  tag           Tag?              @relation(fields: [tagId], references: [id])
   tagId         Int?
 }
 
@@ -70,14 +79,14 @@ model EntryType {
 }
 
 model Account {
-  id            Int         @id @default(autoincrement())
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  name          String      @db.VarChar(255)
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId Int         @unique
+  id            Int               @id @default(autoincrement())
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  name          String            @db.VarChar(255)
+  transaction   LegacyTransaction @relation(fields: [transactionId], references: [id])
+  transactionId Int               @unique
   entries       Entry[]
-  profile       Profile     @relation(fields: [profileId], references: [id])
+  profile       Profile           @relation(fields: [profileId], references: [id])
   profileId     Int
 }
 
