@@ -1,11 +1,13 @@
 import { Currency, Tag, Transaction } from '@prisma/client';
 import { IAdapter } from '../models/adapter.model';
-import { ITransaction, TTransactionModel } from './transactions.model';
+import { IAppTransactionModel } from './transactions.model';
+import { TRestTransactionSchema } from './transactions.schema';
 
 export class TransactionsAdapter
-  implements IAdapter<Transaction, ITransaction, TTransactionModel>
+  implements
+    IAdapter<Transaction, IAppTransactionModel, TRestTransactionSchema>
 {
-  modelToStore(entity: ITransaction): Transaction {
+  modelToStore(entity: IAppTransactionModel): Transaction {
     throw new Error('Method not implemented.');
   }
 
@@ -15,10 +17,12 @@ export class TransactionsAdapter
       currency: Currency;
       tags: Tag[];
     }
-  ): ITransaction {
-    const type: ITransaction['type'] = <ITransaction['type']>transaction.type;
+  ): IAppTransactionModel {
+    const type: IAppTransactionModel['type'] = <IAppTransactionModel['type']>(
+      transaction.type
+    );
 
-    const cash: ITransaction['cash'] = <ITransaction['cash']>{
+    const cash: IAppTransactionModel['cash'] = <IAppTransactionModel['cash']>{
       units: transaction.units,
       cents: transaction.cents,
       currency: {
@@ -30,18 +34,20 @@ export class TransactionsAdapter
       },
     };
 
-    const repeat: ITransaction['repeat'] =
+    const repeat: IAppTransactionModel['repeat'] =
       transaction.repeat !== null ? transaction.repeat : undefined;
 
-    const period: ITransaction['period'] =
+    const period: IAppTransactionModel['period'] =
       transaction.periodicity !== null
-        ? <ITransaction['period']>{
+        ? <IAppTransactionModel['period']>{
             periodicity: transaction.periodicity,
             when: transaction.on || transaction.at || undefined,
           }
         : undefined;
 
-    const tags: ITransaction['tags'] = transaction.tags.map((tag) => tag.label);
+    const tags: IAppTransactionModel['tags'] = transaction.tags.map(
+      (tag) => tag.label
+    );
 
     return {
       id: transaction.id,
@@ -54,16 +60,19 @@ export class TransactionsAdapter
     };
   }
 
-  modelToRest(this: void, transaction: ITransaction): TTransactionModel {
-    const type: TTransactionModel['type'] = transaction.type;
+  modelToRest(
+    this: void,
+    transaction: IAppTransactionModel
+  ): TRestTransactionSchema {
+    const type: TRestTransactionSchema['type'] = transaction.type;
 
-    const cash: TTransactionModel['cash'] = {
+    const cash: TRestTransactionSchema['cash'] = {
       units: transaction.cash.units,
       cents: transaction.cash.cents,
       currency: {},
     };
 
-    const period: TTransactionModel['period'] = transaction.period;
+    const period: TRestTransactionSchema['period'] = transaction.period;
 
     return {
       type,
@@ -75,7 +84,7 @@ export class TransactionsAdapter
     };
   }
 
-  restToModel(entity: TTransactionModel): ITransaction {
+  restToModel(entity: TRestTransactionSchema): IAppTransactionModel {
     throw new Error('Method not implemented.');
   }
 }

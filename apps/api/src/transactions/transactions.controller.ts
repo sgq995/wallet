@@ -2,13 +2,12 @@ import { Type } from '@sinclair/typebox';
 import { IController } from '../models/controller.model';
 import { IRoute, TRouteHandler } from '../models/route.model';
 import { HttpStatus } from '../utilities/http.utility';
+import { Indexable, PartialAndIndexable } from '../utilities/schema.utility';
 import { TransactionsAdapter } from './transactions.adapter';
 import {
-  PartialTransactionModel,
-  TPartialTransactionModel,
-  TransactionModel,
-  TTransactionModel,
-} from './transactions.model';
+  RestTransactionSchema,
+  TRestTransactionSchema,
+} from './transactions.schema';
 import { TransactionsRepository } from './transactions.repository';
 
 export class TransactionsController implements IController {
@@ -26,9 +25,9 @@ export class TransactionsController implements IController {
         endpoint: '/',
         handler: this.find,
         schema: {
-          query: PartialTransactionModel,
+          query: PartialAndIndexable(RestTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Type.Array(TransactionModel),
+            [HttpStatus.Ok]: Type.Array(Indexable(RestTransactionSchema)),
           },
         },
       },
@@ -36,27 +35,29 @@ export class TransactionsController implements IController {
         method: 'POST',
         endpoint: '/',
         handler: this.add,
-        schema: {},
+        schema: {
+          body: RestTransactionSchema,
+        },
       },
     ];
   }
 
   find: TRouteHandler<{
-    Query: TPartialTransactionModel;
-    Reply: TTransactionModel[];
+    Query: Partial<TRestTransactionSchema>;
+    Reply: TRestTransactionSchema[];
   }> = async ({ query }) => {
     const transactions = await this._repository.find();
-    const data: TTransactionModel[] = transactions.map(
+    const data: TRestTransactionSchema[] = transactions.map(
       this._adapter.modelToRest
     );
     return { status: HttpStatus.Ok, data };
   };
 
-  add: TRouteHandler<{ Body: TTransactionModel }> = async ({ body }) => {
+  add: TRouteHandler<{ Body: TRestTransactionSchema }> = async ({ body }) => {
     const transaction = await this._repository.add(
       this._adapter.restToModel(body)
     );
-    const data: TTransactionModel = this._adapter.modelToRest(transaction);
+    const data: TRestTransactionSchema = this._adapter.modelToRest(transaction);
     return { status: HttpStatus.Created, data };
   };
 }

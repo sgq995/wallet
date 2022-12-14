@@ -1,4 +1,28 @@
 import { TObject, TProperties, TSchema, Type } from '@sinclair/typebox';
+import { TypeGuard } from '@sinclair/typebox/guard';
+
+export function RecursivePartial<
+  Properties extends TProperties = TProperties,
+  Schema extends TObject<Properties> = TObject<Properties>
+>(schema: Schema) {
+  const properties = Object.keys(schema.properties).map(
+    (property): [string, TSchema] => {
+      const value = schema.properties[property];
+      if (TypeGuard.TObject(value)) {
+        return [property, RecursivePartial(value)];
+      }
+
+      return [property, value];
+    }
+  );
+  return Type.Partial(
+    Type.Object(
+      properties.reduce((properties, pair) => {
+        return { ...properties, [pair[0]]: pair[1] };
+      }, {})
+    )
+  );
+}
 
 export const WithStatus = Type.Object({
   status: Type.String(),
@@ -35,10 +59,16 @@ export const WithId = Type.Object({
   id: Type.String(),
 });
 
-export function withId<
+export function Indexable<
   Schema extends TObject<TProperties> = TObject<TProperties>
 >(schema: Schema) {
   return Type.Intersect([schema, WithId]);
+}
+
+export function PartialAndIndexable<
+  Schema extends TObject<TProperties> = TObject<TProperties>
+>(schema: Schema) {
+  return Type.Intersect([RecursivePartial(schema), Type.Partial(WithId)]);
 }
 
 export const Paging = Type.Object({

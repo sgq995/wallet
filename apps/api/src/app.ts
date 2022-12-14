@@ -1,4 +1,3 @@
-import { AccountsModule } from './accounts/accounts.module';
 import { IController, isController } from './models/controller.model';
 import { IFramework } from './models/framework.model';
 import { AppModule, AsyncAppModule } from './models/module.model';

@@ -1,7 +1,7 @@
-import { ICurrency } from './currency.model';
+import { IAppCurrencyModel } from './currency.model';
 
-export interface ICash {
+export interface IAppCashModel {
   units: number;
   cents: number;
-  currency: ICurrency;
+  currency: IAppCurrencyModel;
 }

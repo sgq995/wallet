@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { TransactionsAdapter } from './transactions.adapter';
-import { ITransaction } from './transactions.model';
+import { IAppTransactionModel } from './transactions.model';
 
 export class TransactionsRepository {
   constructor(
@@ -8,7 +8,7 @@ export class TransactionsRepository {
     private _adapter: TransactionsAdapter
   ) {}
 
-  async find(): Promise<ITransaction[]> {
+  async find(): Promise<IAppTransactionModel[]> {
     const result = await this._prisma.transaction.findMany({
       where: {},
       include: {
@@ -17,12 +17,12 @@ export class TransactionsRepository {
       },
     });
 
-    const transactions: ITransaction[] = result.map(this._adapter.storeToModel);
+    const transactions: IAppTransactionModel[] = result.map(this._adapter.storeToModel);
 
     return transactions;
   }
 
-  async add(transaction: ITransaction): Promise<ITransaction> {
+  async add(transaction: IAppTransactionModel): Promise<IAppTransactionModel> {
     const result = await this._prisma.transaction.create({
       data: {
         type: transaction.type,
