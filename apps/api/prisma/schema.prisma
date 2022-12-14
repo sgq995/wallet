@@ -15,7 +15,7 @@ model Profile {
   id                      Int                        @id @default(autoincrement())
   userId                  String                     @unique
   entries                 Entry[]
-  accounts                LegacyAccount[]
+  legacyAccounts          LegacyAccount[]
   legacyProfileCategories LegacyProfilesCategories[]
 }
 
@@ -27,15 +27,32 @@ model Currency {
   decimal            String              @default(".") @db.Char(1)
   separator          String              @default(",") @db.Char(1)
   legacyTransactions LegacyTransaction[]
-  cash               Cash[]
+  transaction        Transaction[]
 }
 
-model Cash {
-  id         Int      @id @default(autoincrement())
-  units      Int      @default(0)
-  cents      Int      @default(0)
-  currency   Currency @relation(fields: [currencyId], references: [id])
-  currencyId Int
+model Tag {
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  label        String        @unique
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  type        String
+  units       Int      @default(0)
+  cents       Int      @default(0)
+  currency    Currency @relation(fields: [currencyId], references: [id])
+  currencyId  Int
+  date        DateTime
+  repeat      Boolean?
+  periodicity String?
+  on          Int? // 1 - 31
+  at          String? // 'begin' | 'end'
+  tags        Tag[]
 }
 
 // Legacy

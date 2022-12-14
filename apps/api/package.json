@@ -7,6 +7,7 @@
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "build": "run-s typescript babel",
     "start": "cross-env NODE_ENV=production node dist/index.js",
+    "generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
     "seed": "prisma db seed",
     "typescript": "tsc -p tsconfig.json",
