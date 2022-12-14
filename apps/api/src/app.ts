@@ -1,7 +1,10 @@
+import { AccountsModule } from './accounts/accounts.module';
 import { IController, isController } from './models/controller.model';
 import { IFramework } from './models/framework.model';
 import { AppModule, AsyncAppModule } from './models/module.model';
 import { ModuleSolver } from './module-solver';
+import { PrismaModule } from './prisma';
+import { TransactionModule } from './transactions';
 
 export class App {
   private _moduleSolver: ModuleSolver = new ModuleSolver();
@@ -9,7 +12,7 @@ export class App {
   constructor(private _framework: IFramework) {}
 
   modules(): typeof AppModule[] {
-    return [];
+    return [PrismaModule, TransactionModule];
   }
 
   async start() {
