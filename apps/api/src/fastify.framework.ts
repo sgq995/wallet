@@ -94,10 +94,10 @@ export class FastifyFramework implements IFramework {
       method: route.method,
       url: route.endpoint,
       schema: this._schemas(route.schema),
-      handler: (request, reply) => {
+      handler: async (request, reply) => {
         try {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const { status, data, paging } = route.handler({
+          const { status, data, paging } = await route.handler({
             params: request.params,
             query: request.query,
             headers: request.headers,

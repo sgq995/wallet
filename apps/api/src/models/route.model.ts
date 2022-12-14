@@ -43,7 +43,7 @@ export interface IRouteArgs extends IRequestType, IReplyType {}
 
 export type TRouteHandler<RouteArgs extends IRouteArgs = IRouteArgs> = (
   args: IRequest<RouteArgs>
-) => IReply<RouteArgs> | never;
+) => Promise<IReply<RouteArgs>> | IReply<RouteArgs> | never;
 
 export interface ISchemaType {
   Params?: TSchema;
