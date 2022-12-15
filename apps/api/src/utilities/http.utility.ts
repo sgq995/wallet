@@ -2,6 +2,7 @@ export enum HttpStatus {
   Ok = 200,
   Created = 201,
 
+  BadRequest = 400,
   Forbidden = 403,
   NotFound = 404,
 
@@ -12,6 +13,7 @@ export enum HttpStatus {
 const HTTP_STATUS_MAP: Record<HttpStatus, string> = {
   [HttpStatus.Ok]: 'OK',
   [HttpStatus.Created]: 'Created',
+  [HttpStatus.BadRequest]: 'Bad Request',
   [HttpStatus.Forbidden]: 'Forbidden',
   [HttpStatus.NotFound]: 'Not Found',
   [HttpStatus.InternalServerError]: 'Internal Server Error',
@@ -28,25 +30,31 @@ export class HttpError extends Error {
   }
 }
 
-export class ForbiddenError extends HttpError {
+export class HttpBadRequestError extends HttpError {
+  constructor(message: string) {
+    super(400, message);
+  }
+}
+
+export class HttpForbiddenError extends HttpError {
   constructor(message: string) {
     super(403, message);
   }
 }
 
-export class NotFoundError extends HttpError {
+export class HttpNotFoundError extends HttpError {
   constructor(message: string) {
     super(404, message);
   }
 }
 
-export class InternalServerError extends HttpError {
+export class HttpInternalServerError extends HttpError {
   constructor(message: string) {
     super(500, message);
   }
 }
 
-export class NotImplementedError extends HttpError {
+export class HttpNotImplementedError extends HttpError {
   constructor(message: string) {
     super(501, message);
   }
