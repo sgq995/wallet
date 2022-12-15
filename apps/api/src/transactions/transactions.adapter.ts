@@ -1,3 +1,4 @@
+import { dateTime } from 'utilities';
 import { IAdapter } from '../models/adapter.model';
 import { HttpInternalServerError } from '../utilities/http.utility';
 import { TIndexable } from '../utilities/model.utility';
@@ -50,7 +51,7 @@ export class TransactionsAdapter
       id: entity.id,
       type,
       cash,
-      date: entity.date.toUTCString(),
+      date: dateTime(entity.date, true),
       repeat: entity.repeat,
       period,
       tags: entity.tags,
