@@ -5,7 +5,7 @@ import { RestTimePeriodSchema } from '../schemas/time-period.schema';
 export const RestTransactionSchema = Type.Object({
   type: Type.Union([Type.Literal('income'), Type.Literal('expense')]),
   cash: RestCashSchema,
-  date: Type.String(),
+  date: Type.String({ format: 'date-time' }),
   repeat: Type.Optional(Type.Boolean()),
   period: Type.Optional(RestTimePeriodSchema),
   tags: Type.Array(Type.String()),

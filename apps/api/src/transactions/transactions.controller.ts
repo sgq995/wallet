@@ -37,6 +37,9 @@ export class TransactionsController implements IController {
         handler: this.add,
         schema: {
           body: RestTransactionSchema,
+          reply: {
+            [HttpStatus.Created]: Indexable(RestTransactionSchema),
+          },
         },
       },
     ];

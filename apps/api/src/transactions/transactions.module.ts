@@ -12,8 +12,8 @@ export class TransactionModule extends AppModule {
   constructor(prisma: PrismaClient) {
     super();
 
+    this._repository = new TransactionsRepository(prisma);
     this._adapter = new TransactionsAdapter();
-    this._repository = new TransactionsRepository(prisma, this._adapter);
     this._controller = new TransactionsController(
       this._repository,
       this._adapter

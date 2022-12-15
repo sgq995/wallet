@@ -1,90 +1,100 @@
-import { Currency, Tag, Transaction } from '@prisma/client';
 import { IAdapter } from '../models/adapter.model';
+import { HttpInternalServerError } from '../utilities/http.utility';
+import { TIndexable } from '../utilities/model.utility';
 import { IAppTransactionModel } from './transactions.model';
 import { TRestTransactionSchema } from './transactions.schema';
 
 export class TransactionsAdapter
-  implements
-    IAdapter<Transaction, IAppTransactionModel, TRestTransactionSchema>
+  implements IAdapter<IAppTransactionModel, TRestTransactionSchema>
 {
-  modelToStore(entity: IAppTransactionModel): Transaction {
-    throw new Error('Method not implemented.');
-  }
-
-  storeToModel(
-    this: void,
-    transaction: Transaction & {
-      currency: Currency;
-      tags: Tag[];
-    }
-  ): IAppTransactionModel {
-    const type: IAppTransactionModel['type'] = <IAppTransactionModel['type']>(
-      transaction.type
-    );
-
-    const cash: IAppTransactionModel['cash'] = <IAppTransactionModel['cash']>{
-      units: transaction.units,
-      cents: transaction.cents,
-      currency: {
-        code: transaction.currency.code,
-        decimal: transaction.currency.decimal,
-        precision: transaction.currency.precision,
-        separator: transaction.currency.separator,
-        symbol: transaction.currency.symbol,
-      },
-    };
-
-    const repeat: IAppTransactionModel['repeat'] =
-      transaction.repeat !== null ? transaction.repeat : undefined;
-
-    const period: IAppTransactionModel['period'] =
-      transaction.periodicity !== null
-        ? <IAppTransactionModel['period']>{
-            periodicity: transaction.periodicity,
-            when: transaction.on || transaction.at || undefined,
-          }
-        : undefined;
-
-    const tags: IAppTransactionModel['tags'] = transaction.tags.map(
-      (tag) => tag.label
-    );
-
-    return {
-      id: transaction.id,
-      type,
-      cash,
-      date: transaction.date,
-      repeat,
-      period,
-      tags,
-    };
-  }
-
   modelToRest(
     this: void,
-    transaction: IAppTransactionModel
-  ): TRestTransactionSchema {
-    const type: TRestTransactionSchema['type'] = transaction.type;
+    entity: TIndexable<IAppTransactionModel>
+  ): TIndexable<TRestTransactionSchema> {
+    const type: TRestTransactionSchema['type'] = entity.type;
 
-    const cash: TRestTransactionSchema['cash'] = {
-      units: transaction.cash.units,
-      cents: transaction.cash.cents,
-      currency: {},
+    let cash: TRestTransactionSchema['cash'];
+    if (entity.cash.currency) {
+      cash = {
+        units: entity.cash.units,
+        cents: entity.cash.cents,
+        currency: {
+          id: entity.cash.currency.id,
+          precision: entity.cash.currency.precision,
+          symbol: entity.cash.currency.symbol,
+          code: entity.cash.currency.code,
+          decimal: entity.cash.currency.decimal,
+          separator: entity.cash.currency.separator,
+        },
+      };
+    } else if (entity.cash.currencyId) {
+      cash = {
+        units: entity.cash.units,
+        cents: entity.cash.cents,
+        currencyId: entity.cash.currencyId,
+      };
+    } else {
+      throw new HttpInternalServerError(
+        'transaction should have "currency" or "currencyId"'
+      );
+    }
+
+    const period: TRestTransactionSchema['period'] = entity.period
+      ? {
+          periodicity: entity.period.periodicity,
+          when: entity.period.when,
+        }
+      : undefined;
+
+    return {
+      id: entity.id,
+      type,
+      cash,
+      date: entity.date.toUTCString(),
+      repeat: entity.repeat,
+      period,
+      tags: entity.tags,
+    };
+  }
+
+  restToModel(
+    this: void,
+    entity: TRestTransactionSchema
+  ): IAppTransactionModel {
+    const type: IAppTransactionModel['type'] = entity.type;
+
+    const cash: IAppTransactionModel['cash'] = {
+      units: entity.cash.units,
+      cents: entity.cash.cents,
+      currency:
+        'currency' in entity.cash
+          ? {
+              id: entity.cash.currency.id,
+              precision: entity.cash.currency.precision,
+              symbol: entity.cash.currency.symbol,
+              code: entity.cash.currency.code,
+              decimal: entity.cash.currency.decimal,
+              separator: entity.cash.currency.separator,
+            }
+          : undefined,
+      currencyId:
+        'currencyId' in entity.cash ? entity.cash.currencyId : undefined,
     };
 
-    const period: TRestTransactionSchema['period'] = transaction.period;
+    const period: IAppTransactionModel['period'] = entity.period
+      ? {
+          periodicity: entity.period.periodicity,
+          when: entity.period.when,
+        }
+      : undefined;
 
     return {
       type,
       cash,
-      date: transaction.date.toUTCString(),
-      repeat: transaction.repeat,
+      date: new Date(entity.date),
+      repeat: entity.repeat,
       period,
-      tags: transaction.tags,
+      tags: entity.tags,
     };
-  }
-
-  restToModel(entity: TRestTransactionSchema): IAppTransactionModel {
-    throw new Error('Method not implemented.');
   }
 }

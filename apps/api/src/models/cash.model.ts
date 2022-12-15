@@ -1,7 +1,9 @@
+import { TIndexable } from '../utilities/model.utility';
 import { IAppCurrencyModel } from './currency.model';
 
 export interface IAppCashModel {
   units: number;
   cents: number;
-  currency: IAppCurrencyModel;
+  currency?: TIndexable<IAppCurrencyModel>;
+  currencyId?: number;
 }
