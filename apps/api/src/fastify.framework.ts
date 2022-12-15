@@ -14,7 +14,9 @@ import { IFramework } from './models/framework.model';
 import { AsyncAppModule } from './models/module.model';
 import { IRoute, IRouteSchema } from './models/route.model';
 import {
+  HttpBadRequestError,
   HttpError,
+  HttpInternalServerError,
   HttpStatus,
   httpStatusToString,
 } from './utilities/http.utility';
@@ -61,6 +63,21 @@ export class FastifyFramework implements IFramework {
         const routes = controller.routes();
         routes.forEach((route) => {
           this._single(app, route);
+        });
+
+        app.setErrorHandler((error, request, reply) => {
+          const { validation } = error;
+          if (validation && error.statusCode === 400) {
+            return this._httpError(
+              reply,
+              new HttpBadRequestError(error.message)
+            );
+          }
+
+          return this._httpError(
+            reply,
+            new HttpInternalServerError(error.message)
+          );
         });
       },
       {
@@ -176,6 +193,12 @@ export class FastifyFramework implements IFramework {
     err: HttpError | Error | unknown
   ): FastifyReply | never {
     if (err instanceof HttpError) {
+      this._instance.log.info(
+        {
+          err,
+        },
+        err.message
+      );
       return reply.status(err.status).send({
         status: httpStatusToString(err.status),
         error: {
@@ -185,6 +208,12 @@ export class FastifyFramework implements IFramework {
     }
 
     if (err instanceof Error) {
+      this._instance.log.info(
+        {
+          err,
+        },
+        err.message
+      );
       return reply.status(HttpStatus.InternalServerError).send({
         status: httpStatusToString(HttpStatus.InternalServerError),
         error: {

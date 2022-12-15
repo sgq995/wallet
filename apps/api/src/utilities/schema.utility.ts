@@ -31,7 +31,7 @@ export const WithStatus = Type.Object({
 export function withStatus<
   Schema extends TObject<TProperties> = TObject<TProperties>
 >(schema: Schema) {
-  return Type.Intersect([schema, WithStatus]);
+  return Type.Intersect([WithStatus, schema]);
 }
 
 export function toReplySchema(schema: TSchema) {
@@ -56,13 +56,13 @@ export function toErrorSchema(schema: TSchema) {
 }
 
 export const WithId = Type.Object({
-  id: Type.String(),
+  id: Type.Integer(),
 });
 
 export function Indexable<
   Schema extends TObject<TProperties> = TObject<TProperties>
 >(schema: Schema) {
-  return Type.Intersect([schema, WithId]);
+  return Type.Intersect([WithId, schema]);
 }
 
 export function PartialAndIndexable<
