@@ -23,7 +23,7 @@ model Currency {
   id                 Int                 @id @default(autoincrement())
   precision          Int                 @default(2)
   symbol             String              @db.VarChar(10)
-  code               String              @db.Char(3)
+  code               String              @unique @db.Char(3)
   decimal            String              @default(".") @db.Char(1)
   separator          String              @default(",") @db.Char(1)
   legacyTransactions LegacyTransaction[]
