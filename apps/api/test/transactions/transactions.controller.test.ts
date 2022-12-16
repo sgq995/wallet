@@ -16,19 +16,55 @@ void tap.test('TransactionsController', (t) => {
 
   void t.test('find', async (t) => {
     void t.test('should return all items', async (t) => {
+      const params: { id: number } = <{ id: number }>{};
       const query: Partial<TRestTransactionSchema> = {};
-      const expected: IReply<{ Reply: TRestTransactionSchema[] }> = {
-        status: 200,
-        data: [],
-      };
+      const expected: IReply<{ Reply: TIndexable<TRestTransactionSchema>[] }> =
+        {
+          status: 200,
+          data: [
+            { id: undefined } as unknown as TIndexable<TRestTransactionSchema>,
+          ],
+        };
 
+      adapterMock.restToModel = (model) =>
+        model as unknown as IAppTransactionModel;
       adapterMock.modelToRest = (model) =>
         model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.find = async () => [];
+      repositoryMock.find = async (id, query) => [
+        <TIndexable<IAppTransactionModel>>{ id },
+      ];
 
       const result = await controller.find({
         query,
-        params: undefined,
+        params,
+        headers: undefined,
+        body: undefined,
+      });
+
+      t.same(result, expected);
+      t.end();
+    });
+
+    void t.test('should return selected item', async (t) => {
+      const id = 1;
+      const params: { id: number } = { id };
+      const query: Partial<TRestTransactionSchema> = {};
+      const expected: IReply<{ Reply: TIndexable<TRestTransactionSchema> }> = {
+        status: 200,
+        data: { id } as unknown as TIndexable<TRestTransactionSchema>,
+      };
+
+      adapterMock.restToModel = (model) =>
+        model as unknown as IAppTransactionModel;
+      adapterMock.modelToRest = (model) =>
+        model as unknown as TIndexable<TRestTransactionSchema>;
+      repositoryMock.find = async (id, query) => [
+        <TIndexable<IAppTransactionModel>>{ id },
+      ];
+
+      const result = await controller.find({
+        query,
+        params,
         headers: undefined,
         body: undefined,
       });
@@ -63,6 +99,82 @@ void tap.test('TransactionsController', (t) => {
         params: undefined,
         headers: undefined,
         body,
+      });
+
+      t.same(result, expected);
+      t.end();
+    });
+
+    t.end();
+  });
+
+  void t.test('update', async (t) => {
+    void t.test('should update a transaction', async (t) => {
+      const id = 1;
+      const params: { id: number } = { id };
+      const body: TRestTransactionSchema = <TRestTransactionSchema>{
+        tags: ['test'],
+      };
+
+      const transaction: TIndexable<IAppTransactionModel> = //
+        <TIndexable<IAppTransactionModel>>{
+          id,
+          tags: ['test'],
+        };
+
+      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
+        status: 200,
+        data: transaction as unknown as TRestTransactionSchema,
+      };
+
+      adapterMock.restToModel = (model) =>
+        model as unknown as IAppTransactionModel;
+      adapterMock.modelToRest = (model) =>
+        model as unknown as TIndexable<TRestTransactionSchema>;
+      repositoryMock.update = async (id, transaction) =>
+        <TIndexable<IAppTransactionModel>>{
+          id,
+          ...transaction,
+        };
+
+      const result = await controller.update({
+        query: undefined,
+        params,
+        headers: undefined,
+        body,
+      });
+
+      t.same(result, expected);
+      t.end();
+    });
+
+    t.end();
+  });
+
+  void t.test('remove', async (t) => {
+    void t.test('should remove a transaction', async (t) => {
+      const id = 1;
+      const params: { id: number } = { id };
+
+      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
+        status: 200,
+        data: { id } as unknown as TRestTransactionSchema,
+      };
+
+      adapterMock.restToModel = (model) =>
+        model as unknown as IAppTransactionModel;
+      adapterMock.modelToRest = (model) =>
+        model as unknown as TIndexable<TRestTransactionSchema>;
+      repositoryMock.remove = async (id) =>
+        <TIndexable<IAppTransactionModel>>{
+          id,
+        };
+
+      const result = await controller.remove({
+        query: undefined,
+        params,
+        headers: undefined,
+        body: undefined,
       });
 
       t.same(result, expected);

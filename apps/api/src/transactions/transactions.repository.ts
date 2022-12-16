@@ -1,20 +1,32 @@
 import { Currency, PrismaClient, Tag, Transaction } from '@prisma/client';
 import { IAppCurrencyModel } from '../models';
-import { HttpInternalServerError } from '../utilities/http.utility';
+import {
+  HttpInternalServerError,
+  HttpNotFoundError,
+} from '../utilities/http.utility';
 import { TIndexable } from '../utilities/model.utility';
 import { IAppTransactionModel } from './transactions.model';
 
 export class TransactionsRepository {
   constructor(private _prisma: PrismaClient) {}
 
-  async find(): Promise<TIndexable<IAppTransactionModel>[]> {
+  async find(
+    id?: number,
+    filter?: Partial<IAppTransactionModel>
+  ): Promise<TIndexable<IAppTransactionModel>[]> {
     const result = await this._prisma.transaction.findMany({
-      where: {},
+      where: {
+        id,
+      },
       include: {
         currency: true,
         tags: true,
       },
     });
+
+    if (result.length === 0) {
+      throw new HttpNotFoundError('transaction not found');
+    }
 
     const transactions: TIndexable<IAppTransactionModel>[] = result.map(
       this._toAppModel
@@ -48,6 +60,81 @@ export class TransactionsRepository {
     }
 
     return this._toAppModel(result);
+  }
+
+  async update(
+    id: number,
+    transaction: Partial<IAppTransactionModel>
+  ): Promise<TIndexable<IAppTransactionModel>> {
+    try {
+      const result = await this._prisma.transaction.update({
+        data: {
+          type: transaction.type,
+          units: transaction.cash?.units,
+          cents: transaction.cash?.cents,
+          currency:
+            transaction.cash?.currency?.id ||
+            transaction.cash?.currencyId ||
+            transaction.cash?.currency?.code
+              ? {
+                  update: {
+                    id:
+                      transaction.cash?.currency?.id ||
+                      transaction.cash?.currencyId,
+                    code: transaction.cash?.currency?.code,
+                  },
+                }
+              : undefined,
+          date: transaction.date,
+          repeat: transaction.repeat,
+          periodicity: transaction.period?.periodicity,
+          ...(typeof transaction.period?.when === 'number'
+            ? { on: transaction.period?.when }
+            : { at: transaction.period?.when }),
+          tags: transaction.tags
+            ? {
+                connectOrCreate: transaction.tags.map((tag) => ({
+                  create: {
+                    label: tag,
+                  },
+                  where: {
+                    label: tag,
+                  },
+                })),
+              }
+            : undefined,
+        },
+        where: {
+          id,
+        },
+        include: {
+          currency: true,
+          tags: true,
+        },
+      });
+
+      return this._toAppModel(result);
+    } catch {
+      throw new HttpNotFoundError('transaction or currency not found');
+    }
+  }
+
+  async remove(id: number): Promise<TIndexable<IAppTransactionModel>> {
+    try {
+      const result = await this._prisma.transaction.delete({
+        where: {
+          id,
+        },
+        include: {
+          currency: true,
+          tags: true,
+        },
+      });
+
+      return this._toAppModel(result);
+    } catch {
+      throw new HttpNotFoundError('transaction not found');
+    }
   }
 
   private _toAppModel(
@@ -104,72 +191,80 @@ export class TransactionsRepository {
     transaction: IAppTransactionModel,
     currency: TIndexable<IAppCurrencyModel>
   ) {
-    return this._prisma.transaction.create({
-      data: {
-        type: transaction.type,
-        units: transaction.cash.units,
-        cents: transaction.cash.cents,
-        currency: {
-          connect: {
-            id: currency.id,
-            code: currency.code,
+    try {
+      return this._prisma.transaction.create({
+        data: {
+          type: transaction.type,
+          units: transaction.cash.units,
+          cents: transaction.cash.cents,
+          currency: {
+            connect: {
+              id: currency.id,
+              code: currency.code,
+            },
+          },
+          date: transaction.date,
+          repeat: transaction.repeat,
+          periodicity: transaction.period?.periodicity,
+          ...(typeof transaction.period?.when === 'number'
+            ? { on: transaction.period?.when }
+            : { at: transaction.period?.when }),
+          tags: {
+            connectOrCreate: transaction.tags.map((tag) => ({
+              create: {
+                label: tag,
+              },
+              where: {
+                label: tag,
+              },
+            })),
           },
         },
-        date: transaction.date,
-        repeat: transaction.repeat,
-        periodicity: transaction.period?.periodicity,
-        ...(typeof transaction.period?.when === 'number'
-          ? { on: transaction.period?.when }
-          : { at: transaction.period?.when }),
-        tags: {
-          connectOrCreate: transaction.tags.map((tag) => ({
-            create: {
-              label: tag,
-            },
-            where: {
-              label: tag,
-            },
-          })),
+        include: {
+          currency: true,
+          tags: true,
         },
-      },
-      include: {
-        currency: true,
-        tags: true,
-      },
-    });
+      });
+    } catch {
+      throw new HttpInternalServerError('something goes wrong');
+    }
   }
 
   private _createWithCurrencyId(
     transaction: IAppTransactionModel,
     currencyId: number
   ) {
-    return this._prisma.transaction.create({
-      data: {
-        type: transaction.type,
-        units: transaction.cash.units,
-        cents: transaction.cash.cents,
-        currencyId: currencyId,
-        date: transaction.date,
-        repeat: transaction.repeat,
-        periodicity: transaction.period?.periodicity,
-        ...(typeof transaction.period?.when === 'number'
-          ? { on: transaction.period?.when }
-          : { at: transaction.period?.when }),
-        tags: {
-          connectOrCreate: transaction.tags.map((tag) => ({
-            create: {
-              label: tag,
-            },
-            where: {
-              label: tag,
-            },
-          })),
+    try {
+      return this._prisma.transaction.create({
+        data: {
+          type: transaction.type,
+          units: transaction.cash.units,
+          cents: transaction.cash.cents,
+          currencyId: currencyId,
+          date: transaction.date,
+          repeat: transaction.repeat,
+          periodicity: transaction.period?.periodicity,
+          ...(typeof transaction.period?.when === 'number'
+            ? { on: transaction.period?.when }
+            : { at: transaction.period?.when }),
+          tags: {
+            connectOrCreate: transaction.tags.map((tag) => ({
+              create: {
+                label: tag,
+              },
+              where: {
+                label: tag,
+              },
+            })),
+          },
         },
-      },
-      include: {
-        currency: true,
-        tags: true,
-      },
-    });
+        include: {
+          currency: true,
+          tags: true,
+        },
+      });
+    } catch {
+      throw new HttpInternalServerError('something goes wrong');
+    }
   }
 }

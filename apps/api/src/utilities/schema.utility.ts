@@ -1,4 +1,4 @@
-import { TObject, TProperties, TSchema, Type } from '@sinclair/typebox';
+import { Static, TObject, TProperties, TSchema, Type } from '@sinclair/typebox';
 import { TypeGuard } from '@sinclair/typebox/guard';
 
 export function RecursivePartial<
@@ -58,6 +58,8 @@ export function toErrorSchema(schema: TSchema) {
 export const WithId = Type.Object({
   id: Type.Integer(),
 });
+
+export type TWithId = Static<typeof WithId>;
 
 export function Indexable<
   Schema extends TObject<TProperties> = TObject<TProperties>
