@@ -204,13 +204,15 @@ export class TransactionsController implements IController {
   find: TRouteHandler<{
     Params: TWithId;
     Query: Partial<TRestTransactionSchema>;
-    Reply: TRestTransactionSchema | TRestTransactionSchema[];
+    Reply:
+      | TIndexable<TRestTransactionSchema>
+      | TIndexable<TRestTransactionSchema>[];
   }> = async ({ params, query }) => {
     const transactions = await this._repository.find(
       params?.id,
       query ? this._adapter.restToModel(query) : undefined
     );
-    const data: TRestTransactionSchema[] = transactions.map(
+    const data: TIndexable<TRestTransactionSchema>[] = transactions.map(
       (value: TIndexable<IAppTransactionModel>) =>
         this._adapter.modelToRest(value)
     );
@@ -222,17 +224,22 @@ export class TransactionsController implements IController {
     return { status: HttpStatus.Ok, data };
   };
 
-  add: TRouteHandler<{ Body: TRestTransactionSchema }> = async ({ body }) => {
+  add: TRouteHandler<{
+    Body: TRestTransactionSchema;
+    Reply: TIndexable<TRestTransactionSchema>;
+  }> = async ({ body }) => {
     const transaction = await this._repository.add(
       this._adapter.restToModel(body)
     );
-    const data: TRestTransactionSchema = this._adapter.modelToRest(transaction);
+    const data: TIndexable<TRestTransactionSchema> =
+      this._adapter.modelToRest(transaction);
     return { status: HttpStatus.Created, data };
   };
 
   update: TRouteHandler<{
     Params: TWithId;
     Body: Partial<TRestTransactionSchema>;
+    Reply: TIndexable<TRestTransactionSchema>;
   }> = async ({ params, body }) => {
     const transaction = await this._repository.update(
       params.id,
@@ -243,7 +250,10 @@ export class TransactionsController implements IController {
     return { status: HttpStatus.Ok, data };
   };
 
-  remove: TRouteHandler<{ Params: TWithId }> = async ({ params }) => {
+  remove: TRouteHandler<{
+    Params: TWithId;
+    Reply: TIndexable<TRestTransactionSchema>;
+  }> = async ({ params }) => {
     const transaction = await this._repository.remove(params.id);
     const data: TIndexable<TRestTransactionSchema> =
       this._adapter.modelToRest(transaction);
@@ -253,7 +263,9 @@ export class TransactionsController implements IController {
   findIncome: TRouteHandler<{
     Params: TWithId;
     Query: Partial<TRestTypedTransactionSchema>;
-    Reply: TRestTransactionSchema | TRestTransactionSchema[];
+    Reply:
+      | TIndexable<TRestTransactionSchema>
+      | TIndexable<TRestTransactionSchema>[];
   }> = async (args) => {
     return this.find({
       ...args,
@@ -261,9 +273,10 @@ export class TransactionsController implements IController {
     });
   };
 
-  addIncome: TRouteHandler<{ Body: TRestTypedTransactionSchema }> = async (
-    args
-  ) => {
+  addIncome: TRouteHandler<{
+    Body: TRestTypedTransactionSchema;
+    Reply: TIndexable<TRestTransactionSchema>;
+  }> = async (args) => {
     return this.add({
       ...args,
       body: { ...args.body, type: 'income' },
@@ -273,6 +286,7 @@ export class TransactionsController implements IController {
   updateIncome: TRouteHandler<{
     Params: TWithId;
     Body: Partial<TRestTypedTransactionSchema>;
+    Reply: TIndexable<TRestTransactionSchema>;
   }> = async (args) => {
     return this.update({
       ...args,
@@ -280,14 +294,19 @@ export class TransactionsController implements IController {
     });
   };
 
-  removeIncome: TRouteHandler<{ Params: TWithId }> = async (args) => {
+  removeIncome: TRouteHandler<{
+    Params: TWithId;
+    Reply: TIndexable<TRestTransactionSchema>;
+  }> = async (args) => {
     return this.remove({ ...args });
   };
 
   findExpenses: TRouteHandler<{
     Params: TWithId;
     Query: Partial<TRestTypedTransactionSchema>;
-    Reply: TRestTransactionSchema | TRestTransactionSchema[];
+    Reply:
+      | TIndexable<TRestTransactionSchema>
+      | TIndexable<TRestTransactionSchema>[];
   }> = async (args) => {
     return this.find({
       ...args,
@@ -295,9 +314,10 @@ export class TransactionsController implements IController {
     });
   };
 
-  addExpenses: TRouteHandler<{ Body: TRestTypedTransactionSchema }> = async (
-    args
-  ) => {
+  addExpenses: TRouteHandler<{
+    Body: TRestTypedTransactionSchema;
+    Reply: TIndexable<TRestTransactionSchema>;
+  }> = async (args) => {
     return this.add({
       ...args,
       body: { ...args.body, type: 'expense' },
@@ -307,6 +327,7 @@ export class TransactionsController implements IController {
   updateExpenses: TRouteHandler<{
     Params: TWithId;
     Body: Partial<TRestTypedTransactionSchema>;
+    Reply: TIndexable<TRestTransactionSchema>;
   }> = async (args) => {
     return this.update({
       ...args,
@@ -314,7 +335,10 @@ export class TransactionsController implements IController {
     });
   };
 
-  removeExpenses: TRouteHandler<{ Params: TWithId }> = async (args) => {
+  removeExpenses: TRouteHandler<{
+    Params: TWithId;
+    Reply: TIndexable<TRestTransactionSchema>;
+  }> = async (args) => {
     return this.remove({ ...args });
   };
 }
