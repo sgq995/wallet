@@ -13,18 +13,10 @@ export const RestTransactionSchema = Type.Object({
 
 export type TRestTransactionSchema = Static<typeof RestTransactionSchema>;
 
-export const RestIncomeTransactionSchema = Type.Omit(RestTransactionSchema, [
+export const RestTypedTransactionSchema = Type.Omit(RestTransactionSchema, [
   'type',
 ]);
 
-export type TRestIncomeTransactionSchema = Static<
-  typeof RestIncomeTransactionSchema
->;
-
-export const RestExpenseTransactionSchema = Type.Omit(RestTransactionSchema, [
-  'type',
-]);
-
-export type TRestExpenseTransactionSchema = Static<
-  typeof RestExpenseTransactionSchema
+export type TRestTypedTransactionSchema = Static<
+  typeof RestTypedTransactionSchema
 >;
