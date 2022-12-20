@@ -13,18 +13,16 @@ export const RestTransactionSchema = Type.Object({
 
 export type TRestTransactionSchema = Static<typeof RestTransactionSchema>;
 
-export const RestIncomeTransactionSchema = Type.Intersect([
-  Type.Omit(RestTransactionSchema, ['type']),
-  Type.Object({ type: Type.Literal('income') }),
+export const RestIncomeTransactionSchema = Type.Omit(RestTransactionSchema, [
+  'type',
 ]);
 
 export type TRestIncomeTransactionSchema = Static<
   typeof RestIncomeTransactionSchema
 >;
 
-export const RestExpenseTransactionSchema = Type.Intersect([
-  Type.Omit(RestTransactionSchema, ['type']),
-  Type.Object({ type: Type.Literal('expense') }),
+export const RestExpenseTransactionSchema = Type.Omit(RestTransactionSchema, [
+  'type',
 ]);
 
 export type TRestExpenseTransactionSchema = Static<

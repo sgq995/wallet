@@ -11,7 +11,9 @@ import {
 } from '../utilities/schema.utility';
 import { TransactionsAdapter } from './transactions.adapter';
 import {
+  RestIncomeTransactionSchema,
   RestTransactionSchema,
+  TRestIncomeTransactionSchema,
   TRestTransactionSchema,
 } from './transactions.schema';
 import { TransactionsRepository } from './transactions.repository';
@@ -84,6 +86,62 @@ export class TransactionsController implements IController {
           },
         },
       },
+      {
+        method: 'GET',
+        endpoint: '/income',
+        handler: this.findIncome,
+        schema: {
+          query: PartialAndIndexable(RestIncomeTransactionSchema),
+          reply: {
+            [HttpStatus.Ok]: Type.Array(Indexable(RestIncomeTransactionSchema)),
+          },
+        },
+      },
+      {
+        method: 'POST',
+        endpoint: '/income',
+        handler: this.addIncome,
+        schema: {
+          body: RestIncomeTransactionSchema,
+          reply: {
+            [HttpStatus.Created]: Indexable(RestIncomeTransactionSchema),
+          },
+        },
+      },
+      {
+        method: 'GET',
+        endpoint: '/income/:id',
+        handler: this.findIncome,
+        schema: {
+          params: Type.Partial(WithId),
+          reply: {
+            [HttpStatus.Ok]: Indexable(RestIncomeTransactionSchema),
+          },
+        },
+      },
+      {
+        method: 'PATCH',
+        endpoint: '/income/:id',
+        handler: this.updateIncome,
+        schema: {
+          params: WithId,
+          body: RecursivePartial(RestIncomeTransactionSchema),
+          reply: {
+            [HttpStatus.Ok]: Indexable(RestIncomeTransactionSchema),
+          },
+        },
+      },
+      {
+        method: 'DELETE',
+        endpoint: '/income/:id',
+        handler: this.removeIncome,
+        schema: {
+          params: WithId,
+          reply: {
+            [HttpStatus.Ok]: Indexable(RestIncomeTransactionSchema),
+          },
+        },
+      },
     ];
   }
 
@@ -134,5 +192,39 @@ export class TransactionsController implements IController {
     const data: TIndexable<TRestTransactionSchema> =
       this._adapter.modelToRest(transaction);
     return { status: HttpStatus.Ok, data };
+  };
+
+  findIncome: TRouteHandler<{
+    Params: TWithId;
+    Query: Partial<TRestIncomeTransactionSchema>;
+    Reply: TRestTransactionSchema | TRestTransactionSchema[];
+  }> = async (args) => {
+    return this.find({
+      ...args,
+      query: { ...args.query, type: 'income' },
+    });
+  };
+
+  addIncome: TRouteHandler<{ Body: TRestIncomeTransactionSchema }> = async (
+    args
+  ) => {
+    return this.add({
+      ...args,
+      body: { ...args.body, type: 'income' },
+    });
+  };
+
+  updateIncome: TRouteHandler<{
+    Params: TWithId;
+    Body: Partial<TRestIncomeTransactionSchema>;
+  }> = async (args) => {
+    return this.update({
+      ...args,
+      body: { ...args.body, type: 'income' },
+    });
+  };
+
+  removeIncome: TRouteHandler<{ Params: TWithId }> = async (args) => {
+    return this.remove({ ...args });
   };
 }
