@@ -82,6 +82,23 @@ export class AccountsRepository {
     }
   }
 
+  async remove(id: number): Promise<TIndexable<IAppAccountModel>> {
+    try {
+      const result = await this._prisma.account.delete({
+        where: {
+          id,
+        },
+        include: {
+          currency: true,
+        },
+      });
+
+      return this._toAppModel(result);
+    } catch {
+      throw new HttpNotFoundError('transaction not found');
+    }
+  }
+
   private _toAppModel(
     this: void,
     entity: Account & {

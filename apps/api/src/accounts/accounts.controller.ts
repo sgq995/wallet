@@ -48,7 +48,7 @@ export class AccountsController implements IController {
         schema: {
           body: RestCreateAccountSchema,
           reply: {
-            [HttpStatus.Ok]: Type.Array(Indexable(RestAccountSchema)),
+            [HttpStatus.Created]: Type.Array(Indexable(RestAccountSchema)),
           },
         },
       },
@@ -70,6 +70,17 @@ export class AccountsController implements IController {
         schema: {
           params: WithId,
           body: RecursivePartial(RestCreateAccountSchema),
+          reply: {
+            [HttpStatus.Ok]: Indexable(RestAccountSchema),
+          },
+        },
+      },
+      {
+        method: 'DELETE',
+        endpoint: '/:id',
+        handler: this.remove,
+        schema: {
+          params: WithId,
           reply: {
             [HttpStatus.Ok]: Indexable(RestAccountSchema),
           },
@@ -117,6 +128,16 @@ export class AccountsController implements IController {
       params.id,
       this._adapter.restToModel(body)
     );
+    const data: TIndexable<TRestAccountSchema> =
+      this._adapter.modelToRest(account);
+    return { status: HttpStatus.Ok, data };
+  };
+
+  remove: TRouteHandler<{
+    Params: TWithId;
+    Reply: TIndexable<TRestAccountSchema>;
+  }> = async ({ params }) => {
+    const account = await this._repository.remove(params.id);
     const data: TIndexable<TRestAccountSchema> =
       this._adapter.modelToRest(account);
     return { status: HttpStatus.Ok, data };
