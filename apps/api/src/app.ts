@@ -1,3 +1,4 @@
+import { AccountsModule } from './accounts';
 import { IController, isController } from './models/controller.model';
 import { IFramework } from './models/framework.model';
 import { AppModule, AsyncAppModule } from './models/module.model';
@@ -11,7 +12,7 @@ export class App {
   constructor(private _framework: IFramework) {}
 
   modules(): typeof AppModule[] {
-    return [PrismaModule, TransactionModule];
+    return [AccountsModule, PrismaModule, TransactionModule];
   }
 
   async start() {

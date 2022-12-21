@@ -7,6 +7,10 @@ const value = {
   cents: Type.Integer(),
 };
 
+export const RestCashValueSchema = Type.Object({
+  ...value,
+});
+
 export const RestCashSchema = Type.Union([
   Type.Object({
     ...value,
