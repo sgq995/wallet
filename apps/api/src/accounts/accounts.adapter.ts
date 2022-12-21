@@ -1,5 +1,5 @@
 import { IAdapter } from '../models';
-import { TIndexable } from '../utilities/model.utility';
+import { TIndexable, TRecursivePartial } from '../utilities/model.utility';
 import { IAppAccountModel, IAppCreateAccountModel } from './accounts.model';
 import {
   TRestAccountSchema,
@@ -61,6 +61,10 @@ export class AccountsAdapter
     this: void,
     entity: Partial<TRestAccountSchema>
   ): Partial<IAppAccountModel>;
+  restToModel(
+    this: void,
+    entity: TRecursivePartial<TRestAccountSchema>
+  ): TRecursivePartial<IAppAccountModel>;
   restToModel(
     this: void,
     entity: TRestCreateAccountSchema

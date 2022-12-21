@@ -2,10 +2,11 @@ import { Type } from '@sinclair/typebox';
 import { IController } from '../models/controller.model';
 import { IRoute, TRouteHandler } from '../models/route.model';
 import { HttpStatus } from '../utilities/http.utility';
-import { TIndexable } from '../utilities/model.utility';
+import { TIndexable, TRecursivePartial } from '../utilities/model.utility';
 import {
   Indexable,
   PartialAndIndexable,
+  RecursivePartial,
   TWithId,
   WithId,
 } from '../utilities/schema.utility';
@@ -62,6 +63,18 @@ export class AccountsController implements IController {
           },
         },
       },
+      {
+        method: 'PATCH',
+        endpoint: '/:id',
+        handler: this.update,
+        schema: {
+          params: WithId,
+          body: RecursivePartial(RestCreateAccountSchema),
+          reply: {
+            [HttpStatus.Ok]: Indexable(RestAccountSchema),
+          },
+        },
+      },
     ];
   }
 
@@ -93,5 +106,19 @@ export class AccountsController implements IController {
     const data: TIndexable<TRestAccountSchema> =
       this._adapter.modelToRest(account);
     return { status: HttpStatus.Created, data };
+  };
+
+  update: TRouteHandler<{
+    Params: TWithId;
+    Body: TRecursivePartial<TRestCreateAccountSchema>;
+    Reply: TIndexable<TRestAccountSchema>;
+  }> = async ({ params, body }) => {
+    const account = await this._repository.update(
+      params.id,
+      this._adapter.restToModel(body)
+    );
+    const data: TIndexable<TRestAccountSchema> =
+      this._adapter.modelToRest(account);
+    return { status: HttpStatus.Ok, data };
   };
 }

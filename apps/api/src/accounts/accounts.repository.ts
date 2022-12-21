@@ -3,7 +3,7 @@ import {
   HttpInternalServerError,
   HttpNotFoundError,
 } from '../utilities/http.utility';
-import { TIndexable } from '../utilities/model.utility';
+import { TIndexable, TRecursivePartial } from '../utilities/model.utility';
 import { IAppAccountModel, IAppCreateAccountModel } from './accounts.model';
 
 export class AccountsRepository {
@@ -45,6 +45,31 @@ export class AccountsRepository {
           startingCents: account.startingBalance?.cents,
           units: account.balance.units,
           cents: account.balance.cents,
+        },
+        include: {
+          currency: true,
+        },
+      });
+
+      return this._toAppModel(result);
+    } catch {
+      throw new HttpInternalServerError('something goes wrong');
+    }
+  }
+
+  async update(id: number, account: TRecursivePartial<IAppCreateAccountModel>) {
+    try {
+      const result = await this._prisma.account.update({
+        where: {
+          id,
+        },
+        data: {
+          label: account.label,
+          currencyId: account.currencyId,
+          startingUnits: account.startingBalance?.units,
+          startingCents: account.startingBalance?.cents,
+          units: account.balance?.units,
+          cents: account.balance?.cents,
         },
         include: {
           currency: true,
