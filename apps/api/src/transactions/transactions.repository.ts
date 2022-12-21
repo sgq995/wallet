@@ -24,7 +24,7 @@ export class TransactionsRepository {
       },
     });
 
-    if (result.length === 0) {
+    if (id && result.length === 0) {
       throw new HttpNotFoundError('transaction not found');
     }
 

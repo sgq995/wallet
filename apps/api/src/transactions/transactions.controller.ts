@@ -57,7 +57,7 @@ export class TransactionsController implements IController {
         endpoint: '/:id',
         handler: this.find,
         schema: {
-          params: Type.Partial(WithId),
+          params: WithId,
           reply: {
             [HttpStatus.Ok]: Indexable(RestTransactionSchema),
           },
