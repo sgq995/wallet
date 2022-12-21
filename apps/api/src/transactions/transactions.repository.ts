@@ -21,6 +21,7 @@ export class TransactionsRepository {
       include: {
         currency: true,
         tags: true,
+        account: { select: { id: true } },
       },
     });
 
@@ -41,6 +42,7 @@ export class TransactionsRepository {
     let result: Transaction & {
       currency: Currency;
       tags: Tag[];
+      account: { id: number } | null;
     };
 
     if (transaction.cash.currency) {
@@ -103,6 +105,9 @@ export class TransactionsRepository {
                 })),
               }
             : undefined,
+          account: {
+            connect: { id: transaction.accountId },
+          },
         },
         where: {
           id,
@@ -110,6 +115,7 @@ export class TransactionsRepository {
         include: {
           currency: true,
           tags: true,
+          account: { select: { id: true } },
         },
       });
 
@@ -128,6 +134,7 @@ export class TransactionsRepository {
         include: {
           currency: true,
           tags: true,
+          account: { select: { id: true } },
         },
       });
 
@@ -142,6 +149,7 @@ export class TransactionsRepository {
     entity: Transaction & {
       currency: Currency;
       tags: Tag[];
+      account: { id: number } | null;
     }
   ): TIndexable<IAppTransactionModel> {
     const type: IAppTransactionModel['type'] = <IAppTransactionModel['type']>(
@@ -184,6 +192,7 @@ export class TransactionsRepository {
       repeat,
       period,
       tags,
+      accountId: entity.account?.id,
     };
   }
 
@@ -219,10 +228,16 @@ export class TransactionsRepository {
               },
             })),
           },
+          account: {
+            connect: {
+              id: transaction.accountId,
+            },
+          },
         },
         include: {
           currency: true,
           tags: true,
+          account: { select: { id: true } },
         },
       });
     } catch {
@@ -257,10 +272,12 @@ export class TransactionsRepository {
               },
             })),
           },
+          accountId: transaction.accountId,
         },
         include: {
           currency: true,
           tags: true,
+          account: { select: { id: true } },
         },
       });
     } catch {

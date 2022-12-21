@@ -8,4 +8,5 @@ export interface IAppTransactionModel {
   repeat?: boolean;
   period?: IAppTimePeriodModel;
   tags: string[];
+  accountId?: number;
 }

@@ -66,6 +66,7 @@ export class TransactionsAdapter
       repeat: entity.repeat,
       period,
       tags: entity.tags,
+      accountId: entity.accountId,
     };
   }
 
@@ -114,6 +115,7 @@ export class TransactionsAdapter
       repeat: entity.repeat,
       period,
       tags: entity.tags,
+      accountId: entity.accountId,
     };
   }
 }

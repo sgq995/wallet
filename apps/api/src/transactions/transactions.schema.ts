@@ -9,6 +9,7 @@ export const RestTransactionSchema = Type.Object({
   repeat: Type.Optional(Type.Boolean()),
   period: Type.Optional(RestTimePeriodSchema),
   tags: Type.Array(Type.String()),
+  accountId: Type.Optional(Type.Integer()),
 });
 
 export type TRestTransactionSchema = Static<typeof RestTransactionSchema>;

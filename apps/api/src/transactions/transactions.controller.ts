@@ -1,4 +1,4 @@
-import { Static, Type } from '@sinclair/typebox';
+import { Type } from '@sinclair/typebox';
 import { IController } from '../models/controller.model';
 import { IRoute, TRouteHandler } from '../models/route.model';
 import { HttpStatus } from '../utilities/http.utility';
