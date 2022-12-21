@@ -44,6 +44,7 @@ void tap.test('TransactionsAdapter', (t) => {
         repeat: undefined,
         period: undefined,
         tags: [],
+        accountId: undefined,
       };
 
       const adapter = new TransactionsAdapter();
@@ -77,6 +78,7 @@ void tap.test('TransactionsAdapter', (t) => {
         repeat: undefined,
         period: undefined,
         tags: [],
+        accountId: undefined,
       };
 
       const adapter = new TransactionsAdapter();
@@ -148,6 +150,7 @@ void tap.test('TransactionsAdapter', (t) => {
         repeat: undefined,
         period: undefined,
         tags: [],
+        accountId: undefined,
       };
 
       const adapter = new TransactionsAdapter();
@@ -180,6 +183,7 @@ void tap.test('TransactionsAdapter', (t) => {
         repeat: undefined,
         period: undefined,
         tags: [],
+        accountId: undefined,
       };
 
       const adapter = new TransactionsAdapter();
