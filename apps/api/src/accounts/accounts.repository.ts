@@ -76,6 +76,17 @@ export class AccountsRepository {
         },
       });
 
+      if (account.currencyId) {
+        await this._prisma.transaction.updateMany({
+          data: {
+            currencyId: account.currencyId,
+          },
+          where: {
+            accountId: id,
+          },
+        });
+      }
+
       return this._toAppModel(result);
     } catch {
       throw new HttpInternalServerError('something goes wrong');

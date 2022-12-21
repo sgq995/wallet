@@ -1,6 +1,7 @@
 import { Currency, PrismaClient, Tag, Transaction } from '@prisma/client';
 import { IAppCurrencyModel } from '../models';
 import {
+  HttpBadRequestError,
   HttpInternalServerError,
   HttpNotFoundError,
 } from '../utilities/http.utility';
@@ -68,25 +69,39 @@ export class TransactionsRepository {
     id: number,
     transaction: Partial<IAppTransactionModel>
   ): Promise<TIndexable<IAppTransactionModel>> {
+    const accountId = transaction.accountId;
+    const currencyId =
+      transaction.cash?.currencyId || transaction.cash?.currency?.id;
+    if (accountId && currencyId) {
+      await this._verifyAccountAndCurrency(accountId, currencyId);
+    } else if (accountId) {
+      await this._verifyAccountAndTransaction(accountId, id);
+    }
+
     try {
       const result = await this._prisma.transaction.update({
         data: {
           type: transaction.type,
           units: transaction.cash?.units,
           cents: transaction.cash?.cents,
-          currency:
-            transaction.cash?.currency?.id ||
-            transaction.cash?.currencyId ||
-            transaction.cash?.currency?.code
+          currency: {
+            ...(transaction.cash?.currency?.id || transaction.cash?.currencyId
               ? {
-                  update: {
+                  connect: {
                     id:
                       transaction.cash?.currency?.id ||
                       transaction.cash?.currencyId,
+                  },
+                }
+              : {}),
+            ...(transaction.cash?.currency?.code
+              ? {
+                  connect: {
                     code: transaction.cash?.currency?.code,
                   },
                 }
-              : undefined,
+              : {}),
+          },
           date: transaction.date,
           repeat: transaction.repeat,
           periodicity: transaction.period?.periodicity,
@@ -106,7 +121,13 @@ export class TransactionsRepository {
               }
             : undefined,
           account: {
-            connect: { id: transaction.accountId },
+            ...(transaction.accountId
+              ? {
+                  connect: {
+                    id: transaction.accountId,
+                  },
+                }
+              : {}),
           },
         },
         where: {
@@ -196,10 +217,60 @@ export class TransactionsRepository {
     };
   }
 
-  private _createWithCurrency(
+  private async _verifyAccountAndCurrency(
+    accountId: number | undefined,
+    currencyId: number | undefined
+  ) {
+    if (!accountId) {
+      return;
+    }
+
+    if (!currencyId) {
+      return;
+    }
+
+    const account = await this._prisma.account.findUnique({
+      where: { id: accountId },
+    });
+    if (!account) {
+      throw new HttpNotFoundError('account not found');
+    }
+
+    if (account.currencyId !== currencyId) {
+      throw new HttpBadRequestError(
+        'account transaction should have the same currency as account'
+      );
+    }
+  }
+
+  private async _verifyAccountAndTransaction(
+    accountId: number | undefined,
+    transactionId: number | undefined
+  ) {
+    if (!accountId) {
+      return;
+    }
+
+    if (!transactionId) {
+      return;
+    }
+
+    const transaction = await this._prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+    if (!transaction) {
+      throw new HttpNotFoundError('transaction not found');
+    }
+
+    await this._verifyAccountAndCurrency(accountId, transaction.currencyId);
+  }
+
+  private async _createWithCurrency(
     transaction: IAppTransactionModel,
     currency: TIndexable<IAppCurrencyModel>
   ) {
+    await this._verifyAccountAndCurrency(transaction.accountId, currency.id);
+
     try {
       return this._prisma.transaction.create({
         data: {
@@ -245,10 +316,12 @@ export class TransactionsRepository {
     }
   }
 
-  private _createWithCurrencyId(
+  private async _createWithCurrencyId(
     transaction: IAppTransactionModel,
     currencyId: number
   ) {
+    await this._verifyAccountAndCurrency(transaction.accountId, currencyId);
+
     try {
       return this._prisma.transaction.create({
         data: {
