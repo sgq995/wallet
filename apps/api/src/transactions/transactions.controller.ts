@@ -202,7 +202,7 @@ export class TransactionsController implements IController {
   }
 
   find: TRouteHandler<{
-    Params: TWithId;
+    Params: TWithId | undefined;
     Query: Partial<TRestTransactionSchema>;
     Reply:
       | TIndexable<TRestTransactionSchema>
@@ -261,7 +261,7 @@ export class TransactionsController implements IController {
   };
 
   findIncome: TRouteHandler<{
-    Params: TWithId;
+    Params: TWithId | undefined;
     Query: Partial<TRestTypedTransactionSchema>;
     Reply:
       | TIndexable<TRestTransactionSchema>
@@ -302,7 +302,7 @@ export class TransactionsController implements IController {
   };
 
   findExpenses: TRouteHandler<{
-    Params: TWithId;
+    Params: TWithId | undefined;
     Query: Partial<TRestTypedTransactionSchema>;
     Reply:
       | TIndexable<TRestTransactionSchema>

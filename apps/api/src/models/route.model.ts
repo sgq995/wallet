@@ -42,8 +42,11 @@ export interface IReply<Reply extends IReplyType = IReplyType> {
 export interface IRouteArgs extends IRequestType, IReplyType {}
 
 export type TRouteHandler<RouteArgs extends IRouteArgs = IRouteArgs> = (
-  args: IRequest<RouteArgs>
-) => Promise<IReply<RouteArgs>> | IReply<RouteArgs> | never;
+  args: IRequest<Pick<RouteArgs, keyof IRequestType>>
+) =>
+  | Promise<IReply<Pick<RouteArgs, keyof IReplyType>>>
+  | IReply<Pick<RouteArgs, keyof IReplyType>>
+  | never;
 
 export interface ISchemaType {
   Params?: TSchema;
