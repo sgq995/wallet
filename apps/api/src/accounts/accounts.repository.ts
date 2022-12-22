@@ -106,7 +106,7 @@ export class AccountsRepository {
 
       return this._toAppModel(result);
     } catch {
-      throw new HttpNotFoundError('transaction not found');
+      throw new HttpNotFoundError('account not found');
     }
   }
 

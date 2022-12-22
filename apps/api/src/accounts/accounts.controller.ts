@@ -1,6 +1,7 @@
 import { Type } from '@sinclair/typebox';
 import { IController } from '../models/controller.model';
 import { IRoute, TRouteHandler } from '../models/route.model';
+import { TransactionsController } from '../transactions';
 import { HttpStatus } from '../utilities/http.utility';
 import { TIndexable, TRecursivePartial } from '../utilities/model.utility';
 import {
@@ -48,7 +49,7 @@ export class AccountsController implements IController {
         schema: {
           body: RestCreateAccountSchema,
           reply: {
-            [HttpStatus.Created]: Type.Array(Indexable(RestAccountSchema)),
+            [HttpStatus.Created]: Indexable(RestAccountSchema),
           },
         },
       },

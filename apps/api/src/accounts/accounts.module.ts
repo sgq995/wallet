@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { AppModule } from '../models/module.model';
+import { TransactionsController } from '../transactions';
 import { AccountsAdapter } from './accounts.adapter';
 import { AccountsController } from './accounts.controller';
 import { AccountsRepository } from './accounts.repository';
