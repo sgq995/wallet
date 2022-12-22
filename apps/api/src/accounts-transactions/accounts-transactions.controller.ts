@@ -13,6 +13,7 @@ import {
   PartialAndIndexable,
   RecursivePartial,
 } from '../utilities/schema.utility';
+import { AccountsTransactionsRepository } from './accounts-transactions.repository';
 import {
   TWithAccountId,
   TWithTransactionId,
@@ -23,7 +24,10 @@ import {
 export class AccountsTransactionsController implements IController {
   public prefix?: string | undefined = '/v2/accounts';
 
-  constructor(private _transactionsController: TransactionsController) {}
+  constructor(
+    private _repository: AccountsTransactionsRepository,
+    private _transactionsController: TransactionsController
+  ) {}
 
   routes() {
     return <IRoute[]>[
@@ -95,7 +99,7 @@ export class AccountsTransactionsController implements IController {
       | TIndexable<TRestTransactionSchema>
       | TIndexable<TRestTransactionSchema>[];
   }> = async ({ params, query, ...request }) => {
-    // TODO: Verify account exists
+    await this._repository.verifyAccountExists();
     return this._transactionsController.find({
       ...request,
       params:
@@ -109,7 +113,7 @@ export class AccountsTransactionsController implements IController {
     Body: TRestTransactionSchema;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async ({ params, body, ...request }) => {
-    // TODO: Verify account exists
+    await this._repository.verifyAccountExists();
     return this._transactionsController.add({
       ...request,
       params: {},
@@ -122,7 +126,11 @@ export class AccountsTransactionsController implements IController {
     Body: Partial<TRestTransactionSchema>;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async ({ params, body, ...request }) => {
-    // TODO: Verify account exists
+    await this._repository.verifyAccountExists();
+    await this._repository.verifyTransactionOwnership(
+      params.accountId,
+      params.transactionId
+    );
     return this._transactionsController.update({
       ...request,
       params: { id: params.transactionId },
@@ -134,8 +142,11 @@ export class AccountsTransactionsController implements IController {
     Params: TWithAccountId & TWithTransactionId;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async ({ params, ...request }) => {
-    // TODO: Verify account exists
-    // TODO: Verify transaction and accountId
+    await this._repository.verifyAccountExists();
+    await this._repository.verifyTransactionOwnership(
+      params.accountId,
+      params.transactionId
+    );
     return this._transactionsController.remove({
       ...request,
       params: { id: params.transactionId },
