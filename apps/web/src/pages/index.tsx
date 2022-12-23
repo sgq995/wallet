@@ -1,15 +1,15 @@
-import { SessionAuth } from 'supertokens-auth-react/recipe/session';
-
-import { Typography } from '@mui/material';
-
-import { EntryList } from '../components/entries/EntryList';
+import { Card, CardActionArea, CardContent, Grid } from '@mui/material';
 
 export default function Home() {
   return (
-    <SessionAuth>
-      <Typography variant="h1">Home</Typography>
-
-      <EntryList />
-    </SessionAuth>
+    <Grid component="main" container>
+      <Grid item>
+        <Card variant="outlined">
+          <CardActionArea>
+            <CardContent>Bank Account</CardContent>
+          </CardActionArea>
+        </Card>
+      </Grid>
+    </Grid>
   );
 }
