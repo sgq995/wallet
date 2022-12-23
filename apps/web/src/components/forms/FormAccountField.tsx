@@ -17,7 +17,7 @@ import {
 
 import { useControlledFormComponent } from 'forms';
 
-import { useFindAllQuery } from '../../hooks/accounts';
+import { useFindAllQuery } from '../../legacy/hooks/accounts';
 
 import AsyncViewer, {
   AsyncData,

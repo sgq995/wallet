@@ -1,6 +1,6 @@
 import { CircularProgress, List, ListItem } from '@mui/material';
 import { EffectCallback, ReactElement, useEffect } from 'react';
-import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
+import { useIntersectionObserver } from '../../../hooks/use-intersection-observer';
 
 export interface IInfiniteListProps<
   TEntity = unknown,

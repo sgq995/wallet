@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { TEntryModel } from 'schemas/entries';
 import { useSystemContext } from '../../contexts/system';
-import { yyyyMMdd } from '../../utilities/date.utility';
+import { yyyyMMdd } from '../../legacy/utilities/date.utility';
 import { DeleteDialog, IDeleteDialogProps } from '../dialogs/DeleteDialog';
 import { transactionToAmount } from './utils';
 

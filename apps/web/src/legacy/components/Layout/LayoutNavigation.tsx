@@ -16,12 +16,12 @@ import {
   Tabs,
 } from '@mui/material';
 
-import { AccountsIcon, AddIcon, HomeIcon, LogoutIcon } from '../IconsMaterial';
+import { AccountsIcon, AddIcon, HomeIcon, LogoutIcon } from '../../../components/IconsMaterial';
 
-import { AccountForm } from '../accounts';
-import { CategoryForm } from '../categories';
-import { EntryForm } from '../entries';
-import { ResponsiveDialog } from '../dialogs/ResponsiveDialog';
+import { AccountForm } from '../../../components/accounts';
+import { CategoryForm } from '../../../components/categories';
+import { EntryForm } from '../../../components/entries';
+import { ResponsiveDialog } from '../../../components/dialogs/ResponsiveDialog';
 
 interface Route {
   path: string;

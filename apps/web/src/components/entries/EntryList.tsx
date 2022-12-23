@@ -22,7 +22,7 @@ import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
 import { EntryItem } from './EntryItem';
 import { EntryDeleteDialog } from './EntryDeleteDialog';
 import { EntryEditDialog } from './EntryEditDialog';
-import { InfiniteList } from '../infinite-list';
+import { InfiniteList } from '../../legacy/components/infinite-list';
 
 export interface IEntryListProps {}
 

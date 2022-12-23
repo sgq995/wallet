@@ -9,7 +9,7 @@ import type { TEntryModel } from 'schemas/entries';
 import { Hidden, IconButton, ListItem, ListItemText } from '@mui/material';
 import { DeleteIcon } from '../../components/IconsMaterial';
 
-import { yyyyMMdd } from '../../utilities/date.utility';
+import { yyyyMMdd } from '../../legacy/utilities/date.utility';
 import { transactionToAmount } from './utils';
 import { useSystemContext } from '../../contexts/system';
 
