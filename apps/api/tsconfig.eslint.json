@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/base.json",
+  "extends": "@wallet/dev-tools/tsconfig/base.json",
   "include": ["src/**/*.ts", "test/**/*.ts", "mocks/**/*.ts", "prisma/**/*.ts"],
   "exclude": ["node_modules"]
 }

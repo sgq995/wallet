@@ -1,11 +1,14 @@
 {
-  "name": "eslintconfig",
+  "name": "@wallet/dev-tools",
   "version": "0.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  "private": true,
   "files": [
-    "eslint-preset.js",
-    "eslint-typescript.js"
+    "babelconfig/base.json",
+    "eslintconfig/eslint-preset.js",
+    "eslintconfig/eslint-typescript.js",
+    "tsconfig/base.json",
+    "tsconfig/nextjs.json",
+    "tsconfig/react-library.json"
   ],
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.42.0",

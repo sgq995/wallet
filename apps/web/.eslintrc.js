@@ -1,1 +1,1 @@
-module.exports = require('eslintconfig/eslint-preset');
+module.exports = require('@wallet/dev-tools/eslintconfig/eslint-preset');

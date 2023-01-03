@@ -5,7 +5,7 @@
   "main": "index.ts",
   "types": "index.ts",
   "devDependencies": {
-    "tsconfig": "*",
+    "@wallet/dev-tools": "*",
     "typescript": "^4.8.4"
   }
 }

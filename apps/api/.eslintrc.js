@@ -1,6 +1,6 @@
 const path = require('path');
 
-const eslint = require('eslintconfig/eslint-typescript');
+const eslint = require('@wallet/dev-tools/eslintconfig/eslint-typescript');
 
 module.exports = {
   ...eslint,
