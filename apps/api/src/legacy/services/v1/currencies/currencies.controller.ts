@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 
-import { Request, Reply } from 'schemas/currencies';
+import { Request, Reply } from '@wallet/schemas/currencies';
 import { to } from '../../../utils/promise-simplify';
 
 import { replyNotFound, replyOK } from '../../../utils/response-builder';

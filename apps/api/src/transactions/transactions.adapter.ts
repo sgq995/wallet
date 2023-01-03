@@ -1,4 +1,4 @@
-import { dateTime } from 'utilities';
+import { dateTime } from '@wallet/utilities';
 import { IAdapter } from '../models/adapter.model';
 import { HttpInternalServerError } from '../utilities/http.utility';
 import { TIndexable } from '../utilities/model.utility';

@@ -4,7 +4,7 @@ import type { BoxProps } from '@mui/material';
 
 import { Box } from '@mui/material';
 
-import { FormProvider, IFormProviderProps } from 'forms';
+import { FormProvider, IFormProviderProps } from '@wallet/forms';
 
 export interface IFormProps
   extends BoxProps<

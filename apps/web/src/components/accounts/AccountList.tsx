@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useMemo } from 'react';
-import { Reply } from 'schemas/accounts';
-import { TAccountModel } from 'schemas/accounts/model';
+import { Reply } from '@wallet/schemas/accounts';
+import { TAccountModel } from '@wallet/schemas/accounts/model';
 import { useNotificationSystem } from '../../contexts/notifications';
 import { useFindAllInfiniteQuery, useFindAllQuery } from '../../legacy/hooks/accounts';
 import { InfiniteList } from '../../legacy/components/infinite-list';

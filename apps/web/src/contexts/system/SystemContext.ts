@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { TArrayOfCurrencyModel } from 'schemas/currencies/model';
-import { TArrayOfEntryTypeModel } from 'schemas/entry-types/model';
+import { TArrayOfCurrencyModel } from '@wallet/schemas/currencies/model';
+import { TArrayOfEntryTypeModel } from '@wallet/schemas/entry-types/model';
 
 export interface ISystemContext {
   entryTypes: TArrayOfEntryTypeModel;

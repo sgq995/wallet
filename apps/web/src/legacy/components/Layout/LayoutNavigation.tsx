@@ -16,7 +16,12 @@ import {
   Tabs,
 } from '@mui/material';
 
-import { AccountsIcon, AddIcon, HomeIcon, LogoutIcon } from '../../../components/IconsMaterial';
+import {
+  AccountsIcon,
+  AddIcon,
+  HomeIcon,
+  LogoutIcon,
+} from '../../../legacy/components/IconsMaterial';
 
 import { AccountForm } from '../../../components/accounts';
 import { CategoryForm } from '../../../components/categories';

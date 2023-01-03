@@ -3,8 +3,8 @@ import {
   useFormDataSelector,
   useFormResetEvent,
   useFormValidityCheck,
-} from 'forms';
-import { SaveIcon } from '../IconsMaterial';
+} from '@wallet/forms';
+import { SaveIcon } from '../../legacy/components/IconsMaterial';
 
 export interface IFormSubmitButtonProps<T> {
   onClick?: (state: T) => void;

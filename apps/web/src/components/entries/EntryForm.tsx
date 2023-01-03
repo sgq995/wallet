@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material';
 
-import type { Request, TEntryModel } from 'schemas/entries';
+import type { Request, TEntryModel } from '@wallet/schemas/entries';
 
 import {
   Form,
@@ -13,7 +13,7 @@ import {
   FormSubmitButton,
 } from '../forms';
 
-import { useAddOneMutation, useUpdateOneMutation } from '../../hooks/entries';
+import { useAddOneMutation, useUpdateOneMutation } from '../../legacy/hooks/entries';
 import { useNotificationSystem } from '../../contexts/notifications';
 import { format } from '../../legacy/utilities/date.utility';
 

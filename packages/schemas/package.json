@@ -1,5 +1,5 @@
 {
-  "name": "schemas",
+  "name": "@wallet/schemas",
   "version": "3.0.0",
   "main": "index.js",
   "types": "index.d.ts",

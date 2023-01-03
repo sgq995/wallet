@@ -1,8 +1,8 @@
 import { Dispatch, useEffect, useReducer } from 'react';
 import { UseQueryResult } from 'react-query';
 
-import { useFindAllQuery as useFindAllCurrencies } from '../../../hooks/currencies';
-import { useFindAllQuery as useFindAllEntryTypes } from '../../../hooks/entry-types';
+import { useFindAllQuery as useFindAllCurrencies } from '../../../legacy/hooks/currencies';
+import { useFindAllQuery as useFindAllEntryTypes } from '../../../legacy/hooks/entry-types';
 
 import { defaultSystemContext } from '../SystemContext';
 

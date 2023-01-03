@@ -1,7 +1,7 @@
 import type { FormControlProps, TextFieldProps } from '@mui/material';
 
 import { FormControl, TextField } from '@mui/material';
-import { useControlledFormComponent } from 'forms';
+import { useControlledFormComponent } from '@wallet/forms';
 
 export interface IFormTextFieldProps {
   fullWidth?: FormControlProps['fullWidth'];

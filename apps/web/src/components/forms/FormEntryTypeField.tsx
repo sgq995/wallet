@@ -13,14 +13,14 @@ import {
   Select,
 } from '@mui/material';
 
-import { useFindAllQuery } from '../../hooks/entry-types';
+import { useFindAllQuery } from '../../legacy/hooks/entry-types';
 
 import AsyncViewer, {
   AsyncData,
   AsyncError,
   AsyncLoading,
 } from '../AsyncViewer';
-import { useControlledFormComponent } from 'forms';
+import { useControlledFormComponent } from '@wallet/forms';
 import { toInteger } from 'lodash';
 
 export interface IFormEntryTypeFieldProps {

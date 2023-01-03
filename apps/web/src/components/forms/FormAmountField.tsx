@@ -11,7 +11,7 @@ import {
   TextField,
 } from '@mui/material';
 
-import { numberValidator, useControlledFormComponent } from 'forms';
+import { numberValidator, useControlledFormComponent } from '@wallet/forms';
 import { toInteger } from 'lodash';
 
 import { useSystemContext } from '../../contexts/system';

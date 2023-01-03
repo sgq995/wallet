@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import { TAccountModel } from 'schemas/accounts/model';
+import { TAccountModel } from '@wallet/schemas/accounts/model';
 
 import {
   Form,

@@ -5,7 +5,7 @@ import {
   useQueryClient,
 } from 'react-query';
 
-import { Request, Reply } from 'schemas/accounts';
+import { Request, Reply } from '@wallet/schemas/accounts';
 
 import accountsService from '../services/accounts';
 

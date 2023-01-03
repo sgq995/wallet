@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import { TCategoryModel } from 'schemas/categories/model';
+import { TCategoryModel } from '@wallet/schemas/categories/model';
 
 import { Form, FormNameField, FormSubmitButton } from '../forms';
 

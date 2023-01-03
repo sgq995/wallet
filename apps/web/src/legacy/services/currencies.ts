@@ -1,4 +1,4 @@
-import { Request, Reply } from 'schemas/currencies';
+import { Request, Reply } from '@wallet/schemas/currencies';
 import { EndpointService } from './api';
 
 const CURRENCIES_BASE_URL = '/v1/currencies';
@@ -24,4 +24,4 @@ export default currenciesService;
 export type {
   TCurrencyModel,
   TArrayOfCurrencyModel,
-} from 'schemas/currencies/model';
+} from '@wallet/schemas/currencies/model';

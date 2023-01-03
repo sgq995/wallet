@@ -1,4 +1,4 @@
-import { Request, Reply } from 'schemas/categories';
+import { Request, Reply } from '@wallet/schemas/categories';
 import { EndpointService } from './api';
 
 const CATEGORIES_BASE_URL = '/v1/categories';
@@ -24,4 +24,4 @@ export default categoriesService;
 export type {
   TCategoryModel,
   TArrayOfCategoryModel,
-} from 'schemas/categories/model';
+} from '@wallet/schemas/categories/model';

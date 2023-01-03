@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@wallet/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -14,9 +14,11 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.12",
+    "@wallet/components": "*",
+    "@wallet/forms": "*",
+    "@wallet/schemas": "*",
     "currency.js": "^2.0.4",
     "firebase": "^9.6.10",
-    "forms": "*",
     "lodash": "^4.17.21",
     "next": "^13.0.3",
     "nextjs-cors": "^2.1.1",
@@ -24,10 +26,8 @@
     "react-dom": "^18.2.0",
     "react-query": "^3.38.1",
     "real-cancellable-promise": "^1.1.1",
-    "schemas": "*",
     "supertokens-auth-react": "^0.27.1",
-    "supertokens-node": "^12.0.5",
-    "ui": "*"
+    "supertokens-node": "^12.0.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

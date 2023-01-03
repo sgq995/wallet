@@ -1,4 +1,4 @@
-import { TEntryModel } from 'schemas/entries';
+import { TEntryModel } from '@wallet/schemas/entries';
 import { EditDialog, IEditDialogProps } from '../dialogs/EditDialog';
 import { EntryForm } from './EntryForm';
 

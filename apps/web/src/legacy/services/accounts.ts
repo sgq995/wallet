@@ -1,4 +1,4 @@
-import { Request, Reply } from 'schemas/accounts';
+import { Request, Reply } from '@wallet/schemas/accounts';
 import { EndpointService } from './api';
 
 const ACCOUNTS_BASE_URL = '/v1/accounts';
@@ -24,4 +24,4 @@ export default accountsService;
 export type {
   TAccountModel,
   TArrayOfAccountModel,
-} from 'schemas/accounts/model';
+} from '@wallet/schemas/accounts/model';

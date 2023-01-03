@@ -9,14 +9,14 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Reply, TEntryModel } from 'schemas/entries';
+import { Reply, TEntryModel } from '@wallet/schemas/entries';
 
 import { useNotificationSystem } from '../../contexts/notifications';
 
 import {
   useFindAllInfiniteQuery,
   useRemoveOneMutation,
-} from '../../hooks/entries';
+} from '../../legacy/hooks/entries';
 import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
 
 import { EntryItem } from './EntryItem';

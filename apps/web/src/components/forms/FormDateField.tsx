@@ -7,7 +7,7 @@ import type {
 } from '@mui/material';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import { numberValidator, useControlledFormComponent } from 'forms';
+import { numberValidator, useControlledFormComponent } from '@wallet/forms';
 import { toInteger } from 'lodash';
 
 const YEAR_LIST = new Array(new Date().getFullYear() - 2000 + 1)

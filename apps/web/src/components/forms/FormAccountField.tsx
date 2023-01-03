@@ -15,7 +15,7 @@ import {
   Select,
 } from '@mui/material';
 
-import { useControlledFormComponent } from 'forms';
+import { useControlledFormComponent } from '@wallet/forms';
 
 import { useFindAllQuery } from '../../legacy/hooks/accounts';
 

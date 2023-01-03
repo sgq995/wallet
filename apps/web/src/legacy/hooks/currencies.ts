@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-import { Request, Reply } from 'schemas/currencies';
+import { Request, Reply } from '@wallet/schemas/currencies';
 
 import accountsService from '../services/currencies';
 
