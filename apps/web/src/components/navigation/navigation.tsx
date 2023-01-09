@@ -7,7 +7,7 @@ import { MobileNavigationItem } from './mobile-navigation-item';
 
 export const Navigation: React.FC = () => {
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const navigationItems = useNavigationItems();
 
   if (isDesktop) {

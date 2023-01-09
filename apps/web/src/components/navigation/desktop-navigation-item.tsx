@@ -8,7 +8,7 @@ export const DesktopNavigationItem: React.FC<INavigationItem> = ({
 }) => {
   return (
     <ListItem disableGutters>
-      <ListItemButton component={Link} href={href}>
+      <ListItemButton component={Link} href={href} sx={{ padding: 2 }}>
         <ListItemIcon sx={{ minWidth: 0 }}>{icon}</ListItemIcon>
       </ListItemButton>
     </ListItem>
