@@ -1,4 +1,4 @@
-import { Request, Reply } from '@wallet/schemas/entry-types';
+import { Request, Reply } from '@wallet/schemas/legacy/entry-types';
 import { EndpointService } from './api';
 
 const ENTRY_TYPES_BASE_URL = '/v1/entry-types';
@@ -17,4 +17,4 @@ export default entryTypesService;
 export type {
   TEntryTypeModel,
   TArrayOfEntryTypeModel,
-} from '@wallet/schemas/entry-types/model';
+} from '@wallet/schemas/legacy/entry-types/model';

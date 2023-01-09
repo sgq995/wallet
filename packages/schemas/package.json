@@ -1,9 +1,8 @@
 {
   "name": "@wallet/schemas",
   "version": "3.0.0",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "license": "MIT",
+  "types": "index.ts",
+  "private": true,
   "scripts": {
     "prebuild": "mkdir -p build lib",
     "build": "run-s typescript babel",
@@ -25,14 +24,8 @@
     "typescript": "^4.8.4",
     "yarn-run-all": "^3.1.1"
   },
-  "exports": {
-    ".": "./lib/index.js",
-    "./entry-types": "./lib/entry-types/index.js",
-    "./accounts": "./lib/accounts/index.js",
-    "./categories": "./lib/categories/index.js",
-    "./entries": "./lib/entries/index.js",
-    "./currencies": "./lib/currencies/index.js",
-    "./tags": "./lib/tags/index.js",
-    "./transactions": "./lib/transactions/index.js"
-  }
+  "files": [
+    "**.ts",
+    "legacy/**.ts"
+  ]
 }

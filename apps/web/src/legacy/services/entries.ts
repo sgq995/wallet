@@ -1,4 +1,4 @@
-import { Request, Reply } from '@wallet/schemas/entries';
+import { Request, Reply } from '@wallet/schemas/legacy/entries';
 import { EndpointService } from './api';
 
 const ENTRIES_BASE_URL = '/v1/entries';
@@ -21,4 +21,4 @@ const entriesService = new EndpointService<{
 
 export default entriesService;
 
-export type { TEntryModel, TArrayOfEntryModel } from '@wallet/schemas/entries/model';
+export type { TEntryModel, TArrayOfEntryModel } from '@wallet/schemas/legacy/entries/model';

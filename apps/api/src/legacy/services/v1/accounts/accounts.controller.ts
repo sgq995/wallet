@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 
-import { Request, Reply } from '@wallet/schemas/accounts';
+import { Request, Reply } from '@wallet/schemas/legacy/accounts';
 import { getOrCreateProfileId } from '../../../utils/profile-helper';
 import { to } from '../../../utils/promise-simplify';
 

@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 
-import { Request, Reply } from '@wallet/schemas/categories';
+import { Request, Reply } from '@wallet/schemas/legacy/categories';
 import { to } from '../../../utils/promise-simplify';
 
 import {

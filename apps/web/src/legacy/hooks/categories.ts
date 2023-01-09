@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-import { Request, Reply } from '@wallet/schemas/categories';
+import { Request, Reply } from '@wallet/schemas/legacy/categories';
 
 import categoriesService from '../services/categories';
 

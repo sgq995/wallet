@@ -1,7 +1,7 @@
 import { Entry } from '@prisma/client';
 import { FastifyPluginAsync } from 'fastify';
 
-import { Reply, Request } from '@wallet/schemas/entries';
+import { Reply, Request } from '@wallet/schemas/legacy/entries';
 import { getOrCreateProfileId } from '../../../utils/profile-helper';
 import { to } from '../../../utils/promise-simplify';
 

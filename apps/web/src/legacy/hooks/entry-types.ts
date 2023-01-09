@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { Request, Reply } from '@wallet/schemas/entry-types';
+import { Request, Reply } from '@wallet/schemas/legacy/entry-types';
 
 import entryTypesService from '../services/entry-types';
 
