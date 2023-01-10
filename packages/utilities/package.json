@@ -1,10 +1,14 @@
 {
   "name": "@wallet/utilities",
   "version": "0.0.0",
+  "types": "index.ts",
   "private": true,
   "files": [
-    "date.utility.ts"
+    "**.ts"
   ],
+  "dependencies": {
+    "@sinclair/typebox": "^0.25.13"
+  },
   "devDependencies": {
     "@types/node": "^18.11.9",
     "@wallet/dev-tools": "*",

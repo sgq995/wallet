@@ -3,17 +3,9 @@
   "version": "3.0.0",
   "types": "index.ts",
   "private": true,
-  "scripts": {
-    "prebuild": "mkdir -p build lib",
-    "build": "run-s typescript babel",
-    "build:watch": "run-p typescript:watch babel:watch",
-    "typescript": "tsc -p tsconfig.json",
-    "typescript:watch": "tsc -p tsconfig.json -w",
-    "babel": "babel build -d lib",
-    "babel:watch": "babel build -d lib -w"
-  },
   "dependencies": {
-    "@sinclair/typebox": "^0.25.2"
+    "@sinclair/typebox": "^0.25.13",
+    "@wallet/utilities": "*"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
@@ -25,7 +17,6 @@
     "yarn-run-all": "^3.1.1"
   },
   "files": [
-    "**.ts",
-    "legacy/**.ts"
+    "**.ts"
   ]
 }
