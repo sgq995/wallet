@@ -2,8 +2,9 @@ import { Account, Currency, PrismaClient } from '@prisma/client';
 import {
   HttpInternalServerError,
   HttpNotFoundError,
-} from '../utilities/http.utility';
-import { TIndexable, TRecursivePartial } from '../utilities/model.utility';
+  TIndexable,
+  TRecursivePartial,
+} from '@wallet/utilities';
 import { IAppAccountModel, IAppCreateAccountModel } from './accounts.model';
 
 export class AccountsRepository {

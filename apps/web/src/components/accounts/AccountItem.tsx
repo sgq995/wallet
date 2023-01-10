@@ -1,4 +1,4 @@
-import { TAccountModel } from '@wallet/schemas/accounts/model';
+import { TAccountModel } from '@wallet/schemas/legacy/accounts/model';
 
 export interface AccountItemProps {
   account: TAccountModel;

@@ -1,6 +1,5 @@
 import { Static, TSchema } from '@sinclair/typebox';
-import { HttpStatus } from '../utilities/http.utility';
-import { Paging } from '../utilities/schema.utility';
+import { HttpStatus, Paging } from '@wallet/utilities';
 
 type UndefinedToUnknown<T> = [T] extends [undefined] ? unknown : T;
 

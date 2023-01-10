@@ -1,24 +1,24 @@
 import { Type } from '@sinclair/typebox';
 import { IController } from '../models/controller.model';
 import { IRoute, TRouteHandler } from '../models/route.model';
-import { HttpStatus } from '../utilities/http.utility';
+import { TransactionsAdapter } from './transactions.adapter';
+import { TransactionsRepository } from './transactions.repository';
+import { IAppTransactionModel } from './transactions.model';
 import {
+  HttpStatus,
   Indexable,
   PartialAndIndexable,
   RecursivePartial,
+  TIndexable,
   TWithId,
   WithId,
-} from '../utilities/schema.utility';
-import { TransactionsAdapter } from './transactions.adapter';
+} from '@wallet/utilities';
 import {
-  RestTypedTransactionSchema,
   RestTransactionSchema,
-  TRestTypedTransactionSchema,
+  RestTypedTransactionSchema,
   TRestTransactionSchema,
-} from './transactions.schema';
-import { TransactionsRepository } from './transactions.repository';
-import { TIndexable } from '../utilities/model.utility';
-import { IAppTransactionModel } from './transactions.model';
+  TRestTypedTransactionSchema,
+} from '@wallet/schemas';
 
 export class TransactionsController implements IController {
   prefix?: string | undefined = '/v2/transactions';

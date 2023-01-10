@@ -1,5 +1,16 @@
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { TObject, TSchema } from '@sinclair/typebox';
+import {
+  HttpBadRequestError,
+  HttpError,
+  HttpInternalServerError,
+  HttpStatus,
+  httpStatusToString,
+  isErrorStatus,
+  toErrorSchema,
+  toReplySchema,
+  withPagingSchema,
+} from '@wallet/utilities';
 import fastify, {
   FastifyInstance,
   FastifyReply,
@@ -13,19 +24,6 @@ import { IController } from './models/controller.model';
 import { IFramework } from './models/framework.model';
 import { AsyncAppModule } from './models/module.model';
 import { IRoute, IRouteSchema } from './models/route.model';
-import {
-  HttpBadRequestError,
-  HttpError,
-  HttpInternalServerError,
-  HttpStatus,
-  httpStatusToString,
-} from './utilities/http.utility';
-import { isErrorStatus } from './utilities/rest.utility';
-import {
-  toErrorSchema,
-  toReplySchema,
-  withPagingSchema,
-} from './utilities/schema.utility';
 
 const envToLogger: Record<string, FastifyServerOptions['logger']> = {
   development: {

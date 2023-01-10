@@ -1,10 +1,7 @@
+import { TRestAccountSchema, TRestCreateAccountSchema } from '@wallet/schemas';
+import { TIndexable, TRecursivePartial } from '@wallet/utilities';
 import { IAdapter } from '../models';
-import { TIndexable, TRecursivePartial } from '../utilities/model.utility';
 import { IAppAccountModel, IAppCreateAccountModel } from './accounts.model';
-import {
-  TRestAccountSchema,
-  TRestCreateAccountSchema,
-} from './accounts.schema';
 
 export class AccountsAdapter
   implements IAdapter<IAppAccountModel, TRestAccountSchema>

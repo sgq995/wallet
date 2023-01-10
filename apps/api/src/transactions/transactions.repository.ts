@@ -1,11 +1,11 @@
 import { Currency, PrismaClient, Tag, Transaction } from '@prisma/client';
-import { IAppCurrencyModel } from '../models';
 import {
   HttpBadRequestError,
   HttpInternalServerError,
   HttpNotFoundError,
-} from '../utilities/http.utility';
-import { TIndexable } from '../utilities/model.utility';
+  TIndexable,
+} from '@wallet/utilities';
+import { IAppCurrencyModel } from '../models';
 import { IAppTransactionModel } from './transactions.model';
 
 export class TransactionsRepository {

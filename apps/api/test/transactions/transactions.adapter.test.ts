@@ -1,8 +1,8 @@
+import { TRestTransactionSchema } from '@wallet/schemas';
+import { TIndexable } from '@wallet/utilities';
 import tap from 'tap';
 import { TransactionsAdapter } from '../../src/transactions/transactions.adapter';
 import { IAppTransactionModel } from '../../src/transactions/transactions.model';
-import { TRestTransactionSchema } from '../../src/transactions/transactions.schema';
-import { TIndexable } from '../../src/utilities/model.utility';
 
 void tap.test('TransactionsAdapter', (t) => {
   void t.test('modelToRest', async (t) => {

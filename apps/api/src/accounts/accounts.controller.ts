@@ -1,25 +1,25 @@
 import { Type } from '@sinclair/typebox';
-import { IController } from '../models/controller.model';
-import { IRoute, TRouteHandler } from '../models/route.model';
-import { TransactionsController } from '../transactions';
-import { HttpStatus } from '../utilities/http.utility';
-import { TIndexable, TRecursivePartial } from '../utilities/model.utility';
-import {
-  Indexable,
-  PartialAndIndexable,
-  RecursivePartial,
-  TWithId,
-  WithId,
-} from '../utilities/schema.utility';
-import { AccountsAdapter } from './accounts.adapter';
-import { IAppAccountModel } from './accounts.model';
-import { AccountsRepository } from './accounts.repository';
 import {
   RestAccountSchema,
   RestCreateAccountSchema,
   TRestAccountSchema,
   TRestCreateAccountSchema,
-} from './accounts.schema';
+} from '@wallet/schemas';
+import {
+  HttpStatus,
+  Indexable,
+  PartialAndIndexable,
+  RecursivePartial,
+  TIndexable,
+  TRecursivePartial,
+  TWithId,
+  WithId,
+} from '@wallet/utilities';
+import { IController } from '../models/controller.model';
+import { IRoute, TRouteHandler } from '../models/route.model';
+import { AccountsAdapter } from './accounts.adapter';
+import { IAppAccountModel } from './accounts.model';
+import { AccountsRepository } from './accounts.repository';
 
 export class AccountsController implements IController {
   public prefix?: string | undefined = '/v2/accounts';

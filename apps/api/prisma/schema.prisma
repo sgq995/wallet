@@ -40,22 +40,24 @@ model Tag {
 }
 
 model Transaction {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  type        String
-  units       Int      @default(0)
-  cents       Int      @default(0)
-  currency    Currency @relation(fields: [currencyId], references: [id])
-  currencyId  Int
-  date        DateTime
-  repeat      Boolean?
-  periodicity String?
-  on          Int? // 1 - 31
-  at          String? // 'begin' | 'end'
-  tags        Tag[]
-  account     Account? @relation(fields: [accountId], references: [id])
-  accountId   Int?
+  id               Int      @id @default(autoincrement())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  type             String
+  units            Int      @default(0)
+  cents            Int      @default(0)
+  currency         Currency @relation(fields: [currencyId], references: [id])
+  currencyId       Int
+  date             DateTime
+  repeat           Boolean?
+  periodicity      String?
+  on               Int? // 1 - 31
+  at               String? // 'begin' | 'end'
+  tags             Tag[]
+  account          Account? @relation(fields: [accountId], references: [id])
+  accountId        Int?
+  assetAcquisition Asset?   @relation("AssetAcquisition")
+  assetSelling     Asset?   @relation("AssetSelling")
 }
 
 model Account {
@@ -68,6 +70,14 @@ model Account {
   units         Int           @default(0)
   cents         Int           @default(0)
   transactions  Transaction[]
+}
+
+model Asset {
+  id            Int          @id @default(autoincrement())
+  acquisition   Transaction  @relation(name: "AssetAcquisition", fields: [acquisitionId], references: [id])
+  acquisitionId Int          @unique
+  selling       Transaction? @relation(name: "AssetSelling", fields: [sellingId], references: [id])
+  sellingId     Int?         @unique
 }
 
 // Legacy

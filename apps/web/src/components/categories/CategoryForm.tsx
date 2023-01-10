@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material';
-import { TCategoryModel } from '@wallet/schemas/categories/model';
+import { TCategoryModel } from '@wallet/schemas/legacy/categories/model';
 
-import { Form, FormNameField, FormSubmitButton } from '../forms';
+import { FormContainer, FormNameField, FormSubmitButton } from '../forms';
 
 export interface CategoryFormData {
   name: string;
@@ -15,12 +15,12 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ account }) => {
   const isNewAccount = !account;
 
   return (
-    <Form defaultValues={{ name: '' }}>
+    <FormContainer defaultValues={{ name: '' }}>
       <Stack direction="column" spacing={2}>
         <FormNameField required={isNewAccount} fullWidth />
 
         <FormSubmitButton disabledOnError resetOnSubmit={isNewAccount} />
       </Stack>
-    </Form>
+    </FormContainer>
   );
 };

@@ -1,8 +1,8 @@
 import { Stack } from '@mui/material';
-import { TAccountModel } from '@wallet/schemas/accounts/model';
+import { TAccountModel } from '@wallet/schemas/legacy/accounts/model';
 
 import {
-  Form,
+  FormContainer,
   FormAmountField,
   FormNameField,
   FormSubmitButton,
@@ -16,7 +16,7 @@ export const AccountForm: React.FC<AccountFormProps> = ({ account }) => {
   const isNewAccount = !account;
 
   return (
-    <Form defaultValues={{ name: '', units: '0', cents: '', currency: '' }}>
+    <FormContainer defaultValues={{ name: '', units: '0', cents: '', currency: '' }}>
       <Stack direction="column" spacing={2}>
         <FormNameField required={isNewAccount} fullWidth />
 
@@ -26,6 +26,6 @@ export const AccountForm: React.FC<AccountFormProps> = ({ account }) => {
 
         <FormSubmitButton disabledOnError resetOnSubmit={isNewAccount} />
       </Stack>
-    </Form>
+    </FormContainer>
   );
 };

@@ -1,8 +1,7 @@
+import { TRestAccountSchema } from '@wallet/schemas';
+import { TIndexable } from '@wallet/utilities';
 import tap from 'tap';
-import { AccountsAdapter } from '../../src/accounts/accounts.adapter';
-import { IAppAccountModel } from '../../src/accounts/accounts.model';
-import { TRestAccountSchema } from '../../src/accounts/accounts.schema';
-import { TIndexable } from '../../src/utilities/model.utility';
+import { AccountsAdapter, IAppAccountModel } from '../../src/accounts';
 
 void tap.test('AccountsAdapter', (t) => {
   void t.test('modelToRest', async (t) => {

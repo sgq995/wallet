@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { TEntryModel } from '@wallet/schemas/entries';
+import { TEntryModel } from '@wallet/schemas/legacy/entries';
 import { useSystemContext } from '../../contexts/system';
 import { yyyyMMdd } from '../../legacy/utilities/date.utility';
 import { DeleteDialog, IDeleteDialogProps } from '../dialogs/DeleteDialog';

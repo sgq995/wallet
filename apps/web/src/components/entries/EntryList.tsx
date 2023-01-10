@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Reply, TEntryModel } from '@wallet/schemas/entries';
+import { Reply, TEntryModel } from '@wallet/schemas/legacy/entries';
 
 import { useNotificationSystem } from '../../contexts/notifications';
 

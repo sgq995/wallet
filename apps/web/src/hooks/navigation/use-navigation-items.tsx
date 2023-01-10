@@ -1,10 +1,10 @@
 import {
-  Wifi as WifiIcon,
-  Home as HomeIcon,
-  AccountBalance as AccountBalanceIcon,
-  Balance as BalanceIcon,
-  CurrencyExchange as CurrencyExchangeIcon,
-  Timeline as TimelineIcon,
+  WifiOutlined as WifiIcon,
+  HomeOutlined as HomeIcon,
+  AccountBalanceOutlined as AccountBalanceIcon,
+  BalanceOutlined as BalanceIcon,
+  CurrencyExchangeOutlined as CurrencyExchangeIcon,
+  TimelineOutlined as TimelineIcon,
 } from '@mui/icons-material';
 
 export interface INavigationItem {
@@ -17,7 +17,7 @@ export function useNavigationItems(): INavigationItem[] {
     { href: '/', icon: <HomeIcon /> },
     { href: '/timeline', icon: <TimelineIcon /> },
     { href: '/accounts', icon: <AccountBalanceIcon /> },
-    { href: '/balance', icon: <BalanceIcon /> },
-    { href: '/flow', icon: <CurrencyExchangeIcon /> },
+    // { href: '/balance', icon: <BalanceIcon /> },
+    // { href: '/flow', icon: <CurrencyExchangeIcon /> },
   ];
 }

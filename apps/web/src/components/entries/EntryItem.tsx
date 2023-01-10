@@ -4,7 +4,7 @@ import { useMediaQuery } from '@mui/material';
 // import ListItemText from '@mui/material/ListItemText';
 import type { IconButtonProps } from '@mui/material/IconButton';
 
-import type { TEntryModel } from '@wallet/schemas/entries';
+import type { TEntryModel } from '@wallet/schemas/legacy/entries';
 
 import { Hidden, IconButton, ListItem, ListItemText } from '@mui/material';
 import { DeleteIcon } from '../../legacy/components/IconsMaterial';

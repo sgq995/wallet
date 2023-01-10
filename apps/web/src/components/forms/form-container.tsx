@@ -1,12 +1,8 @@
+import { Box, BoxProps } from '@mui/material';
+import { FormProvider, IFormProviderProps } from '@wallet/forms';
 import { PropsWithChildren } from 'react';
 
-import type { BoxProps } from '@mui/material';
-
-import { Box } from '@mui/material';
-
-import { FormProvider, IFormProviderProps } from '@wallet/forms';
-
-export interface IFormProps
+export interface IFormContainerProps
   extends BoxProps<
     'form',
     {
@@ -16,12 +12,12 @@ export interface IFormProps
   defaultValues?: IFormProviderProps['defaultValues'];
 }
 
-export function Form({
+export function FormContainer({
   defaultValues,
   onSubmit,
   children,
   ...props
-}: PropsWithChildren<IFormProps>) {
+}: PropsWithChildren<IFormContainerProps>) {
   return (
     <FormProvider defaultValues={defaultValues}>
       <Box component="form" onSubmit={onSubmit} {...props}>

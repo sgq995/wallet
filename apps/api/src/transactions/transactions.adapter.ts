@@ -1,9 +1,11 @@
-import { dateTime } from '@wallet/utilities';
+import { TRestTransactionSchema } from '@wallet/schemas';
+import {
+  dateTime,
+  HttpInternalServerError,
+  TIndexable,
+} from '@wallet/utilities';
 import { IAdapter } from '../models/adapter.model';
-import { HttpInternalServerError } from '../utilities/http.utility';
-import { TIndexable } from '../utilities/model.utility';
 import { IAppTransactionModel } from './transactions.model';
-import { TRestTransactionSchema } from './transactions.schema';
 
 export class TransactionsAdapter
   implements IAdapter<IAppTransactionModel, TRestTransactionSchema>

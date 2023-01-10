@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import tap from 'tap';
-import { IReply } from '../../src/models';
-import { TransactionsAdapter } from '../../src/transactions/transactions.adapter';
-import { TransactionsController } from '../../src/transactions/transactions.controller';
-import { IAppTransactionModel } from '../../src/transactions/transactions.model';
-import { TransactionsRepository } from '../../src/transactions/transactions.repository';
 import {
   TRestTransactionSchema,
   TRestTypedTransactionSchema,
-} from '../../src/transactions/transactions.schema';
-import { TIndexable } from '../../src/utilities/model.utility';
+} from '@wallet/schemas';
+import { TIndexable } from '@wallet/utilities';
+import tap from 'tap';
+import { IReply } from '../../src/models';
+import {
+  TransactionsAdapter,
+  TransactionsController,
+  IAppTransactionModel,
+  TransactionsRepository,
+} from '../../src/transactions';
 
 void tap.test('TransactionsController', (t) => {
   const adapterMock: TransactionsAdapter = <TransactionsAdapter>{};

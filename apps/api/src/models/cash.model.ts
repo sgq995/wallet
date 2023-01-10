@@ -1,4 +1,4 @@
-import { TIndexable } from '../utilities/model.utility';
+import { TIndexable } from '@wallet/utilities';
 import { IAppCurrencyModel } from './currency.model';
 
 export interface IAppCashValueModel {

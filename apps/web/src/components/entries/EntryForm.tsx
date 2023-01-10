@@ -1,9 +1,9 @@
 import { Stack } from '@mui/material';
 
-import type { Request, TEntryModel } from '@wallet/schemas/entries';
+import type { Request, TEntryModel } from '@wallet/schemas/legacy/entries';
 
 import {
-  Form,
+  FormContainer,
   FormAccountField,
   FormAmountField,
   FormCategoryField,
@@ -148,7 +148,7 @@ export const EntryForm: React.FC<EntryFormProps> = ({ entry }) => {
   const defaultDate = new Date(entry?.date ?? currentDate);
 
   return (
-    <Form
+    <FormContainer
       defaultValues={{
         year: defaultDate.getUTCFullYear(),
         month: defaultDate.getUTCMonth(),
@@ -185,6 +185,6 @@ export const EntryForm: React.FC<EntryFormProps> = ({ entry }) => {
           onClick={handleSubmit}
         />
       </Stack>
-    </Form>
+    </FormContainer>
   );
 };
