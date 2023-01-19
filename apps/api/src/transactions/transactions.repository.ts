@@ -19,6 +19,9 @@ export class TransactionsRepository {
       where: {
         id,
       },
+      orderBy: {
+        date: 'desc',
+      },
       include: {
         currency: true,
         tags: true,
@@ -103,6 +106,7 @@ export class TransactionsRepository {
               : {}),
           },
           date: transaction.date,
+          description: transaction.description,
           repeat: transaction.repeat,
           periodicity: transaction.period?.periodicity,
           ...(typeof transaction.period?.when === 'number'
@@ -190,6 +194,9 @@ export class TransactionsRepository {
       },
     };
 
+    const description: IAppTransactionModel['description'] =
+      entity.description !== null ? entity.description : undefined;
+
     const repeat: IAppTransactionModel['repeat'] =
       entity.repeat !== null ? entity.repeat : undefined;
 
@@ -210,6 +217,7 @@ export class TransactionsRepository {
       type,
       cash,
       date: entity.date,
+      description,
       repeat,
       period,
       tags,
@@ -284,6 +292,7 @@ export class TransactionsRepository {
             },
           },
           date: transaction.date,
+          description: transaction.description,
           repeat: transaction.repeat,
           periodicity: transaction.period?.periodicity,
           ...(typeof transaction.period?.when === 'number'
@@ -330,6 +339,7 @@ export class TransactionsRepository {
           cents: transaction.cash.cents,
           currencyId: currencyId,
           date: transaction.date,
+          description: transaction.description,
           repeat: transaction.repeat,
           periodicity: transaction.period?.periodicity,
           ...(typeof transaction.period?.when === 'number'

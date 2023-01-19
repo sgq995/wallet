@@ -5,6 +5,7 @@ export interface IAppTransactionModel {
   type: 'income' | 'expense';
   cash: IAppCashModel;
   date: Date;
+  description?: string;
   repeat?: boolean;
   period?: IAppTimePeriodModel;
   tags: string[];

@@ -49,6 +49,7 @@ model Transaction {
   currency         Currency @relation(fields: [currencyId], references: [id])
   currencyId       Int
   date             DateTime
+  description      String?
   repeat           Boolean?
   periodicity      String?
   on               Int? // 1 - 31
