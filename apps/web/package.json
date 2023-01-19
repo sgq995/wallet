@@ -17,6 +17,7 @@
     "@wallet/components": "*",
     "@wallet/forms": "*",
     "@wallet/schemas": "*",
+    "@wallet/utilities": "*",
     "currency.js": "^2.0.4",
     "firebase": "^9.6.10",
     "lodash": "^4.17.21",

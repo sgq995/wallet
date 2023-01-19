@@ -1,27 +1,68 @@
+import { HttpError, isSuccessfulStatus } from '@wallet/utilities';
 import { buildUrl } from './url.utility';
-
-const BASE_URL = 'http://localhost:5000';
 
 interface IRestOptions {
   baseUrl: string;
   endpoint: string;
 }
 
+interface IWithStatus {
+  status: string;
+}
+
+interface IWithMessage {
+  message: string;
+}
+
+interface ISuccessResponse<T> extends IWithStatus {
+  data: T;
+}
+
+interface IFailureResponse<T> extends IWithStatus {
+  error: T | IWithMessage;
+}
+
+type TRestResponse<T> = ISuccessResponse<T> | IFailureResponse<T>;
+
+export function isSuccessResponse<T>(
+  response: TRestResponse<T>
+): response is ISuccessResponse<T> {
+  return 'data' in response;
+}
+
+export function isFailureResponse<T>(
+  response: TRestResponse<T>
+): response is IFailureResponse<T> {
+  return 'error' in response;
+}
+
+function isErrorWithMessage<T>(error: T | IWithMessage): error is IWithMessage {
+  return typeof error === 'object' && 'message' in error;
+}
+
 async function restFetch<T>(
   input: RequestInfo | URL,
   init?: RequestInit
-): Promise<T> {
+): Promise<ISuccessResponse<T>> {
   const response = await fetch(input, {
     ...init,
     headers: { ...init?.headers, 'Content-Type': 'application/json' },
   });
 
-  const body = await response.json();
-  if (200 <= response.status && response.status < 400) {
+  const body: TRestResponse<T> = await response.json();
+  if (isSuccessfulStatus(response.status) && isSuccessResponse(body)) {
     return body;
   }
 
-  throw new Error(`[${response.status}] ${body.error}`);
+  if (!isFailureResponse(body)) {
+    throw new Error(`Unknown response ${JSON.stringify(body)}`);
+  }
+
+  if (isErrorWithMessage(body.error)) {
+    throw new HttpError(response.status, body.error.message);
+  }
+
+  throw new HttpError(response.status, JSON.stringify(body.error));
 }
 
 export type TGetOptions<Query extends Record<string, any>> = IRestOptions &
@@ -32,7 +73,12 @@ export type TGetOptions<Query extends Record<string, any>> = IRestOptions &
 export async function restGet<
   T,
   Query extends Record<string, any> = Record<string, any>
->({ baseUrl, endpoint, query, ...init }: TGetOptions<Query>): Promise<T> {
+>({
+  baseUrl,
+  endpoint,
+  query,
+  ...init
+}: TGetOptions<Query>): Promise<ISuccessResponse<T>> {
   const url = buildUrl(baseUrl, endpoint, query);
   return restFetch(url, { ...init, method: 'GET' });
 }
@@ -45,7 +91,12 @@ export type TPostOptions<Body extends Record<string, any>> = IRestOptions &
 export async function restPost<
   T,
   Body extends Record<string, any> = Record<string, any>
->({ baseUrl, endpoint, body, ...init }: TPostOptions<Body>): Promise<T> {
+>({
+  baseUrl,
+  endpoint,
+  body,
+  ...init
+}: TPostOptions<Body>): Promise<ISuccessResponse<T>> {
   const url = buildUrl(baseUrl, endpoint);
   return restFetch(url, {
     ...init,
@@ -62,7 +113,12 @@ export type TPatchOptions<Body extends Record<string, any>> = IRestOptions &
 export async function restPatch<
   T,
   Body extends Record<string, any> = Record<string, any>
->({ baseUrl, endpoint, body, ...init }: TPatchOptions<Body>): Promise<T> {
+>({
+  baseUrl,
+  endpoint,
+  body,
+  ...init
+}: TPatchOptions<Body>): Promise<ISuccessResponse<T>> {
   const url = buildUrl(baseUrl, endpoint);
   return restFetch(url, {
     ...init,
@@ -78,7 +134,7 @@ export async function restDelete<T>({
   endpoint,
   body,
   ...init
-}: TDeleteOptions): Promise<T> {
+}: TDeleteOptions): Promise<ISuccessResponse<T>> {
   const url = buildUrl(baseUrl, endpoint);
   return restFetch(url, { ...init, method: 'DELETE' });
 }
