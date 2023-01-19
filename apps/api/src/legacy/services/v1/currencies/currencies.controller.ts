@@ -129,7 +129,7 @@ const controller: FastifyPluginAsync = async (fastify) => {
     '/',
     {
       schema: { querystring: Request.Query, response: Reply.FindAll },
-      preHandler: verifySessionHandler(),
+      // preHandler: verifySessionHandler(),
     },
     findAll
   );
@@ -145,7 +145,7 @@ const controller: FastifyPluginAsync = async (fastify) => {
     '/:id',
     {
       schema: { params: Request.Params, response: Reply.FindOne },
-      preHandler: verifySessionHandler(),
+      // preHandler: verifySessionHandler(),
     },
     findOne
   );
