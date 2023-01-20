@@ -3,7 +3,7 @@ import {
   TRestTransactionSchema,
   TRestTypedTransactionSchema,
 } from '@wallet/schemas';
-import { TIndexable } from '@wallet/utilities';
+import { TIndexable } from '@wallet/utilities/model.utility';
 import tap from 'tap';
 import { IReply } from '../../src/models';
 import {

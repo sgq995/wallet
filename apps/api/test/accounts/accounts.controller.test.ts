@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import tap from 'tap';
 import { TRestAccountSchema, TRestCreateAccountSchema } from '@wallet/schemas';
-import { TIndexable } from '@wallet/utilities';
 import { IReply } from '../../src/models';
 import {
   AccountsAdapter,
@@ -10,6 +9,7 @@ import {
   IAppAccountModel,
   IAppCreateAccountModel,
 } from '../../src/accounts';
+import { TIndexable } from '@wallet/utilities/model.utility';
 
 void tap.test('AccountsController', (t) => {
   const adapterMock: AccountsAdapter = <AccountsAdapter>{};

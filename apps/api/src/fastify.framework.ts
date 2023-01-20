@@ -1,3 +1,4 @@
+import fastifyCors from '@fastify/cors';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { TObject, TSchema } from '@sinclair/typebox';
 import {
@@ -6,11 +7,13 @@ import {
   HttpInternalServerError,
   HttpStatus,
   httpStatusToString,
-  isErrorStatus,
+} from '@wallet/utilities/http.utility';
+import { isErrorStatus } from '@wallet/utilities/rest.utility';
+import {
   toErrorSchema,
   toReplySchema,
-  withPagingSchema,
-} from '@wallet/utilities';
+  WithPaging,
+} from '@wallet/utilities/schema.utility';
 import fastify, {
   FastifyInstance,
   FastifyReply,
@@ -45,6 +48,14 @@ export class FastifyFramework implements IFramework {
   private _instance = fastify({
     logger: envToLogger[env] ?? true,
   }).withTypeProvider<TypeBoxTypeProvider>();
+
+  async init() {
+    // await this._instance.register(fastifyCors, {
+    //   origin: config.cors.origin,
+    //   allowedHeaders: ['Content-Type'],
+    //   credentials: true,
+    // });
+  }
 
   async register(module: AsyncAppModule): Promise<void> {
     await this._instance.register(async (app) => {
@@ -183,7 +194,7 @@ export class FastifyFramework implements IFramework {
       return schema;
     }
 
-    return withPagingSchema(schema);
+    return WithPaging(schema);
   }
 
   private _httpError(

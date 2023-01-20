@@ -1,5 +1,5 @@
 import { TRestTransactionSchema } from '@wallet/schemas';
-import { TIndexable } from '@wallet/utilities';
+import { TIndexable } from '@wallet/utilities/model.utility';
 import tap from 'tap';
 import { TransactionsAdapter } from '../../src/transactions/transactions.adapter';
 import { IAppTransactionModel } from '../../src/transactions/transactions.model';
@@ -41,6 +41,7 @@ void tap.test('TransactionsAdapter', (t) => {
           },
         },
         date: '2022-12-14T00:00:00Z',
+        description: undefined,
         repeat: undefined,
         period: undefined,
         tags: [],
@@ -75,6 +76,7 @@ void tap.test('TransactionsAdapter', (t) => {
           currencyId: 1,
         },
         date: '2022-12-14T00:00:00Z',
+        description: undefined,
         repeat: undefined,
         period: undefined,
         tags: [],
@@ -147,6 +149,7 @@ void tap.test('TransactionsAdapter', (t) => {
           currencyId: undefined,
         },
         date: new Date('2022-12-14T00:00:00Z'),
+        description: undefined,
         repeat: undefined,
         period: undefined,
         tags: [],
@@ -180,6 +183,7 @@ void tap.test('TransactionsAdapter', (t) => {
           currencyId: 1,
         },
         date: new Date('2022-12-14T00:00:00Z'),
+        description: undefined,
         repeat: undefined,
         period: undefined,
         tags: [],

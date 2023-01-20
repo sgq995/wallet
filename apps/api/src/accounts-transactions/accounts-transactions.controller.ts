@@ -1,6 +1,19 @@
 import { Type } from '@sinclair/typebox';
-import { RestTransactionSchema, TRestTransactionSchema, TWithAccountId, TWithTransactionId, WithAccountId, WithTransactionId } from '@wallet/schemas';
-import { HttpStatus, Indexable, PartialAndIndexable, RecursivePartial, TIndexable } from '@wallet/utilities';
+import {
+  RestTransactionSchema,
+  TRestTransactionSchema,
+  TWithAccountId,
+  TWithTransactionId,
+  WithAccountId,
+  WithTransactionId,
+} from '@wallet/schemas';
+import { HttpStatus } from '@wallet/utilities/http.utility';
+import { TIndexable } from '@wallet/utilities/model.utility';
+import {
+  PartialWithId,
+  RecursivePartial,
+  WithId,
+} from '@wallet/utilities/schema.utility';
 import { IController, IRoute, TRouteHandler } from '../models';
 import { TransactionsController } from '../transactions';
 import { AccountsTransactionsRepository } from './accounts-transactions.repository';
@@ -21,9 +34,9 @@ export class AccountsTransactionsController implements IController {
         handler: this.find,
         schema: {
           params: WithAccountId,
-          query: PartialAndIndexable(RestTransactionSchema),
+          query: PartialWithId(RestTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Type.Array(Indexable(RestTransactionSchema)),
+            [HttpStatus.Ok]: Type.Array(WithId(RestTransactionSchema)),
           },
         },
       },
@@ -35,7 +48,7 @@ export class AccountsTransactionsController implements IController {
           params: WithAccountId,
           body: RestTransactionSchema,
           reply: {
-            [HttpStatus.Created]: Indexable(RestTransactionSchema),
+            [HttpStatus.Created]: WithId(RestTransactionSchema),
           },
         },
       },
@@ -46,7 +59,7 @@ export class AccountsTransactionsController implements IController {
         schema: {
           params: Type.Intersect([WithAccountId, WithTransactionId]),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTransactionSchema),
           },
         },
       },
@@ -58,7 +71,7 @@ export class AccountsTransactionsController implements IController {
           params: Type.Intersect([WithAccountId, WithTransactionId]),
           body: RecursivePartial(RestTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTransactionSchema),
           },
         },
       },
@@ -69,7 +82,7 @@ export class AccountsTransactionsController implements IController {
         schema: {
           params: Type.Intersect([WithAccountId, WithTransactionId]),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTransactionSchema),
           },
         },
       },

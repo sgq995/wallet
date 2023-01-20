@@ -1,5 +1,5 @@
 import { TRestAccountSchema, TRestCreateAccountSchema } from '@wallet/schemas';
-import { TIndexable, TRecursivePartial } from '@wallet/utilities';
+import { TIndexable, TRecursivePartial } from '@wallet/utilities/model.utility';
 import { IAdapter } from '../models';
 import { IAppAccountModel, IAppCreateAccountModel } from './accounts.model';
 

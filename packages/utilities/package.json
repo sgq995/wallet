@@ -1,7 +1,6 @@
 {
   "name": "@wallet/utilities",
   "version": "0.0.0",
-  "types": "index.ts",
   "private": true,
   "files": [
     "**.ts"

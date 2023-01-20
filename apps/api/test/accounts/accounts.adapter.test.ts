@@ -1,5 +1,5 @@
 import { TRestAccountSchema } from '@wallet/schemas';
-import { TIndexable } from '@wallet/utilities';
+import { TIndexable } from '@wallet/utilities/model.utility';
 import tap from 'tap';
 import { AccountsAdapter, IAppAccountModel } from '../../src/accounts';
 

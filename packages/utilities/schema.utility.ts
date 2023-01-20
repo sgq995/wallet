@@ -24,18 +24,18 @@ export function RecursivePartial<
   );
 }
 
-export const WithStatus = Type.Object({
+export const StatusableSchema = Type.Object({
   status: Type.String(),
 });
 
-export function withStatus<
+export function WithStatus<
   Schema extends TObject<TProperties> = TObject<TProperties>
 >(schema: Schema) {
-  return Type.Intersect([WithStatus, schema]);
+  return Type.Intersect([StatusableSchema, schema]);
 }
 
 export function toReplySchema(schema: TSchema) {
-  return withStatus(
+  return WithStatus(
     Type.Object({
       data: schema,
     })
@@ -43,7 +43,7 @@ export function toReplySchema(schema: TSchema) {
 }
 
 export function toErrorSchema(schema: TSchema) {
-  return withStatus(
+  return WithStatus(
     Type.Object({
       error: Type.Union([
         schema,
@@ -55,26 +55,26 @@ export function toErrorSchema(schema: TSchema) {
   );
 }
 
-export const WithId = Type.Object({
+export const IndexableSchema = Type.Object({
   id: Type.Integer(),
 });
 
-export type TWithId = Static<typeof WithId>;
+export type TIndexableSchema = Static<typeof IndexableSchema>;
 
-export function Indexable<
+export function WithId<
   Properties extends TProperties = TProperties,
   Schema extends TObject<TProperties> = TObject<Properties>
 >(schema: Schema) {
-  return Type.Intersect([WithId, schema]);
+  return Type.Intersect([IndexableSchema, schema]);
 }
 
-export function PartialAndIndexable<
+export function PartialWithId<
   Schema extends TObject<TProperties> = TObject<TProperties>
 >(schema: Schema) {
-  return Type.Intersect([RecursivePartial(schema), Type.Partial(WithId)]);
+  return Type.Intersect([RecursivePartial(schema), Type.Partial(IndexableSchema)]);
 }
 
-export const Paging = Type.Object({
+export const PaginableSchema = Type.Object({
   page: Type.Optional(Type.String()),
   previous: Type.Optional(Type.String()),
   next: Type.Optional(Type.String()),
@@ -82,13 +82,13 @@ export const Paging = Type.Object({
   limit: Type.Optional(Type.Number()),
 });
 
-export function withPagingSchema<
+export function WithPaging<
   Schema extends TObject<TProperties> = TObject<TProperties>
 >(schema: Schema) {
   return Type.Intersect([
     schema,
     Type.Object({
-      paging: Type.Optional(Paging),
+      paging: Type.Optional(PaginableSchema),
     }),
   ]);
 }

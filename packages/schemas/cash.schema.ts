@@ -1,5 +1,5 @@
-import { Static, TIntersect, Type } from '@sinclair/typebox';
-import { Indexable } from '@wallet/utilities/schema.utility';
+import { Static, Type } from '@sinclair/typebox';
+import { WithId } from '@wallet/utilities/schema.utility';
 import { RestCurrencySchema } from './currency.schema';
 
 const value = {
@@ -18,7 +18,7 @@ export const RestCashSchema = Type.Union([
   }),
   Type.Object({
     ...value,
-    currency: Indexable(RestCurrencySchema),
+    currency: WithId(RestCurrencySchema),
   }),
 ]);
 

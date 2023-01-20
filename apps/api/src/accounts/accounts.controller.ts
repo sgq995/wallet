@@ -5,16 +5,15 @@ import {
   TRestAccountSchema,
   TRestCreateAccountSchema,
 } from '@wallet/schemas';
+import { HttpStatus } from '@wallet/utilities/http.utility';
+import { TIndexable, TRecursivePartial } from '@wallet/utilities/model.utility';
 import {
-  HttpStatus,
-  Indexable,
-  PartialAndIndexable,
+  IndexableSchema,
+  PartialWithId,
   RecursivePartial,
-  TIndexable,
-  TRecursivePartial,
-  TWithId,
+  TIndexableSchema,
   WithId,
-} from '@wallet/utilities';
+} from '@wallet/utilities/schema.utility';
 import { IController } from '../models/controller.model';
 import { IRoute, TRouteHandler } from '../models/route.model';
 import { AccountsAdapter } from './accounts.adapter';
@@ -36,9 +35,9 @@ export class AccountsController implements IController {
         endpoint: '/',
         handler: this.find,
         schema: {
-          query: PartialAndIndexable(RestAccountSchema),
+          query: PartialWithId(RestAccountSchema),
           reply: {
-            [HttpStatus.Ok]: Type.Array(Indexable(RestAccountSchema)),
+            [HttpStatus.Ok]: Type.Array(WithId(RestAccountSchema)),
           },
         },
       },
@@ -49,7 +48,7 @@ export class AccountsController implements IController {
         schema: {
           body: RestCreateAccountSchema,
           reply: {
-            [HttpStatus.Created]: Indexable(RestAccountSchema),
+            [HttpStatus.Created]: WithId(RestAccountSchema),
           },
         },
       },
@@ -58,9 +57,9 @@ export class AccountsController implements IController {
         endpoint: '/:id',
         handler: this.find,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           reply: {
-            [HttpStatus.Ok]: Indexable(RestAccountSchema),
+            [HttpStatus.Ok]: WithId(RestAccountSchema),
           },
         },
       },
@@ -69,10 +68,10 @@ export class AccountsController implements IController {
         endpoint: '/:id',
         handler: this.update,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           body: RecursivePartial(RestCreateAccountSchema),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestAccountSchema),
+            [HttpStatus.Ok]: WithId(RestAccountSchema),
           },
         },
       },
@@ -81,9 +80,9 @@ export class AccountsController implements IController {
         endpoint: '/:id',
         handler: this.remove,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           reply: {
-            [HttpStatus.Ok]: Indexable(RestAccountSchema),
+            [HttpStatus.Ok]: WithId(RestAccountSchema),
           },
         },
       },
@@ -91,7 +90,7 @@ export class AccountsController implements IController {
   }
 
   find: TRouteHandler<{
-    Params: TWithId | undefined;
+    Params: TIndexableSchema | undefined;
     Query: Partial<TRestAccountSchema>;
     Reply: TIndexable<TRestAccountSchema> | TIndexable<TRestAccountSchema>[];
   }> = async ({ params, query }) => {
@@ -121,7 +120,7 @@ export class AccountsController implements IController {
   };
 
   update: TRouteHandler<{
-    Params: TWithId;
+    Params: TIndexableSchema;
     Body: TRecursivePartial<TRestCreateAccountSchema>;
     Reply: TIndexable<TRestAccountSchema>;
   }> = async ({ params, body }) => {
@@ -135,7 +134,7 @@ export class AccountsController implements IController {
   };
 
   remove: TRouteHandler<{
-    Params: TWithId;
+    Params: TIndexableSchema;
     Reply: TIndexable<TRestAccountSchema>;
   }> = async ({ params }) => {
     const account = await this._repository.remove(params.id);

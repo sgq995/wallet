@@ -1,24 +1,23 @@
 import { Type } from '@sinclair/typebox';
-import { IController } from '../models/controller.model';
-import { IRoute, TRouteHandler } from '../models/route.model';
-import { TransactionsAdapter } from './transactions.adapter';
-import { TransactionsRepository } from './transactions.repository';
-import { IAppTransactionModel } from './transactions.model';
-import {
-  HttpStatus,
-  Indexable,
-  PartialAndIndexable,
-  RecursivePartial,
-  TIndexable,
-  TWithId,
-  WithId,
-} from '@wallet/utilities';
 import {
   RestTransactionSchema,
   RestTypedTransactionSchema,
   TRestTransactionSchema,
   TRestTypedTransactionSchema,
 } from '@wallet/schemas';
+import { HttpStatus } from '@wallet/utilities/http.utility';
+import { TIndexable } from '@wallet/utilities/model.utility';
+import {
+  IndexableSchema,
+  PartialWithId,
+  RecursivePartial,
+  TIndexableSchema,
+  WithId,
+} from '@wallet/utilities/schema.utility';
+import { IController, IRoute, TRouteHandler } from '../models';
+import { TransactionsAdapter } from './transactions.adapter';
+import { IAppTransactionModel } from './transactions.model';
+import { TransactionsRepository } from './transactions.repository';
 
 export class TransactionsController implements IController {
   prefix?: string | undefined = '/v2/transactions';
@@ -35,9 +34,9 @@ export class TransactionsController implements IController {
         endpoint: '/',
         handler: this.find,
         schema: {
-          query: PartialAndIndexable(RestTransactionSchema),
+          query: PartialWithId(RestTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Type.Array(Indexable(RestTransactionSchema)),
+            [HttpStatus.Ok]: Type.Array(WithId(RestTransactionSchema)),
           },
         },
       },
@@ -48,7 +47,7 @@ export class TransactionsController implements IController {
         schema: {
           body: RestTransactionSchema,
           reply: {
-            [HttpStatus.Created]: Indexable(RestTransactionSchema),
+            [HttpStatus.Created]: WithId(RestTransactionSchema),
           },
         },
       },
@@ -57,9 +56,9 @@ export class TransactionsController implements IController {
         endpoint: '/:id',
         handler: this.find,
         schema: {
-          params: WithId,
+          params: Type.Partial(IndexableSchema),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTransactionSchema),
           },
         },
       },
@@ -68,10 +67,10 @@ export class TransactionsController implements IController {
         endpoint: '/:id',
         handler: this.update,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           body: RecursivePartial(RestTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTransactionSchema),
           },
         },
       },
@@ -80,9 +79,9 @@ export class TransactionsController implements IController {
         endpoint: '/:id',
         handler: this.remove,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTransactionSchema),
           },
         },
       },
@@ -91,9 +90,9 @@ export class TransactionsController implements IController {
         endpoint: '/income',
         handler: this.findIncome,
         schema: {
-          query: PartialAndIndexable(RestTypedTransactionSchema),
+          query: PartialWithId(RestTypedTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Type.Array(Indexable(RestTypedTransactionSchema)),
+            [HttpStatus.Ok]: Type.Array(WithId(RestTypedTransactionSchema)),
           },
         },
       },
@@ -104,7 +103,7 @@ export class TransactionsController implements IController {
         schema: {
           body: RestTypedTransactionSchema,
           reply: {
-            [HttpStatus.Created]: Indexable(RestTypedTransactionSchema),
+            [HttpStatus.Created]: WithId(RestTypedTransactionSchema),
           },
         },
       },
@@ -113,9 +112,9 @@ export class TransactionsController implements IController {
         endpoint: '/income/:id',
         handler: this.findIncome,
         schema: {
-          params: Type.Partial(WithId),
+          params: Type.Partial(IndexableSchema),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTypedTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTypedTransactionSchema),
           },
         },
       },
@@ -124,10 +123,10 @@ export class TransactionsController implements IController {
         endpoint: '/income/:id',
         handler: this.updateIncome,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           body: RecursivePartial(RestTypedTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTypedTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTypedTransactionSchema),
           },
         },
       },
@@ -136,9 +135,9 @@ export class TransactionsController implements IController {
         endpoint: '/income/:id',
         handler: this.removeIncome,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTypedTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTypedTransactionSchema),
           },
         },
       },
@@ -147,9 +146,9 @@ export class TransactionsController implements IController {
         endpoint: '/expenses',
         handler: this.findExpenses,
         schema: {
-          query: PartialAndIndexable(RestTypedTransactionSchema),
+          query: PartialWithId(RestTypedTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Type.Array(Indexable(RestTypedTransactionSchema)),
+            [HttpStatus.Ok]: Type.Array(WithId(RestTypedTransactionSchema)),
           },
         },
       },
@@ -160,7 +159,7 @@ export class TransactionsController implements IController {
         schema: {
           body: RestTypedTransactionSchema,
           reply: {
-            [HttpStatus.Created]: Indexable(RestTypedTransactionSchema),
+            [HttpStatus.Created]: WithId(RestTypedTransactionSchema),
           },
         },
       },
@@ -169,9 +168,9 @@ export class TransactionsController implements IController {
         endpoint: '/expenses/:id',
         handler: this.findExpenses,
         schema: {
-          params: Type.Partial(WithId),
+          params: Type.Partial(IndexableSchema),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTypedTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTypedTransactionSchema),
           },
         },
       },
@@ -180,10 +179,10 @@ export class TransactionsController implements IController {
         endpoint: '/expenses/:id',
         handler: this.updateExpenses,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           body: RecursivePartial(RestTypedTransactionSchema),
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTypedTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTypedTransactionSchema),
           },
         },
       },
@@ -192,9 +191,9 @@ export class TransactionsController implements IController {
         endpoint: '/expenses/:id',
         handler: this.removeExpenses,
         schema: {
-          params: WithId,
+          params: IndexableSchema,
           reply: {
-            [HttpStatus.Ok]: Indexable(RestTypedTransactionSchema),
+            [HttpStatus.Ok]: WithId(RestTypedTransactionSchema),
           },
         },
       },
@@ -202,7 +201,7 @@ export class TransactionsController implements IController {
   }
 
   find: TRouteHandler<{
-    Params: TWithId | undefined;
+    Params: TIndexableSchema | undefined;
     Query: Partial<TRestTransactionSchema>;
     Reply:
       | TIndexable<TRestTransactionSchema>
@@ -237,7 +236,7 @@ export class TransactionsController implements IController {
   };
 
   update: TRouteHandler<{
-    Params: TWithId;
+    Params: TIndexableSchema;
     Body: Partial<TRestTransactionSchema>;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async ({ params, body }) => {
@@ -251,7 +250,7 @@ export class TransactionsController implements IController {
   };
 
   remove: TRouteHandler<{
-    Params: TWithId;
+    Params: TIndexableSchema;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async ({ params }) => {
     const transaction = await this._repository.remove(params.id);
@@ -261,7 +260,7 @@ export class TransactionsController implements IController {
   };
 
   findIncome: TRouteHandler<{
-    Params: TWithId | undefined;
+    Params: TIndexableSchema | undefined;
     Query: Partial<TRestTypedTransactionSchema>;
     Reply:
       | TIndexable<TRestTransactionSchema>
@@ -284,7 +283,7 @@ export class TransactionsController implements IController {
   };
 
   updateIncome: TRouteHandler<{
-    Params: TWithId;
+    Params: TIndexableSchema;
     Body: Partial<TRestTypedTransactionSchema>;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async (args) => {
@@ -295,14 +294,14 @@ export class TransactionsController implements IController {
   };
 
   removeIncome: TRouteHandler<{
-    Params: TWithId;
+    Params: TIndexableSchema;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async (args) => {
     return this.remove({ ...args });
   };
 
   findExpenses: TRouteHandler<{
-    Params: TWithId | undefined;
+    Params: TIndexableSchema | undefined;
     Query: Partial<TRestTypedTransactionSchema>;
     Reply:
       | TIndexable<TRestTransactionSchema>
@@ -325,7 +324,7 @@ export class TransactionsController implements IController {
   };
 
   updateExpenses: TRouteHandler<{
-    Params: TWithId;
+    Params: TIndexableSchema;
     Body: Partial<TRestTypedTransactionSchema>;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async (args) => {
@@ -336,7 +335,7 @@ export class TransactionsController implements IController {
   };
 
   removeExpenses: TRouteHandler<{
-    Params: TWithId;
+    Params: TIndexableSchema;
     Reply: TIndexable<TRestTransactionSchema>;
   }> = async (args) => {
     return this.remove({ ...args });

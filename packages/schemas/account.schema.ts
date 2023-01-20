@@ -1,5 +1,5 @@
 import { Static, Type } from '@sinclair/typebox';
-import { Indexable } from '@wallet/utilities/schema.utility';
+import { WithId } from '@wallet/utilities/schema.utility';
 import { RestCashValueSchema } from './cash.schema';
 import { RestCurrencySchema } from './currency.schema';
 
@@ -11,7 +11,7 @@ const base = {
 
 export const RestAccountSchema = Type.Object({
   ...base,
-  currency: Indexable(RestCurrencySchema),
+  currency: WithId(RestCurrencySchema),
 });
 
 export type TRestAccountSchema = Static<typeof RestAccountSchema>;

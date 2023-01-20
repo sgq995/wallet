@@ -1,5 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { HttpBadRequestError, HttpNotFoundError } from '@wallet/utilities';
+import {
+  HttpBadRequestError,
+  HttpNotFoundError,
+} from '@wallet/utilities/http.utility';
 
 export class AccountsTransactionsRepository {
   constructor(private _prisma: PrismaClient) {}

@@ -22,6 +22,8 @@ export class App {
   }
 
   async start() {
+    await this._framework.init();
+
     await this._moduleSolver.resolve(this.modules());
 
     const modules: AsyncAppModule[] = this._moduleSolver.modules.filter(

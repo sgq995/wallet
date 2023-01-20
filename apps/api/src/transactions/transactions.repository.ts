@@ -3,8 +3,8 @@ import {
   HttpBadRequestError,
   HttpInternalServerError,
   HttpNotFoundError,
-  TIndexable,
-} from '@wallet/utilities';
+} from '@wallet/utilities/http.utility';
+import { TIndexable } from '@wallet/utilities/model.utility';
 import { IAppCurrencyModel } from '../models';
 import { IAppTransactionModel } from './transactions.model';
 
