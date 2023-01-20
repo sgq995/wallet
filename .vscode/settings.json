@@ -1,5 +1,6 @@
 {
   "exportall.config.relExclusion": [
-    "/packages/schemas/legacy"
+    "/packages/schemas/legacy",
+    "/apps/web/src/hooks/transactions/transactions.key.ts"
   ]
 }

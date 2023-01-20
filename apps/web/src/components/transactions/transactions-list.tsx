@@ -1,72 +1,29 @@
-import { Delete } from '@mui/icons-material';
-import { Avatar, Box, List, Skeleton, Typography } from '@mui/material';
-import { Stack } from '@mui/system';
-import currency from 'currency.js';
-import { PropsWithChildren } from 'react';
-import { useQuery } from 'react-query';
-import { ICash } from '../../models/cash.model';
-import { TransactionsService } from '../../services';
+import { List, ListItem } from '@mui/material';
+import { TIndexable } from '@wallet/utilities';
+import { useIntersection } from '../../hooks/use-intersection';
+import { ITransaction } from '../../models/transaction.model';
+import { cashToString } from '../../utilities/cash.utility';
 import { TransactionsListItem } from './transactions-list-item';
 
-function cashToString(cash: ICash): string {
-  return currency(cash.units).format({
-    symbol: cash.currency.symbol,
-    separator: cash.currency.separator,
-    decimal: cash.currency.decimal,
-    precision: cash.currency.precision,
-  });
+export interface ITransactionsListProps {
+  transactions: TIndexable<ITransaction>[];
 }
 
-interface IRepeatProps {
-  times: number;
-}
-
-const Repeat: React.FC<PropsWithChildren<IRepeatProps>> = ({
-  times,
-  children,
+export const TransactionsList: React.FC<ITransactionsListProps> = ({
+  transactions,
 }) => {
-  return <>{new Array(times).fill(children)}</>;
-};
-
-export const TransactionsList: React.FC = () => {
-  const { isLoading, data, error } = useQuery(['transactions'], ({ signal }) =>
-    TransactionsService.find()
-  );
-
-  if (isLoading) {
-    return (
-      <Stack direction="column" gap={2}>
-        <Repeat times={5}>
-          <Stack direction="row" gap={2} alignItems="center">
-            <Skeleton variant="circular">
-              <Avatar />
-            </Skeleton>
-            <Stack direction="column" flexGrow={1}>
-              <Skeleton variant="text" />
-              <Skeleton variant="text" />
-            </Stack>
-            <Skeleton variant="circular">
-              <Delete />
-            </Skeleton>
-          </Stack>
-        </Repeat>
-      </Stack>
-    );
-  }
-
-  if (error) {
-    console.error(error);
-
-    return (
-      <Box>
-        <Typography variant="body1">Something goes wrong</Typography>
-      </Box>
-    );
-  }
+  const ref = useIntersection<HTMLLIElement>({
+    onIntersectIn() {
+      console.log('intersect in');
+    },
+    onIntersectOut() {
+      console.log('intersect out');
+    },
+  });
 
   return (
     <List>
-      {data.map((transaction) => (
+      {transactions.map((transaction) => (
         <TransactionsListItem
           key={transaction.id}
           amount={cashToString(transaction.cash)}
@@ -75,6 +32,8 @@ export const TransactionsList: React.FC = () => {
           type={transaction.type}
         />
       ))}
+
+      <ListItem ref={ref} disablePadding />
     </List>
   );
 };

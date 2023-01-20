@@ -1,9 +1,18 @@
-import { useQuery } from 'react-query';
-import { ITransaction } from '../../models/transaction.model';
-import { TransactionsService } from '../../services';
+import { HttpError } from '@wallet/utilities';
+import { useInfiniteQuery } from 'react-query';
+import {
+  TransactionsService,
+  TTransactionQuery,
+  TTransactionResponse,
+} from '../../services';
+import { TRANSACTIONS_KEY } from './transactions.key';
 
-export function useInfiniteTransactions(query?: ITransaction) {
-  return useQuery(['transactions', query], () =>
-    TransactionsService.find(query)
+export function useInfiniteTransactions(
+  query?: TTransactionQuery,
+  options?: Parameters<typeof useInfiniteQuery>[2]
+) {
+  return useInfiniteQuery<TTransactionResponse, HttpError>(
+    [TRANSACTIONS_KEY, query],
+    () => TransactionsService.find(query)
   );
 }
