@@ -5,7 +5,7 @@ import { Navigation } from '../navigation';
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
-    <Stack direction="row" sx={{ minHeight: '100vh', gap: 4 }}>
+    <Stack direction="row" sx={{ minHeight: '100vh' }}>
       <CssBaseline />
 
       <Navigation />
