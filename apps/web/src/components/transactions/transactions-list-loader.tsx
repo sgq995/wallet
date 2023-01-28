@@ -1,15 +1,27 @@
 import { Box, Typography } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useInfiniteTransactions } from '../../hooks/transactions';
 import { TransactionsList } from './transactions-list';
 import { TransactionsListFallback } from './transactions-list-fallback';
 
 export const TransactionsListLoader: React.FC = () => {
-  const { isLoading, data, error, fetchNextPage } = useInfiniteTransactions();
+  const { isLoading, data, error, fetchNextPage, isFetchingNextPage } =
+    useInfiniteTransactions();
   const transactions = useMemo(
-    () => data?.pages.reduce((draft, page) => draft.concat(page), []),
+    () =>
+      data?.pages.reduce((draft, page) => {
+        return draft.concat(
+          page.transactions.filter(
+            (transaction) => !draft.find((item) => transaction.id === item.id)
+          )
+        );
+      }, []),
     [data]
   );
+
+  const handleListBottomReached = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
 
   if (isLoading) {
     return <TransactionsListFallback />;
@@ -25,5 +37,14 @@ export const TransactionsListLoader: React.FC = () => {
     );
   }
 
-  return <TransactionsList transactions={transactions} />;
+  return (
+    <>
+      <TransactionsList
+        transactions={transactions}
+        onBottomReached={handleListBottomReached}
+      />
+
+      {isFetchingNextPage && <TransactionsListFallback />}
+    </>
+  );
 };

@@ -3,7 +3,7 @@ function booleanToQuery(key: string, bool: boolean): string {
 }
 
 function numberToQuery(key: string, num: number): string {
-  return `${key}=${num.toString()}`;
+  return `${key}=${num}`;
 }
 
 function stringToQuery(key: string, str: string): string {
@@ -13,7 +13,7 @@ function stringToQuery(key: string, str: string): string {
 function dictionaryToQuery(key: string, dict: Record<string, any>): string {
   return joinQueryParams(
     Object.keys(dict).map((dictKey: string): string =>
-      typeToQuery(`${key}['${dictKey}']`, dict[dictKey])
+      typeToQuery(`${key}[${dictKey}]`, dict[dictKey])
     )
   );
 }

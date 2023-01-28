@@ -20,6 +20,7 @@ import fastify, {
   FastifyServerOptions,
   RouteShorthandOptions,
 } from 'fastify';
+import QueryString from 'qs';
 import config from './config';
 import plugins from './legacy/plugins';
 import services from './legacy/services/v1';
@@ -47,6 +48,7 @@ const env = process.env.NODE_ENV ?? 'default';
 export class FastifyFramework implements IFramework {
   private _instance = fastify({
     logger: envToLogger[env] ?? true,
+    querystringParser: QueryString.parse,
   }).withTypeProvider<TypeBoxTypeProvider>();
 
   async init() {
@@ -122,7 +124,6 @@ export class FastifyFramework implements IFramework {
       schema: this._schemas(route.schema),
       handler: async (request, reply) => {
         try {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const { status, data, paging } = await route.handler({
             params: request.params,
             query: request.query,

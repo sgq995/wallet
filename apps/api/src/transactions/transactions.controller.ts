@@ -9,12 +9,14 @@ import { HttpStatus } from '@wallet/utilities/http.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import {
   IndexableSchema,
-  PartialWithId,
+  PaginableSchema,
   RecursivePartial,
   TIndexableSchema,
+  TPaginableSchema,
   WithId,
 } from '@wallet/utilities/schema.utility';
 import { IController, IRoute, TRouteHandler } from '../models';
+import { paginableRestToModel } from '../utilities/paginable.utility';
 import { TransactionsAdapter } from './transactions.adapter';
 import { IAppTransactionModel } from './transactions.model';
 import { TransactionsRepository } from './transactions.repository';
@@ -34,7 +36,12 @@ export class TransactionsController implements IController {
         endpoint: '/',
         handler: this.find,
         schema: {
-          query: PartialWithId(RestTransactionSchema),
+          query: Type.Intersect([
+            Type.Partial(IndexableSchema),
+            RecursivePartial(RestTransactionSchema),
+            Type.Partial(PaginableSchema),
+          ]),
+          paging: PaginableSchema,
           reply: {
             [HttpStatus.Ok]: Type.Array(WithId(RestTransactionSchema)),
           },
@@ -56,7 +63,7 @@ export class TransactionsController implements IController {
         endpoint: '/:id',
         handler: this.find,
         schema: {
-          params: Type.Partial(IndexableSchema),
+          params: IndexableSchema,
           reply: {
             [HttpStatus.Ok]: WithId(RestTransactionSchema),
           },
@@ -90,7 +97,11 @@ export class TransactionsController implements IController {
         endpoint: '/income',
         handler: this.findIncome,
         schema: {
-          query: PartialWithId(RestTypedTransactionSchema),
+          query: Type.Intersect([
+            Type.Partial(IndexableSchema),
+            RecursivePartial(RestTypedTransactionSchema),
+            RecursivePartial(PaginableSchema),
+          ]),
           reply: {
             [HttpStatus.Ok]: Type.Array(WithId(RestTypedTransactionSchema)),
           },
@@ -112,7 +123,7 @@ export class TransactionsController implements IController {
         endpoint: '/income/:id',
         handler: this.findIncome,
         schema: {
-          params: Type.Partial(IndexableSchema),
+          params: IndexableSchema,
           reply: {
             [HttpStatus.Ok]: WithId(RestTypedTransactionSchema),
           },
@@ -146,7 +157,11 @@ export class TransactionsController implements IController {
         endpoint: '/expenses',
         handler: this.findExpenses,
         schema: {
-          query: PartialWithId(RestTypedTransactionSchema),
+          query: Type.Intersect([
+            Type.Partial(IndexableSchema),
+            RecursivePartial(RestTypedTransactionSchema),
+            RecursivePartial(PaginableSchema),
+          ]),
           reply: {
             [HttpStatus.Ok]: Type.Array(WithId(RestTypedTransactionSchema)),
           },
@@ -168,7 +183,7 @@ export class TransactionsController implements IController {
         endpoint: '/expenses/:id',
         handler: this.findExpenses,
         schema: {
-          params: Type.Partial(IndexableSchema),
+          params: IndexableSchema,
           reply: {
             [HttpStatus.Ok]: WithId(RestTypedTransactionSchema),
           },
@@ -202,14 +217,15 @@ export class TransactionsController implements IController {
 
   find: TRouteHandler<{
     Params: TIndexableSchema | undefined;
-    Query: Partial<TRestTransactionSchema>;
+    Query: Partial<TRestTransactionSchema & TPaginableSchema>;
     Reply:
       | TIndexable<TRestTransactionSchema>
       | TIndexable<TRestTransactionSchema>[];
   }> = async ({ params, query }) => {
-    const transactions = await this._repository.find(
+    const { transactions, paging } = await this._repository.find(
       params?.id,
-      query ? this._adapter.restToModel(query) : undefined
+      query ? this._adapter.restToModel(query) : undefined,
+      query.paging ? paginableRestToModel(query.paging) : undefined
     );
     const data: TIndexable<TRestTransactionSchema>[] = transactions.map(
       (value: TIndexable<IAppTransactionModel>) =>
@@ -217,10 +233,13 @@ export class TransactionsController implements IController {
     );
 
     if (params?.id) {
-      return { status: HttpStatus.Ok, data: data[0] };
+      return {
+        status: HttpStatus.Ok,
+        data: data[0],
+      };
     }
 
-    return { status: HttpStatus.Ok, data };
+    return { status: HttpStatus.Ok, data, paging };
   };
 
   add: TRouteHandler<{

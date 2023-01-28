@@ -6,15 +6,22 @@ import {
 } from '@wallet/utilities/http.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { IAppCurrencyModel } from '../models';
+import { IAppPagingModel } from '../models/paging.model';
 import { IAppTransactionModel } from './transactions.model';
+
+const TRANSACTIONS_FIND_LIMIT = 10;
 
 export class TransactionsRepository {
   constructor(private _prisma: PrismaClient) {}
 
   async find(
     id?: number,
-    filter?: Partial<IAppTransactionModel>
-  ): Promise<TIndexable<IAppTransactionModel>[]> {
+    filter?: Partial<IAppTransactionModel>,
+    requestPaging?: IAppPagingModel
+  ): Promise<{
+    transactions: TIndexable<IAppTransactionModel>[];
+    paging: IAppPagingModel;
+  }> {
     const result = await this._prisma.transaction.findMany({
       where: {
         id,
@@ -22,6 +29,8 @@ export class TransactionsRepository {
       orderBy: {
         date: 'desc',
       },
+      skip: requestPaging?.offset,
+      take: requestPaging?.limit ?? TRANSACTIONS_FIND_LIMIT,
       include: {
         currency: true,
         tags: true,
@@ -37,7 +46,12 @@ export class TransactionsRepository {
       this._toAppModel
     );
 
-    return transactions;
+    const paging: IAppPagingModel = {
+      offset: requestPaging?.offset ?? 0,
+      limit: requestPaging?.limit ?? TRANSACTIONS_FIND_LIMIT,
+    };
+
+    return { transactions, paging };
   }
 
   async add(

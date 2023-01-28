@@ -1,6 +1,6 @@
-import { Static, TSchema } from '@sinclair/typebox';
+import { TSchema } from '@sinclair/typebox';
 import { HttpStatus } from '@wallet/utilities/http.utility';
-import { PaginableSchema } from '@wallet/utilities/schema.utility';
+import { TPaginableSchema } from '@wallet/utilities/schema.utility';
 
 type UndefinedToUnknown<T> = [T] extends [undefined] ? unknown : T;
 
@@ -26,7 +26,7 @@ export interface IRequest<Request extends IRequestType = IRequestType> {
 }
 
 type TReplyDefault = unknown;
-type TPagingDefault = Static<typeof PaginableSchema>;
+type TPagingDefault = TPaginableSchema['paging'];
 
 export interface IReplyType {
   Reply?: TReplyDefault;

@@ -8,7 +8,8 @@ import {
   ListItemText,
 } from '@mui/material';
 import { blue, green, red } from '@mui/material/colors';
-import { DateFormatter } from '@wallet/utilities';
+import { DateFormatter } from '@wallet/utilities/date.utility';
+import { useDeleteTransaction } from '../../hooks/transactions/use-delete-transaction';
 
 export type TTransactionType = 'income' | 'expense' | 'linked';
 
@@ -29,6 +30,7 @@ function transactionDateFormat(date: Date): string {
 }
 
 export interface ITransactionsListItemProps {
+  id: number;
   amount: string;
   date: Date;
   description: string;
@@ -36,21 +38,29 @@ export interface ITransactionsListItemProps {
 }
 
 export const TransactionsListItem: React.FC<ITransactionsListItemProps> = ({
+  id,
   amount,
   date,
   description,
   type,
 }) => {
+  const { isLoading, isSuccess, mutate } = useDeleteTransaction(id);
+  const isDisabled = isLoading || isSuccess;
+
+  const handleDelete = () => {
+    mutate();
+  };
+
   return (
     <ListItem
       secondaryAction={
-        <IconButton edge="end">
+        <IconButton edge="end" disabled={isDisabled} onClick={handleDelete}>
           <Delete sx={{ color: red[500] }} />
         </IconButton>
       }
       disablePadding
     >
-      <ListItemButton alignItems="flex-start">
+      <ListItemButton disabled={isDisabled}>
         <ListItemAvatar>
           <Avatar sx={{ bgcolor: color[type] }}>{Icon[type]}</Avatar>
         </ListItemAvatar>

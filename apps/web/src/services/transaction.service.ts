@@ -1,15 +1,26 @@
 import { TRestTransactionSchema } from '@wallet/schemas';
-import { TIndexable } from '@wallet/utilities';
+import { TIndexable } from '@wallet/utilities/model.utility';
+import { TPaginableSchema } from '@wallet/utilities/schema.utility';
 import config from '../config';
+import { IPaging } from '../models/paging.model';
 import { ITransaction } from '../models/transaction.model';
-import { restGet, restPost } from '../utilities/rest-api.utility';
-import { ICreateable } from './creatable.service';
+import { restDelete, restGet } from '../utilities/rest-api.utility';
+import { IDeletable } from './deletable.service';
 import { IReadable } from './readable.service';
 
 const TRANSACTIONS_BASE_PATH = '/v2/transactions';
 
-export type TTransactionQuery = Partial<TIndexable<ITransaction>>;
-export type TTransactionResponse = Array<TIndexable<ITransaction>>;
+type TIndexableTransaction = TIndexable<ITransaction>;
+
+export type TTransactionParams = Pick<TIndexableTransaction, 'id'>;
+export type TTransactionQuery = Partial<TIndexableTransaction> & {
+  paging: Partial<IPaging>;
+};
+export type TTransactionReadResponse = {
+  transactions: Array<TIndexableTransaction>;
+  paging: IPaging;
+};
+export type TTransactionDeleteResponse = TIndexableTransaction;
 
 function restToApp(entity: TRestTransactionSchema): ITransaction {
   return {
@@ -41,7 +52,7 @@ function restToApp(entity: TRestTransactionSchema): ITransaction {
 
 function indexableRestToApp(
   entity: TIndexable<TRestTransactionSchema>
-): TIndexable<ITransaction> {
+): TIndexableTransaction {
   return {
     ...restToApp(entity),
     id: entity.id,
@@ -49,16 +60,35 @@ function indexableRestToApp(
 }
 
 class TransactionsServiceImpl
-  implements IReadable<TTransactionQuery, TTransactionResponse>
+  implements
+    IReadable<TTransactionQuery, TTransactionReadResponse>,
+    IDeletable<TTransactionParams, TTransactionDeleteResponse>
 {
-  async find(query?: TTransactionQuery): Promise<TTransactionResponse> {
-    const body = await restGet<TIndexable<TRestTransactionSchema>[]>({
+  async find(query?: TTransactionQuery): Promise<TTransactionReadResponse> {
+    const body = await restGet<
+      TIndexable<TRestTransactionSchema>[],
+      TPaginableSchema['paging']
+    >({
       baseUrl: config.app.apiBaseUrl,
       endpoint: TRANSACTIONS_BASE_PATH,
       query,
     });
 
-    return body.data.map(indexableRestToApp);
+    return {
+      transactions: body.data.map(indexableRestToApp),
+      paging: body.paging,
+    };
+  }
+
+  async remove(
+    params: TTransactionParams
+  ): Promise<TTransactionDeleteResponse> {
+    const body = await restDelete<TTransactionDeleteResponse>({
+      baseUrl: config.app.apiBaseUrl,
+      endpoint: `${TRANSACTIONS_BASE_PATH}/${params.id}`,
+    });
+
+    return body.data;
   }
 }
 

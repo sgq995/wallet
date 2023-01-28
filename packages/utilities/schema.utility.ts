@@ -71,24 +71,26 @@ export function WithId<
 export function PartialWithId<
   Schema extends TObject<TProperties> = TObject<TProperties>
 >(schema: Schema) {
-  return Type.Intersect([RecursivePartial(schema), Type.Partial(IndexableSchema)]);
+  return Type.Intersect([
+    RecursivePartial(schema),
+    Type.Partial(IndexableSchema),
+  ]);
 }
 
 export const PaginableSchema = Type.Object({
-  page: Type.Optional(Type.String()),
-  previous: Type.Optional(Type.String()),
-  next: Type.Optional(Type.String()),
-  offset: Type.Optional(Type.Number()),
-  limit: Type.Optional(Type.Number()),
+  paging: Type.Object({
+    page: Type.Optional(Type.String()),
+    previous: Type.Optional(Type.String()),
+    next: Type.Optional(Type.String()),
+    offset: Type.Optional(Type.Number()),
+    limit: Type.Optional(Type.Number()),
+  }),
 });
+
+export type TPaginableSchema = Static<typeof PaginableSchema>;
 
 export function WithPaging<
   Schema extends TObject<TProperties> = TObject<TProperties>
 >(schema: Schema) {
-  return Type.Intersect([
-    schema,
-    Type.Object({
-      paging: Type.Optional(PaginableSchema),
-    }),
-  ]);
+  return Type.Intersect([schema, RecursivePartial(PaginableSchema)]);
 }
