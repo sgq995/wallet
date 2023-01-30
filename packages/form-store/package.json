@@ -1,0 +1,24 @@
+{
+  "name": "@wallet/form-store",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "immer": "^9.0.19",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@types/lodash": "^4.14.188",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
+    "@wallet/dev-tools": "*",
+    "eslint": "^8.26.0",
+    "jest": "^29.2.2",
+    "jest-environment-jsdom": "^29.2.2",
+    "typescript": "^4.8.4"
+  }
+}
