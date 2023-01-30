@@ -1,5 +1,5 @@
 import { AppProps } from 'next/app';
-import { useRef } from 'react';
+import { useState } from 'react';
 import {
   DehydratedState,
   Hydrate,
@@ -12,10 +12,10 @@ export default function MyApp({
   Component,
   pageProps,
 }: AppProps<{ dehydratedState: DehydratedState }>) {
-  const queryClient = useRef(new QueryClient());
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={queryClient.current}>
+    <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <Layout>
           <Component {...pageProps} />
