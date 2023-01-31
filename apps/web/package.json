@@ -15,6 +15,7 @@
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.12",
     "@wallet/components": "*",
+    "@wallet/form-store": "*",
     "@wallet/forms": "*",
     "@wallet/schemas": "*",
     "@wallet/utilities": "*",
