@@ -4,6 +4,8 @@ import { useCallback } from 'react';
 import { useIntersection } from '../../hooks/use-intersection';
 import { ITransaction } from '../../models/transaction.model';
 import { cashToString } from '../../utilities/cash.utility';
+import { TransactionsInlineForm } from './transactions-inline-form';
+import { TransactionsForm } from './transactions-form';
 import { TransactionsListItem } from './transactions-list-item';
 
 export interface ITransactionsListProps {
