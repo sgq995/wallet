@@ -7,4 +7,4 @@ export * from './FormEntryTypeField';
 export * from './FormNameField';
 export * from './FormSubmitButton';
 export * from './FormTextField';
-export * from './form-container';
+export * from './FormContainer';

@@ -23,10 +23,10 @@ import {
   LogoutIcon,
 } from '../../../legacy/components/IconsMaterial';
 
-import { AccountForm } from '../../../components/accounts';
-import { CategoryForm } from '../../../components/categories';
-import { EntryForm } from '../../../components/entries';
-import { ResponsiveDialog } from '../../../components/dialogs/ResponsiveDialog';
+import { AccountForm } from '../../components/accounts';
+import { CategoryForm } from '../categories';
+import { EntryForm } from '../../components/entries';
+import { ResponsiveDialog } from '../../components/dialogs/ResponsiveDialog';
 
 interface Route {
   path: string;

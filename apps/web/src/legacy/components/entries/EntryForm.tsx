@@ -13,9 +13,9 @@ import {
   FormSubmitButton,
 } from '../forms';
 
-import { useAddOneMutation, useUpdateOneMutation } from '../../legacy/hooks/entries';
-import { useNotificationSystem } from '../../contexts/notifications';
-import { format } from '../../legacy/utilities/date.utility';
+import { useAddOneMutation, useUpdateOneMutation } from '../../hooks/entries';
+import { useNotificationSystem } from '../../../contexts/notifications';
+import { format } from '../../utilities/date.utility';
 
 import { EntryFormData } from './EntryFormData';
 

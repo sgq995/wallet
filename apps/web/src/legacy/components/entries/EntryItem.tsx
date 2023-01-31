@@ -7,11 +7,11 @@ import type { IconButtonProps } from '@mui/material/IconButton';
 import type { TEntryModel } from '@wallet/schemas/legacy/entries';
 
 import { Hidden, IconButton, ListItem, ListItemText } from '@mui/material';
-import { DeleteIcon } from '../../legacy/components/IconsMaterial';
+import { DeleteIcon } from '../../components/IconsMaterial';
 
-import { yyyyMMdd } from '../../legacy/utilities/date.utility';
+import { yyyyMMdd } from '../../utilities/date.utility';
 import { transactionToAmount } from './utils';
-import { useSystemContext } from '../../contexts/system';
+import { useSystemContext } from '../../../contexts/system';
 
 import theme from '../../theme';
 

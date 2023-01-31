@@ -7,7 +7,7 @@ import {
   useSessionContext,
 } from 'supertokens-auth-react/recipe/session';
 
-import theme from '../../../theme';
+import theme from '../../theme';
 
 import {
   Box,
