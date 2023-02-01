@@ -217,19 +217,19 @@ export interface IFormDateFieldProps {
 
 export const FormDateField: React.FC<IFormDateFieldProps> = ({
   id,
-  name = 'date',
+  name,
   required,
 }) => {
   const yearFieldId = id ? `${id}-year` : undefined;
-  const yearFieldName = `${name}-year`;
+  const yearFieldName = name ? `${name}-year` : 'year';
   const [year, setYear] = useControlledFormComponent<string>(yearFieldName);
 
   const monthFieldId = id ? `${id}-year` : undefined;
-  const monthFieldName = `${name}-month`;
+  const monthFieldName = name ? `${name}-month` : 'month';
   const [month, setMonth] = useControlledFormComponent<string>(monthFieldName);
 
   const dayFieldId = id ? `${id}-year` : undefined;
-  const dayFieldName = `${name}-day`;
+  const dayFieldName = name ? `${name}-day` : 'day';
   const [day, setDay] = useControlledFormComponent<string>(dayFieldName);
 
   return (
