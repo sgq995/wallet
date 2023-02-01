@@ -4,6 +4,10 @@
   "main": "index.ts",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch --onlyChanged"
+  },
   "dependencies": {
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
