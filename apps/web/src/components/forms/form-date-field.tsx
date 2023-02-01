@@ -213,24 +213,36 @@ export interface IFormDateFieldProps {
   id?: string;
   name?: string;
   required?: boolean;
+  defaultYear?: string;
+  defaultMonth?: string;
+  defaultDay?: string;
 }
 
 export const FormDateField: React.FC<IFormDateFieldProps> = ({
   id,
   name,
   required,
+  defaultYear,
+  defaultMonth,
+  defaultDay,
 }) => {
   const yearFieldId = id ? `${id}-year` : undefined;
   const yearFieldName = name ? `${name}-year` : 'year';
-  const [year, setYear] = useControlledFormComponent<string>(yearFieldName);
+  const [year, setYear] = useControlledFormComponent<string>(yearFieldName, {
+    defaultValue: defaultYear,
+  });
 
   const monthFieldId = id ? `${id}-year` : undefined;
   const monthFieldName = name ? `${name}-month` : 'month';
-  const [month, setMonth] = useControlledFormComponent<string>(monthFieldName);
+  const [month, setMonth] = useControlledFormComponent<string>(monthFieldName, {
+    defaultValue: defaultMonth,
+  });
 
   const dayFieldId = id ? `${id}-year` : undefined;
   const dayFieldName = name ? `${name}-day` : 'day';
-  const [day, setDay] = useControlledFormComponent<string>(dayFieldName);
+  const [day, setDay] = useControlledFormComponent<string>(dayFieldName, {
+    defaultValue: defaultDay,
+  });
 
   return (
     <Stack direction="row" spacing={2}>

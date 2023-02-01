@@ -1,4 +1,6 @@
 export * from './transactions-block-form';
+export * from './transactions-form-create-button';
+export * from './transactions-form-update-button';
 export * from './transactions-inline-form';
 export * from './transactions-list-fallback';
 export * from './transactions-list-item';
