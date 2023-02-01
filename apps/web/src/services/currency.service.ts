@@ -1,5 +1,5 @@
 import { TRestCurrencySchema } from '@wallet/schemas';
-import { TIndexable } from '@wallet/utilities';
+import { TIndexable } from '@wallet/utilities/model.utility';
 import config from '../config';
 import { ICurrency } from '../models/currency.model';
 import { restGet } from '../utilities/rest-api.utility';

@@ -12,7 +12,16 @@ export default function MyApp({
   Component,
   pageProps,
 }: AppProps<{ dehydratedState: DehydratedState }>) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
