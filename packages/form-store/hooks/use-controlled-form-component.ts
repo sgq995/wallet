@@ -1,11 +1,16 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { FormStoreContext } from '../context';
+import { useCallback, useEffect, useState } from 'react';
+import { IFormComponentOptions } from './types';
+import { useFormStore } from './use-form-store';
+
+export interface IUseControlledFormComponentOptions<Value>
+  extends IFormComponentOptions<Value> {}
 
 export function useControlledFormComponent<Value>(
   name: string,
-  defaultValue?: Value
+  options?: IUseControlledFormComponentOptions<Value>
 ): [Value, (value: Value) => void] {
-  const formStore = useContext(FormStoreContext);
+  const { defaultValue } = options ?? {};
+  const formStore = useFormStore();
 
   useEffect(() => {
     formStore.register({

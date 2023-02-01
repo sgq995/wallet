@@ -1,11 +1,16 @@
 import { useCallback } from 'react';
+import { IFormComponentOptions } from './types';
 import { useFormStore } from './use-form-store';
+
+export interface IUseUncontrolledFormComponentOptions<Value>
+  extends IFormComponentOptions<Value> {}
 
 export function useUncontrolledFormComponent<Node, Value>(
   name: string,
   rawValue: (node: Node) => Value,
-  defaultValue?: Value
+  options?: IUseUncontrolledFormComponentOptions<Value>
 ) {
+  const { defaultValue } = options ?? {};
   const formStore = useFormStore();
 
   const refCallback = useCallback(

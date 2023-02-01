@@ -126,7 +126,9 @@ export class FormStore<Store extends TStore = TStore> {
           return;
         }
 
-        draft[key] = component.value;
+        if (typeof component.value !== 'undefined') {
+          draft[key] = component.value;
+        }
       });
     });
   };

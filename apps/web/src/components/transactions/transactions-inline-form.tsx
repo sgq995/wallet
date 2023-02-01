@@ -1,6 +1,7 @@
 import { Add as AddIcon } from '@mui/icons-material';
-import { Box, IconButton, Select, Stack, TextField } from '@mui/material';
+import { Box, IconButton, Stack, TextField } from '@mui/material';
 import { FormStoreProvider, useUncontrolledInput } from '@wallet/form-store';
+import { FormDateField } from '../forms/form-date-field';
 
 const DEFAULT_TRANSACTIONS_FORM_VALUES = {
   type: '',
@@ -10,12 +11,20 @@ const DEFAULT_TRANSACTIONS_FORM_VALUES = {
 const { type, description } = DEFAULT_TRANSACTIONS_FORM_VALUES;
 
 export const TransactionsInlineForm: React.FC = () => {
-  const typeRef = useUncontrolledInput('type', type);
-  const descriptionRef = useUncontrolledInput('description', description);
+  const typeRef = useUncontrolledInput('type', { defaultValue: type });
+  const descriptionRef = useUncontrolledInput('description', {
+    defaultValue: description,
+  });
 
   return (
     <FormStoreProvider defaultValues={DEFAULT_TRANSACTIONS_FORM_VALUES}>
       <Stack direction="row" spacing={4}>
+        <FormDateField
+          id="transactions-date"
+          name="transactions-date"
+          required
+        />
+
         <TextField
           id="transactions-type"
           ref={typeRef}
@@ -39,7 +48,7 @@ export const TransactionsInlineForm: React.FC = () => {
           label="Description"
         />
 
-        <Box alignItems="center">
+        <Box display="flex" alignItems="center">
           <IconButton color="primary" sx={{ flexGrow: 0 }}>
             <AddIcon />
           </IconButton>
