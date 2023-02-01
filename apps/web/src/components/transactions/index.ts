@@ -1,4 +1,4 @@
-export * from './transactions-form';
+export * from './transactions-block-form';
 export * from './transactions-inline-form';
 export * from './transactions-list-fallback';
 export * from './transactions-list-item';
