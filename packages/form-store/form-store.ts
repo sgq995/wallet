@@ -36,78 +36,164 @@ export class UncontrolledFormComponent<Value = TDefaultFormComponentValue>
   }
 }
 
-export type TStoreKey = string;
+export type TStoreKey = string | number | symbol;
 export type TStoreValue = unknown;
-export type TStore = Record<TStoreKey, TStoreValue>;
+export type TStore<
+  Key extends TStoreKey = TStoreKey,
+  Value = TStoreValue
+> = Record<Key, Value>;
+export type TSnapshot<
+  Key extends TStoreKey = TStoreKey,
+  RawStore extends TStore<Key, string> = TStore<Key, string>,
+  Store extends TStore<Key> = TStore<Key>
+> =
+  | ({
+      [P in Key]: RawStore[P] | Store[P] | null;
+    } & { hasError: true })
+  | ({
+      [P in Key]: Store[P];
+    } & { hasError: false });
 
-export interface IFormStoreOptions<Store extends TStore> {
-  name: keyof Store | (() => keyof Store);
-}
-
-function getComponentName<Store extends TStore>(
-  name: IFormStoreOptions<Store>['name']
-): keyof Store {
-  let componentName: keyof Store;
-  if (typeof name === 'function') {
-    componentName = name();
-  } else {
-    componentName = name;
-  }
-  return componentName;
+export interface IFormStoreOptions<
+  Key extends TStoreKey = TStoreKey,
+  RawValue = TDefaultFormComponentValue,
+  Value = TDefaultFormComponentValue
+> {
+  name: Key;
+  rawValidator?: (value: RawValue) => boolean;
+  parser?: (value: RawValue) => Value;
+  validator?: (value: Value) => boolean;
 }
 
 export interface IFormStoreRegisterOptions<
-  Store extends TStore,
+  Key extends TStoreKey = TStoreKey,
+  RawValue = TDefaultFormComponentValue,
   Value = TDefaultFormComponentValue
-> extends IFormStoreOptions<Store> {
-  defaultValue?: Value;
-  rawValue?: () => Value;
+> extends IFormStoreOptions<Key, RawValue, Value> {
+  defaultValue?: RawValue;
+  rawValue?: () => RawValue;
 }
 
 export interface IFormStoreUpdateOptions<
-  Store extends TStore,
+  Key extends TStoreKey = TStoreKey,
+  RawValue = TDefaultFormComponentValue,
   Value = TDefaultFormComponentValue
-> extends IFormStoreOptions<Store> {
-  rawValue: Value;
+> extends IFormStoreOptions<Key, RawValue, Value> {
+  rawValue: RawValue;
 }
 
-export class FormStore<Store extends TStore = TStore> {
+export class FormStore<
+  Key extends TStoreKey = TStoreKey,
+  RawStore extends TStore<Key, string> = TStore<Key, string>,
+  Store extends TStore<Key> = TStore<Key>,
+  Snapshot extends TSnapshot<Key, RawStore, Store> = TSnapshot<
+    Key,
+    RawStore,
+    Store
+  >
+> {
+  private _defaultValues: RawStore;
   private _components: Record<
-    keyof Store,
-    IFormComponent<Store[keyof Store]> | null
+    Key,
+    IFormComponent<RawStore[keyof RawStore]> | null
+  >;
+  private _rawValidators: Record<
+    Key,
+    ((value: RawStore[keyof RawStore]) => boolean) | null
+  >;
+  private _parsers: Record<
+    Key,
+    ((value: RawStore[keyof RawStore]) => Store[keyof Store]) | null
+  >;
+  private _validators: Record<
+    Key,
+    ((value: Store[keyof Store]) => boolean) | null
   >;
 
-  constructor(private _defaultValues: Store) {
-    this._components = mapValues(_defaultValues, () => null);
+  constructor(defaultValues: RawStore) {
+    this._defaultValues = { ...defaultValues };
+    this._components = mapValues(this._defaultValues, () => null);
+    this._rawValidators = mapValues(this._defaultValues, () => null);
+    this._parsers = mapValues(this._defaultValues, () => null);
+    this._validators = mapValues(this._defaultValues, () => null);
   }
 
-  readonly register = <Value extends Store[keyof Store] = Store[keyof Store]>(
-    options: IFormStoreRegisterOptions<Store, Value>
+  readonly register = <
+    RawValue extends RawStore[keyof RawStore] = RawStore[keyof RawStore],
+    Value extends Store[keyof Store] = Store[keyof Store]
+  >(
+    options: IFormStoreRegisterOptions<Key, RawValue, Value>
   ): void => {
-    const { name, defaultValue, rawValue } = options;
+    const {
+      name: componentName,
+      defaultValue,
+      rawValue,
+      rawValidator,
+      parser,
+      validator,
+    } = options;
 
-    let componentName = getComponentName(name);
-
-    if (typeof defaultValue !== 'undefined') {
-      this._defaultValues[componentName] = defaultValue;
+    if (this._components[componentName]) {
+      return;
     }
 
-    let component: IFormComponent<Value>;
+    if (typeof defaultValue !== 'undefined') {
+      this._defaultValues = {
+        ...this._defaultValues,
+        [componentName as keyof RawStore]: defaultValue,
+      };
+    }
+
+    if (typeof rawValidator === 'function') {
+      this._rawValidators = {
+        ...this._rawValidators,
+        [componentName]: rawValidator,
+      };
+    }
+
+    if (typeof parser === 'function') {
+      this._parsers = {
+        ...this._parsers,
+        [componentName]: parser,
+      };
+    }
+
+    if (typeof validator === 'function') {
+      this._validators = {
+        ...this._validators,
+        [componentName]: validator,
+      };
+    }
+
+    let component: IFormComponent<RawValue>;
     if (rawValue) {
-      component = new UncontrolledFormComponent<Value>(rawValue);
+      component = new UncontrolledFormComponent<RawValue>(rawValue);
     } else {
-      component = new ControlledFormComponent<Value>();
+      component = new ControlledFormComponent<RawValue>();
     }
 
     this._components[componentName] = component;
   };
 
-  readonly update = <Value extends Store[keyof Store] = Store[keyof Store]>(
-    options: IFormStoreUpdateOptions<Store, Value>
-  ): void => {
-    const { name, rawValue } = options;
+  readonly unregister = (componentName: Key) => {
+    if (!this._components[componentName]) {
+      return;
+    }
 
-    let componentName = getComponentName(name);
+    delete this._defaultValues[componentName];
+    delete this._components[componentName];
+    delete this._rawValidators[componentName];
+    delete this._parsers[componentName];
+    delete this._validators[componentName];
+  };
+
+  readonly update = <
+    RawValue extends RawStore[keyof RawStore] = RawStore[keyof RawStore],
+    Value extends Store[keyof Store] = Store[keyof Store]
+  >(
+    options: IFormStoreUpdateOptions<Key, RawValue, Value>
+  ): void => {
+    const { name: componentName, rawValue } = options;
 
     let component: IFormComponent | null = this._components[componentName];
     if (component === null) {
@@ -119,17 +205,61 @@ export class FormStore<Store extends TStore = TStore> {
     component.value = rawValue;
   };
 
-  readonly snapshot = (): Store => {
-    return produce(this._defaultValues, (draft: Store) => {
-      forEach(this._components, (component, key: keyof Store) => {
+  readonly snapshot = (): Snapshot => {
+    let hasError = false;
+
+    const rawValues = produce(this._defaultValues, (draft) => {
+      forEach(this._components, (component, componentName) => {
         if (!component) {
           return;
         }
 
+        let value = this._defaultValues[componentName];
         if (typeof component.value !== 'undefined') {
-          draft[key] = component.value;
+          value = component.value;
         }
+
+        const rawValidator = this._rawValidators[componentName];
+        try {
+          if (rawValidator && !rawValidator(value)) {
+            value = null;
+            hasError = true;
+          }
+        } catch {
+          value = null;
+          hasError = true;
+        }
+
+        draft[componentName] = value;
       });
     });
+
+    const snapshot: Snapshot = mapValues(
+      rawValues,
+      (rawValue, componentName: Key) => {
+        let value: RawStore[keyof RawStore] | Store[keyof Store] | null =
+          rawValue;
+
+        const parser = this._parsers[componentName];
+        const validator = this._validators[componentName];
+        if (parser) {
+          try {
+            value = parser(rawValue);
+            if (validator && !validator(value)) {
+              value = null;
+              hasError = true;
+            }
+          } catch {
+            value = null;
+            hasError = true;
+          }
+        }
+
+        return value;
+      }
+    ) as Snapshot;
+
+    snapshot.hasError = hasError;
+    return snapshot;
   };
 }

@@ -8,11 +8,11 @@ function getInputValue(node: HTMLInputElement) {
   return node.value;
 }
 
-export function useUncontrolledInput(
+export function useUncontrolledInput<Value = unknown>(
   name: string,
-  options?: IUseUncontrolledFormComponentOptions<string>
+  options?: IUseUncontrolledFormComponentOptions<Value>
 ) {
-  return useUncontrolledFormComponent<HTMLInputElement, string>(
+  return useUncontrolledFormComponent<HTMLInputElement, Value>(
     name,
     getInputValue,
     options

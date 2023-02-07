@@ -2,26 +2,33 @@ import { useCallback, useEffect, useState } from 'react';
 import { IFormComponentOptions } from './types';
 import { useFormStore } from './use-form-store';
 
-export interface IUseControlledFormComponentOptions<Value>
+export interface IUseControlledFormComponentOptions<Value = unknown>
   extends IFormComponentOptions<Value> {}
 
-export function useControlledFormComponent<Value>(
+export function useControlledFormComponent<Value = unknown>(
   name: string,
   options?: IUseControlledFormComponentOptions<Value>
-): [Value, (value: Value) => void] {
-  const { defaultValue } = options ?? {};
+): [string, (value: string) => void] {
+  const { defaultValue, rawValidator, parser, validator } = options ?? {};
   const formStore = useFormStore();
 
   useEffect(() => {
     formStore.register({
       name,
       defaultValue,
+      rawValidator,
+      parser,
+      validator,
     });
-  }, [formStore, name, defaultValue]);
 
-  const [state, setState] = useState<Value>(defaultValue);
+    return () => {
+      formStore.unregister(name);
+    };
+  }, [formStore, name, defaultValue, rawValidator, parser, validator]);
+
+  const [state, setState] = useState(defaultValue);
   const setValue = useCallback(
-    (value: Value) => {
+    (value: string) => {
       formStore.update({ name, rawValue: value });
       setState(value);
     },
