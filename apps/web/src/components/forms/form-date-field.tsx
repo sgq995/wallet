@@ -1,6 +1,5 @@
 import { Stack, TextField } from '@mui/material';
 import { useControlledFormComponent } from '@wallet/form-store';
-import { isFinite } from 'lodash';
 import React, { useEffect, useState } from 'react';
 
 const YEAR_LIST = new Array(new Date().getFullYear() - 2000 + 1)
@@ -31,6 +30,7 @@ const YearSelect: React.FC<IYearSelectProps> = ({
       required={required}
       select
       SelectProps={{ native: true }}
+      fullWidth
     >
       <option value=""></option>
       {YEAR_LIST.map((year) => (
@@ -81,6 +81,7 @@ const MonthSelect: React.FC<IFormDateMonthProps> = ({
       required={required}
       select
       SelectProps={{ native: true }}
+      fullWidth
     >
       <option value=""></option>
       {MONTH_LIST.map((month, index) => (
@@ -198,6 +199,7 @@ const DaySelect: React.FC<IFormDayFieldProps> = ({
       required={required}
       select
       SelectProps={{ native: true }}
+      fullWidth
     >
       <option value=""></option>
       {dayList.map((day) => (
@@ -228,20 +230,26 @@ export const FormDateField: React.FC<IFormDateFieldProps> = ({
 }) => {
   const yearFieldId = id ? `${id}-year` : undefined;
   const yearFieldName = name ? `${name}-year` : 'year';
-  const [year, setYear] = useControlledFormComponent<string>(yearFieldName, {
+  const [year, setYear] = useControlledFormComponent(yearFieldName, {
     defaultValue: defaultYear,
+    parser: parseInt,
+    validator: isFinite,
   });
 
   const monthFieldId = id ? `${id}-year` : undefined;
   const monthFieldName = name ? `${name}-month` : 'month';
-  const [month, setMonth] = useControlledFormComponent<string>(monthFieldName, {
+  const [month, setMonth] = useControlledFormComponent(monthFieldName, {
     defaultValue: defaultMonth,
+    parser: parseInt,
+    validator: isFinite,
   });
 
   const dayFieldId = id ? `${id}-year` : undefined;
   const dayFieldName = name ? `${name}-day` : 'day';
-  const [day, setDay] = useControlledFormComponent<string>(dayFieldName, {
+  const [day, setDay] = useControlledFormComponent(dayFieldName, {
     defaultValue: defaultDay,
+    parser: parseInt,
+    validator: isFinite,
   });
 
   return (

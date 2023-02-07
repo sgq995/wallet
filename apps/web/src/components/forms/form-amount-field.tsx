@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { Skeleton, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
 import {
   useUncontrolledFormComponent,
@@ -29,10 +29,16 @@ const CurrencySelect: React.FC<ICurrencySelectProps> = ({
   const fieldName = name ? `${name}-currency` : 'currency';
   const ref = useUncontrolledFormComponent(fieldName, getSelectValue, {
     defaultValue,
+    parser: parseInt,
+    validator: isFinite,
   });
 
   if (isLoading) {
-    return <>loading</>;
+    return (
+      <Skeleton>
+        <TextField />
+      </Skeleton>
+    );
   }
 
   if (isError) {
@@ -48,6 +54,7 @@ const CurrencySelect: React.FC<ICurrencySelectProps> = ({
       required={required}
       select
       SelectProps={{ native: true }}
+      fullWidth
     >
       <option value="" disabled></option>
       {data.map(({ id, code, symbol }) => (
@@ -78,11 +85,17 @@ export const FormAmountField: React.FC<IFormDateFieldProps> = ({
 }) => {
   const unitsFieldId = id ? `${id}-units` : undefined;
   const unitsFieldName = name ? `${name}-units` : 'units';
-  const unitsRef = useUncontrolledInput(unitsFieldName);
+  const unitsRef = useUncontrolledInput(unitsFieldName, {
+    parser: parseInt,
+    validator: isFinite,
+  });
 
   const centsFieldId = id ? `${id}-cents` : undefined;
   const centsFieldName = name ? `${name}-cents` : 'cents';
-  const centsRef = useUncontrolledInput(centsFieldName);
+  const centsRef = useUncontrolledInput(centsFieldName, {
+    parser: parseInt,
+    validator: isFinite,
+  });
 
   return (
     <Stack direction="row" spacing={2}>
@@ -99,6 +112,7 @@ export const FormAmountField: React.FC<IFormDateFieldProps> = ({
         defaultValue={defaultUnits}
         label="Units"
         required={required}
+        fullWidth
       />
 
       <TextField
@@ -107,6 +121,7 @@ export const FormAmountField: React.FC<IFormDateFieldProps> = ({
         defaultValue={defaultCents}
         label="Cents"
         required={required}
+        fullWidth
       />
     </Stack>
   );

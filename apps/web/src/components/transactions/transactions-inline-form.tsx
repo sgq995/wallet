@@ -6,45 +6,57 @@ import {
 import { PropsWithChildren } from 'react';
 import { FormAmountField } from '../forms/form-amount-field';
 import { FormDateField } from '../forms/form-date-field';
+import {
+  defaultCents,
+  defaultCurrency,
+  defaultDay,
+  defaultDescription,
+  defaultMonth,
+  defaultType,
+  defaultUnits,
+  defaultYear,
+  DEFAULT_TRANSACTIONS_FORM_VALUES,
+} from './transactions-default-values';
 
-const DEFAULT_TRANSACTIONS_FORM_VALUES = {
-  year: '',
-  month: '',
-  day: '',
-  type: '',
-  currency: '',
-  units: '',
-  cents: '',
-  description: '',
-};
+function isValidType(type: string) {
+  if (type === 'income') {
+    return true;
+  }
 
-const { year, month, day, type, currency, units, cents, description } =
-  DEFAULT_TRANSACTIONS_FORM_VALUES;
+  if (type === 'expense') {
+    return true;
+  }
+
+  return false;
+}
 
 export interface ITransactionsInlineFormProps {}
 
 export const TransactionsInlineForm: React.FC<
   PropsWithChildren<ITransactionsInlineFormProps>
 > = WithFormStoreProvider(({ children }) => {
-  const typeRef = useUncontrolledInput('type', { defaultValue: type });
+  const typeRef = useUncontrolledInput('type', {
+    defaultValue: defaultType,
+    rawValidator: isValidType,
+  });
   const descriptionRef = useUncontrolledInput('description', {
-    defaultValue: description,
+    defaultValue: defaultDescription,
   });
 
   return (
-    <Stack direction="row" spacing={4}>
+    <Stack direction="column" spacing={4}>
       <FormDateField
         id="transactions-date"
-        defaultYear={year}
-        defaultMonth={month}
-        defaultDay={day}
+        defaultYear={defaultYear}
+        defaultMonth={defaultMonth}
+        defaultDay={defaultDay}
         required
       />
 
       <TextField
         id="transactions-type"
         inputRef={typeRef}
-        defaultValue={type}
+        defaultValue={defaultType}
         label="Type"
         required
         select
@@ -57,16 +69,16 @@ export const TransactionsInlineForm: React.FC<
 
       <FormAmountField
         id="transactions-amount"
-        defaultCurrency={currency}
-        defaultUnits={units}
-        defaultCents={cents}
+        defaultCurrency={defaultCurrency}
+        defaultUnits={defaultUnits}
+        defaultCents={defaultCents}
         required
       />
 
       <TextField
         id="transactions-description"
         inputRef={descriptionRef}
-        defaultValue={description}
+        defaultValue={defaultDescription}
         label="Description"
       />
 
