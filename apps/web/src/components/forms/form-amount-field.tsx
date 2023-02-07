@@ -4,6 +4,7 @@ import {
   useUncontrolledFormComponent,
   useUncontrolledInput,
 } from '@wallet/form-store';
+import { useCallback } from 'react';
 import { useCurrencies } from '../../hooks/currencies/use-currencies';
 
 function getSelectValue(select: HTMLSelectElement) {
@@ -25,12 +26,19 @@ const CurrencySelect: React.FC<ICurrencySelectProps> = ({
 }) => {
   const { isLoading, isError, data } = useCurrencies();
 
+  const validator = useCallback(
+    (id: number) => {
+      return !!data?.some((currency) => id === currency.id);
+    },
+    [data]
+  );
+
   const fieldId = id ? `${id}-currency` : undefined;
   const fieldName = name ? `${name}-currency` : 'currency';
   const ref = useUncontrolledFormComponent(fieldName, getSelectValue, {
     defaultValue,
     parser: parseInt,
-    validator: isFinite,
+    validator,
   });
 
   if (isLoading) {
