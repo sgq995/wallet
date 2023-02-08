@@ -9,9 +9,11 @@ import { HttpStatus } from '@wallet/utilities/http.utility';
 import { TIndexable, TRecursivePartial } from '@wallet/utilities/model.utility';
 import {
   IndexableSchema,
+  PaginableSchema,
   PartialWithId,
   RecursivePartial,
   TIndexableSchema,
+  TPaginableSchema,
   WithId,
 } from '@wallet/utilities/schema.utility';
 import { IController } from '../models/controller.model';
@@ -35,7 +37,12 @@ export class AccountsController implements IController {
         endpoint: '/',
         handler: this.find,
         schema: {
-          query: PartialWithId(RestAccountSchema),
+          query: Type.Intersect([
+            Type.Partial(IndexableSchema),
+            RecursivePartial(RestAccountSchema),
+            Type.Partial(PaginableSchema),
+          ]),
+          paging: PaginableSchema,
           reply: {
             [HttpStatus.Ok]: Type.Array(WithId(RestAccountSchema)),
           },
@@ -91,10 +98,10 @@ export class AccountsController implements IController {
 
   find: TRouteHandler<{
     Params: TIndexableSchema | undefined;
-    Query: Partial<TRestAccountSchema>;
+    Query: Partial<TRestAccountSchema & TPaginableSchema>;
     Reply: TIndexable<TRestAccountSchema> | TIndexable<TRestAccountSchema>[];
   }> = async ({ params, query }) => {
-    const accounts = await this._repository.find(
+    const { accounts, paging } = await this._repository.find(
       params?.id,
       query ? this._adapter.restToModel(query) : undefined
     );
@@ -106,7 +113,7 @@ export class AccountsController implements IController {
       return { status: HttpStatus.Ok, data: data[0] };
     }
 
-    return { status: HttpStatus.Ok, data };
+    return { status: HttpStatus.Ok, data, paging };
   };
 
   add: TRouteHandler<{

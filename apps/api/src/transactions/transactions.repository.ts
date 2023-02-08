@@ -5,11 +5,10 @@ import {
   HttpNotFoundError,
 } from '@wallet/utilities/http.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
+import config from '../config';
 import { IAppCurrencyModel } from '../models';
 import { IAppPagingModel } from '../models/paging.model';
 import { IAppTransactionModel } from './transactions.model';
-
-const TRANSACTIONS_FIND_LIMIT = 10;
 
 export class TransactionsRepository {
   constructor(private _prisma: PrismaClient) {}
@@ -30,7 +29,7 @@ export class TransactionsRepository {
         date: 'desc',
       },
       skip: requestPaging?.offset,
-      take: requestPaging?.limit ?? TRANSACTIONS_FIND_LIMIT,
+      take: requestPaging?.limit ?? config.app.transactions.readLimit,
       include: {
         currency: true,
         tags: true,
@@ -48,7 +47,7 @@ export class TransactionsRepository {
 
     const paging: IAppPagingModel = {
       offset: requestPaging?.offset ?? 0,
-      limit: requestPaging?.limit ?? TRANSACTIONS_FIND_LIMIT,
+      limit: requestPaging?.limit ?? config.app.transactions.readLimit,
     };
 
     return { transactions, paging };

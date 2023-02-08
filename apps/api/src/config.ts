@@ -5,6 +5,16 @@ export default {
   app: {
     host: process.env.APP_HOST ?? '0.0.0.0',
     port: process.env.APP_PORT ? parseInt(process.env.APP_PORT) : 5000,
+    transactions: {
+      readLimit: process.env.APP_TRANSACTIONS_READ_LIMIT
+        ? parseInt(process.env.APP_TRANSACTIONS_READ_LIMIT)
+        : 10,
+    },
+    accounts: {
+      readLimit: process.env.APP_ACCOUNTS_READ_LIMIT
+        ? parseInt(process.env.APP_ACCOUNTS_READ_LIMIT)
+        : 10,
+    },
   },
   cors: {
     origin: process.env.CORS_ORIGIN?.split(',') ?? 'http://localhost:3000',

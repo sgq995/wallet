@@ -4,6 +4,8 @@ import {
   HttpNotFoundError,
 } from '@wallet/utilities/http.utility';
 import { TIndexable, TRecursivePartial } from '@wallet/utilities/model.utility';
+import config from '../config';
+import { IAppPagingModel } from '../models/paging.model';
 import { IAppAccountModel, IAppCreateAccountModel } from './accounts.model';
 
 export class AccountsRepository {
@@ -11,12 +13,18 @@ export class AccountsRepository {
 
   async find(
     id?: number,
-    filter?: Partial<IAppAccountModel>
-  ): Promise<TIndexable<IAppAccountModel>[]> {
+    filter?: Partial<IAppAccountModel>,
+    requestPaging?: IAppPagingModel
+  ): Promise<{
+    accounts: TIndexable<IAppAccountModel>[];
+    paging: IAppPagingModel;
+  }> {
     const result = await this._prisma.account.findMany({
       where: {
         id,
       },
+      skip: requestPaging?.offset,
+      take: requestPaging?.limit ?? config.app.accounts.readLimit,
       include: {
         currency: true,
       },
@@ -30,7 +38,12 @@ export class AccountsRepository {
       this._toAppModel
     );
 
-    return accounts;
+    const paging: IAppPagingModel = {
+      offset: requestPaging?.offset ?? 0,
+      limit: requestPaging?.limit ?? config.app.transactions.readLimit,
+    };
+
+    return { accounts, paging };
   }
 
   async add(
