@@ -1,7 +1,16 @@
+import { TIndexable } from '@wallet/utilities/model.utility';
 import { ICurrency } from './currency.model';
 
-export interface ICash {
+interface ICashBase {
   units: number;
   cents: number;
-  currency: ICurrency;
+}
+
+export interface ICash extends ICashBase {
+  currency: TIndexable<ICurrency>;
+}
+
+export interface ICashById extends ICashBase {
+  // TODO: TId
+  currencyId: number;
 }

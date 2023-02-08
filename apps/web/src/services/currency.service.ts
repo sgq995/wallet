@@ -7,8 +7,11 @@ import { IReadable } from './readable.service';
 
 const CURRENCY_BASE = '/v1/currencies';
 
-export type TCurrencyQuery = Partial<TIndexable<ICurrency>>;
-export type TCurrencyResponse = Array<TIndexable<ICurrency>>;
+type TIndexableCurrency = TIndexable<ICurrency>;
+
+export type TCurrencyQuery = Partial<TIndexableCurrency>;
+
+export type TCurrencyResponse = Array<TIndexableCurrency>;
 
 function restToApp(entity: TRestCurrencySchema): ICurrency {
   return {

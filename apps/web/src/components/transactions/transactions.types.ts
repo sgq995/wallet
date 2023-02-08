@@ -2,7 +2,7 @@ export type TTransactionsStore = {
   year: number;
   month: number;
   day: number;
-  type: string;
+  type: 'income' | 'expense';
   currency: number;
   units: number;
   cents: number;
