@@ -1,9 +1,10 @@
-import { Grid } from '@mui/material';
+import { Box } from '@mui/material';
+import { AccountsGridLoader } from '../components/accounts';
 
 export default function Accounts() {
   return (
-    <Grid component="main" container padding={2} spacing={2}>
-      <Grid item xs={12}></Grid>
-    </Grid>
+    <Box component="main" padding={2}>
+      <AccountsGridLoader />
+    </Box>
   );
 }

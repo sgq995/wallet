@@ -125,9 +125,11 @@ class TransactionsServiceImpl
     IReadable<TTransactionQuery, TTransactionReadResponse>,
     IDeletable<TTransactionParams, TTransactionDeleteResponse>
 {
+  constructor(private _apiBaseUrl: string) {}
+
   async add(entity: TTransactionBody): Promise<TTransactionCreateResponse> {
     const body = await restPost<TIndexableRestTransaction>({
-      baseUrl: config.app.apiBaseUrl,
+      baseUrl: this._apiBaseUrl,
       endpoint: TRANSACTIONS_BASE_PATH,
       body: appToRest(entity),
     });
@@ -140,7 +142,7 @@ class TransactionsServiceImpl
       TIndexableRestTransaction[],
       TPaginableSchema['paging']
     >({
-      baseUrl: config.app.apiBaseUrl,
+      baseUrl: this._apiBaseUrl,
       endpoint: TRANSACTIONS_BASE_PATH,
       query,
     });
@@ -155,7 +157,7 @@ class TransactionsServiceImpl
     params: TTransactionParams
   ): Promise<TTransactionDeleteResponse> {
     const body = await restDelete<TTransactionDeleteResponse>({
-      baseUrl: config.app.apiBaseUrl,
+      baseUrl: this._apiBaseUrl,
       endpoint: `${TRANSACTIONS_BASE_PATH}/${params.id}`,
     });
 
@@ -163,4 +165,6 @@ class TransactionsServiceImpl
   }
 }
 
-export const TransactionsService = new TransactionsServiceImpl();
+export const TransactionsService = new TransactionsServiceImpl(
+  config.app.apiBaseUrl
+);

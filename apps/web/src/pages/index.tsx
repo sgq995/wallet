@@ -8,20 +8,17 @@ import { TransactionsListLoader } from '../components/transactions/transactions-
 import { CurrencyService } from '../services';
 
 export default function Home() {
-  const { isLoading, data, error } = useQuery({
-    queryKey: ['currencies'],
-    queryFn: () => CurrencyService.find(),
-  });
-
   return (
     <Grid component="main" container padding={2} spacing={2}>
-      <Grid item xs={12}>
+      <Grid item xs={12} md={6} xl={4}>
         <TransactionsForm>
           <Box display="flex" alignItems="center">
             <TransactionsFormCreateButton />
           </Box>
         </TransactionsForm>
+      </Grid>
 
+      <Grid item xs={12}>
         <TransactionsListLoader />
       </Grid>
     </Grid>

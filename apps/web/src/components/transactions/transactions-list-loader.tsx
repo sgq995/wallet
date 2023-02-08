@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material';
+import { isEqual, uniqWith } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { useInfiniteTransactions } from '../../hooks/transactions';
 import { TransactionsList } from './transactions-list';
@@ -9,13 +10,7 @@ export const TransactionsListLoader: React.FC = () => {
     useInfiniteTransactions();
   const transactions = useMemo(
     () =>
-      data?.pages.reduce((draft, page) => {
-        return draft.concat(
-          page.transactions.filter(
-            (transaction) => !draft.find((item) => transaction.id === item.id)
-          )
-        );
-      }, []),
+      uniqWith(data?.pages.map((page) => page.transactions).flat(), isEqual),
     [data]
   );
 
@@ -31,8 +26,10 @@ export const TransactionsListLoader: React.FC = () => {
     console.error(error);
 
     return (
-      <Box>
-        <Typography variant="body1">Something goes wrong</Typography>
+      <Box width="100%" display="grid" alignContent="center">
+        <Typography variant="body1" color="error">
+          Something goes wrong
+        </Typography>
       </Box>
     );
   }
