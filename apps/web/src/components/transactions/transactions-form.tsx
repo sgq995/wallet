@@ -32,7 +32,7 @@ function isValidType(type: string) {
 
 export interface ITransactionsInlineFormProps {}
 
-export const TransactionsInlineForm: React.FC<
+export const TransactionsForm: React.FC<
   PropsWithChildren<ITransactionsInlineFormProps>
 > = WithFormStoreProvider(({ children }) => {
   const typeRef = useUncontrolledInput('type', {
