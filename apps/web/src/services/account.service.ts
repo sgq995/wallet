@@ -1,10 +1,11 @@
-import { TRestAccountSchema } from '@wallet/schemas';
+import { TRestAccountSchema, TRestCreateAccountSchema } from '@wallet/schemas';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { TPaginableSchema } from '@wallet/utilities/schema.utility';
 import config from '../config';
-import { IAccount } from '../models/account.model';
+import { IAccount, ICreatableAccount } from '../models/account.model';
 import { IPaging } from '../models/paging.model';
-import { restGet } from '../utilities/rest-api.utility';
+import { restGet, restPost } from '../utilities/rest-api.utility';
+import { ICreateable } from './creatable.service';
 import { IReadable } from './readable.service';
 
 const ACCOUNTS_BASE_PATH = '/v2/accounts';
@@ -16,37 +17,79 @@ export type TAccountQuery = Partial<TIndexableAccount> & {
   paging: Partial<IPaging>;
 };
 
+export type TAccountBody = ICreatableAccount;
+
+export type TAccountCreateResponse = TIndexableAccount;
+
 export type TAccountReadResponse = {
   accounts: Array<TIndexableAccount>;
   paging: IPaging;
 };
 
-function restToApp(entity: TRestAccountSchema): IAccount {
-  const currency: IAccount['currency'] = {
-    code: entity.currency.code,
-    decimal: entity.currency.decimal,
-    precision: entity.currency.precision,
-    separator: entity.currency.separator,
-    symbol: entity.currency.symbol,
-  };
-
-  const startingBalance: IAccount['startingBalance'] = entity.startingBalance
-    ? {
-        units: entity.startingBalance.units,
-        cents: entity.startingBalance.cents,
-      }
-    : undefined;
-
-  const balance: IAccount['balance'] = {
-    units: entity.balance.units,
-    cents: entity.balance.cents,
-  };
-
+function appToRest(entity: IAccount): TRestAccountSchema {
   return {
     label: entity.label,
-    currency,
-    startingBalance,
-    balance,
+    balance: {
+      cents: entity.balance.cents,
+      units: entity.balance.units,
+    },
+    currency: {
+      id: entity.currency.id,
+      code: entity.currency.code,
+      decimal: entity.currency.decimal,
+      precision: entity.currency.precision,
+      separator: entity.currency.separator,
+      symbol: entity.currency.symbol,
+    },
+    startingBalance: entity.startingBalance
+      ? {
+          cents: entity.startingBalance.cents,
+          units: entity.startingBalance.units,
+        }
+      : undefined,
+  };
+}
+
+function modifableAppToRest(
+  entity: ICreatableAccount
+): TRestCreateAccountSchema {
+  return {
+    label: entity.label,
+    balance: {
+      cents: entity.balance.cents,
+      units: entity.balance.units,
+    },
+    currencyId: entity.currencyId,
+    startingBalance: entity.startingBalance
+      ? {
+          cents: entity.startingBalance.cents,
+          units: entity.startingBalance.units,
+        }
+      : undefined,
+  };
+}
+
+function restToApp(entity: TRestAccountSchema): IAccount {
+  return {
+    label: entity.label,
+    currency: {
+      id: entity.currency.id,
+      code: entity.currency.code,
+      decimal: entity.currency.decimal,
+      precision: entity.currency.precision,
+      separator: entity.currency.separator,
+      symbol: entity.currency.symbol,
+    },
+    startingBalance: entity.startingBalance
+      ? {
+          units: entity.startingBalance.units,
+          cents: entity.startingBalance.cents,
+        }
+      : undefined,
+    balance: {
+      units: entity.balance.units,
+      cents: entity.balance.cents,
+    },
   };
 }
 
@@ -58,9 +101,21 @@ function indexableRestToApp(entity: TIndexableRestAccount): TIndexableAccount {
 }
 
 class AccountsServiceImpl
-  implements IReadable<TAccountQuery, TAccountReadResponse>
+  implements
+    ICreateable<TAccountBody, TAccountCreateResponse>,
+    IReadable<TAccountQuery, TAccountReadResponse>
 {
   constructor(private _apiBaseUrl: string) {}
+
+  async add(entity: TAccountBody): Promise<TAccountCreateResponse> {
+    const body = await restPost<TIndexableRestAccount>({
+      baseUrl: this._apiBaseUrl,
+      endpoint: ACCOUNTS_BASE_PATH,
+      body: modifableAppToRest(entity),
+    });
+
+    return indexableRestToApp(body.data);
+  }
 
   async find(query?: TAccountQuery): Promise<TAccountReadResponse> {
     const body = await restGet<

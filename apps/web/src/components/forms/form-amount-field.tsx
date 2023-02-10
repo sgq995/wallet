@@ -4,8 +4,10 @@ import {
   useUncontrolledFormComponent,
   useUncontrolledInput,
 } from '@wallet/form-store';
+import { isEmpty, isUndefined, wrap } from 'lodash';
 import { useCallback } from 'react';
 import { useCurrencies } from '../../hooks/currencies/use-currencies';
+import { flowOr } from '../../utilities/validator.utility';
 
 function getSelectValue(select: HTMLSelectElement) {
   return select.value;
@@ -74,6 +76,16 @@ const CurrencySelect: React.FC<ICurrencySelectProps> = ({
   );
 };
 
+const parseIfNotEmpty = wrap(parseInt, (func, ...args) => {
+  if (isEmpty(args[0])) {
+    return undefined;
+  }
+
+  return func.apply(this, args);
+});
+
+const isUndefinedOrFinite = flowOr(isUndefined, isFinite);
+
 export interface IFormDateFieldProps {
   id?: string;
   name?: string;
@@ -81,6 +93,7 @@ export interface IFormDateFieldProps {
   defaultCurrency?: string;
   defaultUnits?: string;
   defaultCents?: string;
+  hideCurrency?: boolean;
 }
 
 export const FormAmountField: React.FC<IFormDateFieldProps> = ({
@@ -90,29 +103,34 @@ export const FormAmountField: React.FC<IFormDateFieldProps> = ({
   defaultCurrency,
   defaultUnits,
   defaultCents,
+  hideCurrency,
 }) => {
   const unitsFieldId = id ? `${id}-units` : undefined;
-  const unitsFieldName = name ? `${name}-units` : 'units';
+  const unitsFieldName = name ? `${name}Units` : 'units';
   const unitsRef = useUncontrolledInput(unitsFieldName, {
-    parser: parseInt,
-    validator: isFinite,
+    parser: required ? parseInt : parseIfNotEmpty,
+    validator: required ? isFinite : isUndefinedOrFinite,
   });
 
   const centsFieldId = id ? `${id}-cents` : undefined;
-  const centsFieldName = name ? `${name}-cents` : 'cents';
+  const centsFieldName = name ? `${name}Cents` : 'cents';
   const centsRef = useUncontrolledInput(centsFieldName, {
-    parser: parseInt,
-    validator: isFinite,
+    parser: required ? parseInt : parseIfNotEmpty,
+    validator: required ? isFinite : isUndefinedOrFinite,
   });
+
+  const shouldShowCurrency = !hideCurrency;
 
   return (
     <Stack direction="row" spacing={2}>
-      <CurrencySelect
-        id={id}
-        name={name}
-        defaultValue={defaultCurrency}
-        required={required}
-      />
+      {shouldShowCurrency && (
+        <CurrencySelect
+          id={id}
+          name={name}
+          defaultValue={defaultCurrency}
+          required={required}
+        />
+      )}
 
       <TextField
         id={unitsFieldId}

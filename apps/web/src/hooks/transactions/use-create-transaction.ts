@@ -1,4 +1,3 @@
-import { HttpError } from '@wallet/utilities/http.utility';
 import { useMutation, useQueryClient } from 'react-query';
 import { TransactionsService, TTransactionBody } from '../../services';
 import { TRANSACTIONS_KEY } from './transactions.key';

@@ -16,6 +16,7 @@ export const AccountsGrid: React.FC<IAccountGridProps> = ({ accounts }) => {
           key={account.id}
           label={account.label}
           balance={cashToString(account.balance, account.currency)}
+          currencyCode={account.currency.code}
         />
       ))}
     </Grid>

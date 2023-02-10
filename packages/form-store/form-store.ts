@@ -222,10 +222,12 @@ export class FormStore<
         const rawValidator = this._rawValidators[componentName];
         try {
           if (rawValidator && !rawValidator(value)) {
+            console.log('rawValidator', componentName, value);
             value = null;
             hasError = true;
           }
         } catch {
+          console.log('rawValidator catch', componentName);
           value = null;
           hasError = true;
         }
@@ -246,10 +248,12 @@ export class FormStore<
           try {
             value = parser(rawValue);
             if (validator && !validator(value)) {
+              console.log('validator', { componentName, rawValue, value });
               value = null;
               hasError = true;
             }
           } catch {
+            console.log('validator catch', componentName);
             value = null;
             hasError = true;
           }

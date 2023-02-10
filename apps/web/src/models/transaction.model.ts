@@ -15,6 +15,6 @@ export interface ITransaction extends ITransactionBase {
   cash: ICashWithCurrency;
 }
 
-export interface ITransactionWithCurrencyId extends ITransactionBase {
+export interface ICreatableTransaction extends ITransactionBase {
   cash: ICashWithCurrencyId;
 }

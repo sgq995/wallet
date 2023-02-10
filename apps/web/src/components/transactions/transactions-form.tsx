@@ -30,10 +30,10 @@ function isValidType(type: string) {
   return false;
 }
 
-export interface ITransactionsInlineFormProps {}
+export interface ITransactionsFormProps {}
 
 export const TransactionsForm: React.FC<
-  PropsWithChildren<ITransactionsInlineFormProps>
+  PropsWithChildren<ITransactionsFormProps>
 > = WithFormStoreProvider(({ children }) => {
   const typeRef = useUncontrolledInput('type', {
     defaultValue: defaultType,
@@ -44,7 +44,7 @@ export const TransactionsForm: React.FC<
   });
 
   return (
-    <Stack direction="column" spacing={4}>
+    <Stack component="form" direction="column" spacing={4}>
       <FormDateField
         id="transactions-date"
         defaultYear={defaultYear}
