@@ -1,11 +1,12 @@
 import currency from 'currency.js';
-import { ICash } from '../models/cash.model';
+import { ICashBase } from '../models/cash.model';
+import { ICurrency } from '../models/currency.model';
 
-export function cashToString(cash: ICash): string {
+export function cashToString(cash: ICashBase, currencyData: ICurrency): string {
   return currency(cash.units).format({
-    symbol: cash.currency.symbol,
-    separator: cash.currency.separator,
-    decimal: cash.currency.decimal,
-    precision: cash.currency.precision,
+    symbol: currencyData.symbol,
+    separator: currencyData.separator,
+    decimal: currencyData.decimal,
+    precision: currencyData.precision,
   });
 }

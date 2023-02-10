@@ -2,7 +2,7 @@ import { List, ListItem } from '@mui/material';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { useCallback } from 'react';
 import { useIntersection } from '../../hooks/use-intersection';
-import { ICash } from '../../models/cash.model';
+import { ICashWithCurrency } from '../../models/cash.model';
 import { ITransaction } from '../../models/transaction.model';
 import { cashToString } from '../../utilities/cash.utility';
 import { TransactionsListItem } from './transactions-list-item';
@@ -30,7 +30,7 @@ export const TransactionsList: React.FC<ITransactionsListProps> = ({
         <TransactionsListItem
           key={transaction.id}
           id={transaction.id}
-          amount={cashToString(transaction.cash as ICash)}
+          amount={cashToString(transaction.cash, transaction.cash.currency)}
           date={transaction.date}
           description={transaction.description ?? ''}
           type={transaction.type}

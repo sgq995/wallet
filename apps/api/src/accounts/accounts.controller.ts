@@ -10,7 +10,6 @@ import { TIndexable, TRecursivePartial } from '@wallet/utilities/model.utility';
 import {
   IndexableSchema,
   PaginableSchema,
-  PartialWithId,
   RecursivePartial,
   TIndexableSchema,
   TPaginableSchema,

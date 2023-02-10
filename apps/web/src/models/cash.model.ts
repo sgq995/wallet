@@ -6,11 +6,11 @@ export interface ICashBase {
   cents: number;
 }
 
-export interface ICash extends ICashBase {
+export interface ICashWithCurrency extends ICashBase {
   currency: TIndexable<ICurrency>;
 }
 
-export interface ICashById extends ICashBase {
+export interface ICashWithCurrencyId extends ICashBase {
   // TODO: number -> TId
   currencyId: number;
 }
