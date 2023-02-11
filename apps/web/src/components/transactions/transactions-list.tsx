@@ -2,7 +2,6 @@ import { List, ListItem } from '@mui/material';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { useCallback } from 'react';
 import { useIntersection } from '../../hooks/use-intersection';
-import { ICashWithCurrency } from '../../models/cash.model';
 import { ITransaction } from '../../models/transaction.model';
 import { cashToString } from '../../utilities/cash.utility';
 import { TransactionsListItem } from './transactions-list-item';

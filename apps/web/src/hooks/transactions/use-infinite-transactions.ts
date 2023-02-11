@@ -12,7 +12,10 @@ export function useInfiniteTransactions(query?: TTransactionQuery) {
   return useInfiniteQuery<TTransactionReadResponse, HttpError>(
     [TRANSACTIONS_KEY, query],
     ({ signal, pageParam }) =>
-      TransactionsService.find({ ...query, paging: pageParam }),
+      TransactionsService.withSignal(signal).find({
+        ...query,
+        paging: pageParam,
+      }),
     {
       getNextPageParam(lastPage, allPages): IPaging | undefined {
         if (!lastPage.paging) {

@@ -1,4 +1,4 @@
-import { Add as AddIcon, Send as SendIcon } from '@mui/icons-material';
+import { Send as SendIcon } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useFormStore } from '@wallet/form-store';
 import { useCreateTransaction } from '../../hooks/transactions';

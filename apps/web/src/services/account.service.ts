@@ -6,6 +6,7 @@ import { IAccount, ICreatableAccount } from '../models/account.model';
 import { IPaging } from '../models/paging.model';
 import { restGet, restPost } from '../utilities/rest-api.utility';
 import { ICreateable } from './creatable.service';
+import { HttpService } from './http.service';
 import { IReadable } from './readable.service';
 
 const ACCOUNTS_BASE_PATH = '/v2/accounts';
@@ -101,17 +102,21 @@ function indexableRestToApp(entity: TIndexableRestAccount): TIndexableAccount {
 }
 
 class AccountsServiceImpl
+  extends HttpService
   implements
     ICreateable<TAccountBody, TAccountCreateResponse>,
     IReadable<TAccountQuery, TAccountReadResponse>
 {
-  constructor(private _apiBaseUrl: string) {}
+  constructor(private _apiBaseUrl: string, signal?: AbortSignal) {
+    super(signal);
+  }
 
   async add(entity: TAccountBody): Promise<TAccountCreateResponse> {
     const body = await restPost<TIndexableRestAccount>({
       baseUrl: this._apiBaseUrl,
       endpoint: ACCOUNTS_BASE_PATH,
       body: modifableAppToRest(entity),
+      signal: this.signal,
     });
 
     return indexableRestToApp(body.data);
@@ -125,6 +130,7 @@ class AccountsServiceImpl
       baseUrl: this._apiBaseUrl,
       endpoint: ACCOUNTS_BASE_PATH,
       query,
+      signal: this.signal,
     });
 
     return {

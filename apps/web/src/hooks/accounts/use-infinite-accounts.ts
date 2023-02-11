@@ -12,7 +12,7 @@ export function useInfiniteAccounts(query?: TAccountQuery) {
   return useInfiniteQuery<TAccountReadResponse, HttpError>(
     [ACCOUNTS_KEY, query],
     ({ signal, pageParam }) =>
-      AccountsService.find({ ...query, paging: pageParam }),
+      AccountsService.withSignal(signal).find({ ...query, paging: pageParam }),
     {
       getNextPageParam(lastPage, allPages): IPaging | undefined {
         if (!lastPage.paging) {

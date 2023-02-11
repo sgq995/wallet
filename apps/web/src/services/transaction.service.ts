@@ -4,11 +4,15 @@ import { TIndexable } from '@wallet/utilities/model.utility';
 import { TPaginableSchema } from '@wallet/utilities/schema.utility';
 import config from '../config';
 import { IPaging } from '../models/paging.model';
-import { ITransaction } from '../models/transaction.model';
+import {
+  ICreatableTransaction,
+  ITransaction,
+} from '../models/transaction.model';
 import { restDelete, restGet, restPost } from '../utilities/rest-api.utility';
 import { ICreateable } from './creatable.service';
 import { IDeletable } from './deletable.service';
 import { IReadable } from './readable.service';
+import { HttpService } from './http.service';
 
 const TRANSACTIONS_BASE_PATH = '/v2/transactions';
 
@@ -21,7 +25,7 @@ export type TTransactionQuery = Partial<TIndexableTransaction> & {
   paging: Partial<IPaging>;
 };
 
-export type TTransactionBody = ITransaction;
+export type TTransactionBody = ICreatableTransaction;
 
 export type TTransactionCreateResponse = TIndexableTransaction;
 
@@ -33,23 +37,21 @@ export type TTransactionReadResponse = {
 export type TTransactionDeleteResponse = TIndexableTransaction;
 
 function restToApp(entity: TRestTransactionSchema): ITransaction {
+  if (!('currency' in entity.cash)) {
+    throw new Error('Not implemented yet');
+  }
+
   const cash: ITransaction['cash'] = {
     units: entity.cash.units,
     cents: entity.cash.cents,
-    ...('currency' in entity.cash
-      ? {
-          currency: {
-            code: entity.cash.currency.code,
-            decimal: entity.cash.currency.decimal,
-            id: entity.cash.currency.id,
-            precision: entity.cash.currency.precision,
-            separator: entity.cash.currency.separator,
-            symbol: entity.cash.currency.symbol,
-          },
-        }
-      : {
-          currencyId: entity.cash.currencyId,
-        }),
+    currency: {
+      code: entity.cash.currency.code,
+      decimal: entity.cash.currency.decimal,
+      id: entity.cash.currency.id,
+      precision: entity.cash.currency.precision,
+      separator: entity.cash.currency.separator,
+      symbol: entity.cash.currency.symbol,
+    },
   };
 
   return {
@@ -78,7 +80,9 @@ function indexableRestToApp(
   };
 }
 
-function appToRest(entity: ITransaction): TRestTransactionSchema {
+function appToRest(
+  entity: ITransaction | ICreatableTransaction
+): TRestTransactionSchema {
   const cash: TRestTransactionSchema['cash'] = {
     units: entity.cash.units,
     cents: entity.cash.cents,
@@ -120,18 +124,22 @@ function indexableAppToRest(
 }
 
 class TransactionsServiceImpl
+  extends HttpService
   implements
     ICreateable<TTransactionBody, TTransactionCreateResponse>,
     IReadable<TTransactionQuery, TTransactionReadResponse>,
     IDeletable<TTransactionParams, TTransactionDeleteResponse>
 {
-  constructor(private _apiBaseUrl: string) {}
+  constructor(private _apiBaseUrl: string, signal?: AbortSignal) {
+    super(signal);
+  }
 
   async add(entity: TTransactionBody): Promise<TTransactionCreateResponse> {
     const body = await restPost<TIndexableRestTransaction>({
       baseUrl: this._apiBaseUrl,
       endpoint: TRANSACTIONS_BASE_PATH,
       body: appToRest(entity),
+      signal: this.signal,
     });
 
     return indexableRestToApp(body.data);
@@ -145,6 +153,7 @@ class TransactionsServiceImpl
       baseUrl: this._apiBaseUrl,
       endpoint: TRANSACTIONS_BASE_PATH,
       query,
+      signal: this.signal,
     });
 
     return {
@@ -159,6 +168,7 @@ class TransactionsServiceImpl
     const body = await restDelete<TTransactionDeleteResponse>({
       baseUrl: this._apiBaseUrl,
       endpoint: `${TRANSACTIONS_BASE_PATH}/${params.id}`,
+      signal: this.signal,
     });
 
     return body.data;
