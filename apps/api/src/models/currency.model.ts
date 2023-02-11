@@ -1,4 +1,4 @@
-export interface IAppCurrencyModel {
+export interface ICurrencyModel {
   symbol: string;
   separator: string;
   decimal: string;

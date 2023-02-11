@@ -4,22 +4,29 @@ import {
   HttpInternalServerError,
   HttpNotFoundError,
 } from '@wallet/utilities/http.utility';
-import { TIndexable } from '@wallet/utilities/model.utility';
+import { TIndex, TIndexable } from '@wallet/utilities/model.utility';
 import config from '../config';
-import { IAppCurrencyModel } from '../models';
-import { IAppPagingModel } from '../models/paging.model';
-import { IAppTransactionModel } from './transactions.model';
+import { ICurrencyModel } from '../models';
+import { IPagingModel } from '../models/paging.model';
+import {
+  ITransactionMutableModel,
+  ITransactionReadonlyModel,
+} from './transactions.model';
+import {
+  TIndexableTransactionReadonlyModel,
+  TPartialTransactionMutableModel,
+} from './transactions.types';
 
 export class TransactionsRepository {
   constructor(private _prisma: PrismaClient) {}
 
   async find(
     id?: number,
-    filter?: Partial<IAppTransactionModel>,
-    requestPaging?: IAppPagingModel
+    filter?: TPartialTransactionMutableModel,
+    requestPaging?: IPagingModel
   ): Promise<{
-    transactions: TIndexable<IAppTransactionModel>[];
-    paging: IAppPagingModel;
+    transactions: TIndexableTransactionReadonlyModel[];
+    paging: IPagingModel;
   }> {
     const result = await this._prisma.transaction.findMany({
       where: {
@@ -41,11 +48,11 @@ export class TransactionsRepository {
       throw new HttpNotFoundError('transaction not found');
     }
 
-    const transactions: TIndexable<IAppTransactionModel>[] = result.map(
+    const transactions: TIndexableTransactionReadonlyModel[] = result.map(
       this._toAppModel
     );
 
-    const paging: IAppPagingModel = {
+    const paging: IPagingModel = {
       offset: requestPaging?.offset ?? 0,
       limit: requestPaging?.limit ?? config.app.transactions.readLimit,
     };
@@ -54,40 +61,26 @@ export class TransactionsRepository {
   }
 
   async add(
-    transaction: IAppTransactionModel
-  ): Promise<TIndexable<IAppTransactionModel>> {
-    let result: Transaction & {
+    transaction: ITransactionMutableModel
+  ): Promise<TIndexableTransactionReadonlyModel> {
+    const result: Transaction & {
       currency: Currency;
       tags: Tag[];
       account: { id: number } | null;
-    };
-
-    if (transaction.cash.currency) {
-      result = await this._createWithCurrency(
-        transaction,
-        transaction.cash.currency
-      );
-    } else if (transaction.cash.currencyId) {
-      result = await this._createWithCurrencyId(
-        transaction,
-        transaction.cash.currencyId
-      );
-    } else {
-      throw new HttpInternalServerError(
-        'transaction should have "currency" or "currencyId"'
-      );
-    }
+    } = await this._createWithCurrencyId(
+      transaction,
+      transaction.cash.currencyId
+    );
 
     return this._toAppModel(result);
   }
 
   async update(
     id: number,
-    transaction: Partial<IAppTransactionModel>
-  ): Promise<TIndexable<IAppTransactionModel>> {
+    transaction: Partial<ITransactionMutableModel>
+  ): Promise<TIndexableTransactionReadonlyModel> {
     const accountId = transaction.accountId;
-    const currencyId =
-      transaction.cash?.currencyId || transaction.cash?.currency?.id;
+    const currencyId = transaction.cash?.currencyId;
     if (accountId && currencyId) {
       await this._verifyAccountAndCurrency(accountId, currencyId);
     } else if (accountId) {
@@ -101,19 +94,10 @@ export class TransactionsRepository {
           units: transaction.cash?.units,
           cents: transaction.cash?.cents,
           currency: {
-            ...(transaction.cash?.currency?.id || transaction.cash?.currencyId
+            ...(currencyId
               ? {
                   connect: {
-                    id:
-                      transaction.cash?.currency?.id ||
-                      transaction.cash?.currencyId,
-                  },
-                }
-              : {}),
-            ...(transaction.cash?.currency?.code
-              ? {
-                  connect: {
-                    code: transaction.cash?.currency?.code,
+                    id: currencyId,
                   },
                 }
               : {}),
@@ -163,7 +147,7 @@ export class TransactionsRepository {
     }
   }
 
-  async remove(id: number): Promise<TIndexable<IAppTransactionModel>> {
+  async remove(id: TIndex): Promise<TIndexableTransactionReadonlyModel> {
     try {
       const result = await this._prisma.transaction.delete({
         where: {
@@ -189,12 +173,11 @@ export class TransactionsRepository {
       tags: Tag[];
       account: { id: number } | null;
     }
-  ): TIndexable<IAppTransactionModel> {
-    const type: IAppTransactionModel['type'] = <IAppTransactionModel['type']>(
-      entity.type
-    );
+  ): TIndexableTransactionReadonlyModel {
+    const type: ITransactionReadonlyModel['type'] =
+      entity.type as ITransactionReadonlyModel['type'];
 
-    const cash: IAppTransactionModel['cash'] = <IAppTransactionModel['cash']>{
+    const cash: ITransactionReadonlyModel['cash'] = {
       units: entity.units,
       cents: entity.cents,
       currency: {
@@ -205,23 +188,23 @@ export class TransactionsRepository {
         separator: entity.currency.separator,
         symbol: entity.currency.symbol,
       },
-    };
+    } as ITransactionReadonlyModel['cash'];
 
-    const description: IAppTransactionModel['description'] =
+    const description: ITransactionReadonlyModel['description'] =
       entity.description !== null ? entity.description : undefined;
 
-    const repeat: IAppTransactionModel['repeat'] =
+    const repeat: ITransactionReadonlyModel['repeat'] =
       entity.repeat !== null ? entity.repeat : undefined;
 
-    const period: IAppTransactionModel['period'] =
+    const period: ITransactionReadonlyModel['period'] =
       entity.periodicity !== null
-        ? <IAppTransactionModel['period']>{
+        ? ({
             periodicity: entity.periodicity,
             when: entity.on || entity.at || undefined,
-          }
+          } as ITransactionReadonlyModel['period'])
         : undefined;
 
-    const tags: IAppTransactionModel['tags'] = entity.tags.map(
+    const tags: ITransactionReadonlyModel['tags'] = entity.tags.map(
       (tag) => tag.label
     );
 
@@ -287,8 +270,8 @@ export class TransactionsRepository {
   }
 
   private async _createWithCurrency(
-    transaction: IAppTransactionModel,
-    currency: TIndexable<IAppCurrencyModel>
+    transaction: ITransactionReadonlyModel,
+    currency: TIndexable<ICurrencyModel>
   ) {
     await this._verifyAccountAndCurrency(transaction.accountId, currency.id);
 
@@ -339,7 +322,7 @@ export class TransactionsRepository {
   }
 
   private async _createWithCurrencyId(
-    transaction: IAppTransactionModel,
+    transaction: ITransactionMutableModel,
     currencyId: number
   ) {
     await this._verifyAccountAndCurrency(transaction.accountId, currencyId);

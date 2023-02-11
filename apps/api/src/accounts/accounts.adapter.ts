@@ -1,24 +1,42 @@
-import { TRestAccountSchema, TRestCreateAccountSchema } from '@wallet/schemas';
-import { TIndexable, TRecursivePartial } from '@wallet/utilities/model.utility';
-import { IAdapter } from '../models';
-import { IAppAccountModel, IAppCreateAccountModel } from './accounts.model';
+import { TAccountMutableSchema } from '@wallet/schemas';
+import { IMutableAdapter, IReadonlyAdapter } from '../models';
+import { IAccountMutableModel } from './accounts.model';
+import {
+  TIndexableAccountReadonlyModel,
+  TIndexableAccountReadonlySchema,
+  TPartialAccountMutableModel,
+  TPartialAccountMutableSchema,
+  TPartialAccountReadonlyModel,
+  TPartialAccountReadonlySchema,
+} from './accounts.types';
 
 export class AccountsAdapter
-  implements IAdapter<IAppAccountModel, TRestAccountSchema>
+  implements
+    IReadonlyAdapter<
+      TIndexableAccountReadonlyModel,
+      TIndexableAccountReadonlySchema
+    >,
+    IReadonlyAdapter<
+      TPartialAccountReadonlyModel,
+      TPartialAccountReadonlySchema
+    >,
+    IMutableAdapter<IAccountMutableModel, TAccountMutableSchema>,
+    IMutableAdapter<TPartialAccountMutableModel, TPartialAccountMutableSchema>
 {
-  modelToRest(
-    this: void,
-    entity: TIndexable<IAppAccountModel>
-  ): TIndexable<TRestAccountSchema>;
-  modelToRest(
-    this: void,
-    entity: TIndexable<Partial<IAppAccountModel>>
-  ): TIndexable<Partial<TRestAccountSchema>>;
-  modelToRest(
-    this: void,
-    entity: TIndexable<IAppAccountModel> | TIndexable<Partial<IAppAccountModel>>
-  ): TIndexable<TRestAccountSchema> | TIndexable<Partial<TRestAccountSchema>> {
-    const currency: TRestAccountSchema['currency'] | undefined = entity.currency
+  readonlyModelToSchema(
+    entity: TIndexableAccountReadonlyModel
+  ): TIndexableAccountReadonlySchema;
+  readonlyModelToSchema(
+    entity: TPartialAccountReadonlyModel
+  ): TPartialAccountReadonlySchema;
+  readonlyModelToSchema(
+    entity: TIndexableAccountReadonlyModel | TPartialAccountReadonlyModel
+  ): TIndexableAccountReadonlySchema | TPartialAccountReadonlySchema {
+    const id: TPartialAccountReadonlySchema['id'] = entity.id;
+
+    const label: TPartialAccountReadonlySchema['label'] = entity.label;
+
+    const currency: TPartialAccountReadonlySchema['currency'] = entity.currency
       ? {
           id: entity.currency.id,
           symbol: entity.currency.symbol,
@@ -29,7 +47,7 @@ export class AccountsAdapter
         }
       : undefined;
 
-    const startingBalance: TRestAccountSchema['startingBalance'] =
+    const startingBalance: TPartialAccountReadonlySchema['startingBalance'] =
       entity.startingBalance
         ? {
             units: entity.startingBalance.units,
@@ -37,7 +55,7 @@ export class AccountsAdapter
           }
         : undefined;
 
-    const balance: TRestAccountSchema['balance'] | undefined = entity.balance
+    const balance: TPartialAccountReadonlySchema['balance'] = entity.balance
       ? {
           units: entity.balance.units,
           cents: entity.balance.cents,
@@ -45,52 +63,37 @@ export class AccountsAdapter
       : undefined;
 
     return {
-      id: entity.id,
-      label: entity.label,
+      id,
+      label,
       currency,
       startingBalance,
       balance,
     };
   }
 
-  restToModel(this: void, entity: TRestAccountSchema): IAppAccountModel;
-  restToModel(
-    this: void,
-    entity: Partial<TRestAccountSchema>
-  ): Partial<IAppAccountModel>;
-  restToModel(
-    this: void,
-    entity: TRecursivePartial<TRestAccountSchema>
-  ): TRecursivePartial<IAppAccountModel>;
-  restToModel(
-    this: void,
-    entity: TRestCreateAccountSchema
-  ): IAppCreateAccountModel;
-  restToModel(
-    this: void,
-    entity:
-      | TRestAccountSchema
-      | Partial<TRestAccountSchema>
-      | TRestCreateAccountSchema
-  ): IAppAccountModel | Partial<IAppAccountModel> | IAppCreateAccountModel {
-    const currencyId: number | undefined =
-      'currencyId' in entity && entity.currencyId
-        ? entity.currencyId
-        : undefined;
+  readonlySchemaToModel(
+    _entity: TIndexableAccountReadonlySchema
+  ): TIndexableAccountReadonlyModel {
+    throw new Error('Method not implemented.');
+  }
 
-    const currency: IAppAccountModel['currency'] | undefined =
-      'currency' in entity && entity.currency
-        ? {
-            id: entity.currency.id,
-            symbol: entity.currency.symbol,
-            separator: entity.currency.separator,
-            decimal: entity.currency.decimal,
-            precision: entity.currency.precision,
-            code: entity.currency.code,
-          }
-        : undefined;
+  mutableModelToSchema(_entity: TAccountMutableSchema): TAccountMutableSchema {
+    throw new Error('Method not implemented.');
+  }
 
-    const startingBalance: IAppAccountModel['startingBalance'] =
+  mutableSchemaToModel(entity: TAccountMutableSchema): TAccountMutableSchema;
+  mutableSchemaToModel(
+    entity: TPartialAccountMutableSchema
+  ): TPartialAccountMutableModel;
+  mutableSchemaToModel(
+    entity: TAccountMutableSchema | TPartialAccountMutableSchema
+  ): TAccountMutableSchema | TPartialAccountMutableModel {
+    const label: TPartialAccountMutableModel['label'] = entity.label;
+
+    const currencyId: TPartialAccountMutableModel['currencyId'] =
+      entity.currencyId;
+
+    const startingBalance: TPartialAccountMutableModel['startingBalance'] =
       entity.startingBalance
         ? {
             units: entity.startingBalance.units,
@@ -98,7 +101,7 @@ export class AccountsAdapter
           }
         : undefined;
 
-    const balance: IAppAccountModel['balance'] | undefined = entity.balance
+    const balance: TPartialAccountMutableModel['balance'] = entity.balance
       ? {
           units: entity.balance.units,
           cents: entity.balance.cents,
@@ -106,9 +109,8 @@ export class AccountsAdapter
       : undefined;
 
     return {
-      label: entity.label,
-      ...('currency' in entity ? { currency } : {}),
-      ...('currencyId' in entity ? { currencyId } : {}),
+      label,
+      currencyId,
       startingBalance,
       balance,
     };

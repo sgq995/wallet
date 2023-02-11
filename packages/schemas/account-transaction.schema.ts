@@ -1,13 +1,14 @@
 import { Static, Type } from '@sinclair/typebox';
+import { IndexType } from '@wallet/utilities/schema.utility';
 
-export const WithAccountId = Type.Object({
-  accountId: Type.Integer(),
+export const AccountIdSchema = Type.Object({
+  accountId: IndexType,
 });
 
-export type TWithAccountId = Static<typeof WithAccountId>;
+export type TAccountIdSchema = Static<typeof AccountIdSchema>;
 
-export const WithTransactionId = Type.Object({
-  transactionId: Type.Integer(),
+export const TransactionIdSchema = Type.Object({
+  transactionId: IndexType,
 });
 
-export type TWithTransactionId = Static<typeof WithTransactionId>;
+export type TTransactionIdSchema = Static<typeof TransactionIdSchema>;

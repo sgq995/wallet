@@ -1,4 +1,4 @@
-export interface IAppTimePeriodModel {
+export interface ITimePeriodModel {
   periodicity:
     | 'daily'
     | 'weekly'

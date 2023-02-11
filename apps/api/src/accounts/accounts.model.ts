@@ -1,16 +1,16 @@
-import { TIndexable } from '@wallet/utilities/model.utility';
-import { IAppCashValueModel, IAppCurrencyModel } from '../models';
+import { TIndex, TIndexable } from '@wallet/utilities/model.utility';
+import { ICashBaseModel, ICurrencyModel } from '../models';
 
-export interface IAppAccountBaseModel {
+export interface IAccountBaseModel {
   label: string;
-  startingBalance?: IAppCashValueModel;
-  balance: IAppCashValueModel;
+  startingBalance?: ICashBaseModel;
+  balance: ICashBaseModel;
 }
 
-export interface IAppAccountModel extends IAppAccountBaseModel {
-  currency: TIndexable<IAppCurrencyModel>;
+export interface IAccountReadonlyModel extends IAccountBaseModel {
+  currency: TIndexable<ICurrencyModel>;
 }
 
-export interface IAppCreateAccountModel extends IAppAccountBaseModel {
-  currencyId: number;
+export interface IAccountMutableModel extends IAccountBaseModel {
+  currencyId: TIndex;
 }

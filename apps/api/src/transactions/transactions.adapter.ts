@@ -1,123 +1,161 @@
-import { TRestTransactionSchema } from '@wallet/schemas';
+import { TTransactionMutableSchema } from '@wallet/schemas';
 import { dateTime } from '@wallet/utilities/date.utility';
-import { HttpInternalServerError } from '@wallet/utilities/http.utility';
-import { TIndexable } from '@wallet/utilities/model.utility';
-import { IAdapter } from '../models/adapter.model';
-import { IAppTransactionModel } from './transactions.model';
+import { IMutableAdapter, IReadonlyAdapter } from '../models';
+import { ITransactionMutableModel } from './transactions.model';
+import {
+  TIndexableTransactionReadonlyModel,
+  TIndexableTransactionReadonlySchema,
+  TPartialTransactionMutableModel,
+  TPartialTransactionMutableSchema,
+  TPartialTransactionReadonlyModel,
+  TPartialTransactionReadonlySchema,
+} from './transactions.types';
 
 export class TransactionsAdapter
-  implements IAdapter<IAppTransactionModel, TRestTransactionSchema>
+  implements
+    IReadonlyAdapter<
+      TIndexableTransactionReadonlyModel,
+      TIndexableTransactionReadonlySchema
+    >,
+    IReadonlyAdapter<
+      TPartialTransactionReadonlyModel,
+      TPartialTransactionReadonlySchema
+    >,
+    IMutableAdapter<ITransactionMutableModel, TTransactionMutableSchema>,
+    IMutableAdapter<
+      TPartialTransactionMutableModel,
+      TPartialTransactionMutableSchema
+    >
 {
-  modelToRest(
-    this: void,
-    entity: TIndexable<IAppTransactionModel>
-  ): TIndexable<TRestTransactionSchema>;
-  modelToRest(
-    this: void,
-    entity: TIndexable<Partial<IAppTransactionModel>>
-  ): TIndexable<Partial<TRestTransactionSchema>>;
-  // prettier-ignore
-  modelToRest(
-    this: void,
+  readonlyModelToSchema(
+    entity: TIndexableTransactionReadonlyModel
+  ): TIndexableTransactionReadonlySchema;
+  readonlyModelToSchema(
+    entity: TPartialTransactionReadonlyModel
+  ): TPartialTransactionReadonlySchema;
+  readonlyModelToSchema(
     entity:
-      | TIndexable<IAppTransactionModel>
-      | TIndexable<Partial<IAppTransactionModel>>
-  ): TIndexable<TRestTransactionSchema> | TIndexable<Partial<TRestTransactionSchema>> {
-    const type: TRestTransactionSchema['type'] | undefined = entity.type;
+      | TIndexableTransactionReadonlyModel
+      | TPartialTransactionReadonlyModel
+  ): TIndexableTransactionReadonlySchema | TPartialTransactionReadonlySchema {
+    const id: TPartialTransactionReadonlySchema['id'] = entity.id;
 
-    let cash: TRestTransactionSchema['cash'] | undefined;
-    if (entity.cash?.currency) {
-      cash = {
-        units: entity.cash.units,
-        cents: entity.cash.cents,
-        currency: {
-          id: entity.cash.currency.id,
-          precision: entity.cash.currency.precision,
-          symbol: entity.cash.currency.symbol,
-          code: entity.cash.currency.code,
-          decimal: entity.cash.currency.decimal,
-          separator: entity.cash.currency.separator,
-        },
-      };
-    } else if (entity.cash?.currencyId) {
-      cash = {
-        units: entity.cash.units,
-        cents: entity.cash.cents,
-        currencyId: entity.cash.currencyId,
-      };
-    } else {
-      throw new HttpInternalServerError(
-        'transaction should have "currency" or "currencyId"'
-      );
-    }
+    const type: TPartialTransactionReadonlySchema['type'] = entity.type;
 
-    const period: TRestTransactionSchema['period'] = entity.period
-      ? {
-          periodicity: entity.period.periodicity,
-          when: entity.period.when,
-        }
-      : undefined;
-
-    return {
-      id: entity.id,
-      type,
-      cash,
-      date: entity.date ? dateTime(entity.date, true) : undefined,
-      description: entity.description,
-      repeat: entity.repeat,
-      period,
-      tags: entity.tags,
-      accountId: entity.accountId,
-    };
-  }
-
-  restToModel(this: void, entity: TRestTransactionSchema): IAppTransactionModel;
-  restToModel(
-    this: void,
-    entity: Partial<TRestTransactionSchema>
-  ): Partial<IAppTransactionModel>;
-  restToModel(
-    this: void,
-    entity: TRestTransactionSchema | Partial<TRestTransactionSchema>
-  ): IAppTransactionModel | Partial<IAppTransactionModel> {
-    const type: IAppTransactionModel['type'] | undefined = entity.type;
-
-    const cash: IAppTransactionModel['cash'] | undefined = entity.cash
+    const cash: TPartialTransactionReadonlySchema['cash'] = entity.cash
       ? {
           units: entity.cash.units,
           cents: entity.cash.cents,
-          currency:
-            'currency' in entity.cash
-              ? {
-                  id: entity.cash.currency.id,
-                  precision: entity.cash.currency.precision,
-                  symbol: entity.cash.currency.symbol,
-                  code: entity.cash.currency.code,
-                  decimal: entity.cash.currency.decimal,
-                  separator: entity.cash.currency.separator,
-                }
-              : undefined,
-          currencyId:
-            'currencyId' in entity.cash ? entity.cash.currencyId : undefined,
+          currency: {
+            id: entity.cash.currency.id,
+            precision: entity.cash.currency.precision,
+            symbol: entity.cash.currency.symbol,
+            code: entity.cash.currency.code,
+            decimal: entity.cash.currency.decimal,
+            separator: entity.cash.currency.separator,
+          },
         }
       : undefined;
 
-    const period: IAppTransactionModel['period'] = entity.period
+    const date: TPartialTransactionReadonlySchema['date'] = entity.date
+      ? dateTime(entity.date, true)
+      : undefined;
+
+    const description: TPartialTransactionReadonlySchema['description'] =
+      entity.description;
+
+    const repeat: TPartialTransactionReadonlySchema['repeat'] = entity.repeat;
+
+    const period: TPartialTransactionReadonlySchema['period'] = entity.period
       ? {
           periodicity: entity.period.periodicity,
           when: entity.period.when,
         }
       : undefined;
 
+    const tags: TPartialTransactionReadonlySchema['tags'] = entity.tags
+      ? [...entity.tags]
+      : undefined;
+
+    const accountId: TPartialTransactionReadonlySchema['accountId'] =
+      entity.accountId;
+
+    return {
+      id,
+      type,
+      cash,
+      date,
+      description,
+      repeat,
+      period,
+      tags,
+      accountId,
+    };
+  }
+
+  readonlySchemaToModel(
+    entity: TIndexableTransactionReadonlySchema
+  ): TIndexableTransactionReadonlyModel {
+    throw new Error('Method not implemented.');
+  }
+
+  mutableModelToSchema(
+    entity: ITransactionMutableModel
+  ): TTransactionMutableSchema {
+    throw new Error('Method not implemented.');
+  }
+
+  mutableSchemaToModel(
+    entity: TTransactionMutableSchema
+  ): ITransactionMutableModel;
+  mutableSchemaToModel(
+    entity: TPartialTransactionMutableSchema
+  ): TPartialTransactionMutableModel;
+  mutableSchemaToModel(
+    entity: TTransactionMutableSchema | TPartialTransactionMutableSchema
+  ): ITransactionMutableModel | TPartialTransactionMutableModel {
+    const type: TPartialTransactionMutableModel['type'] = entity.type;
+
+    const cash: TPartialTransactionMutableModel['cash'] = entity.cash
+      ? {
+          units: entity.cash.units,
+          cents: entity.cash.cents,
+          currencyId: entity.cash.currencyId,
+        }
+      : undefined;
+
+    const date: TPartialTransactionMutableModel['date'] = entity.date
+      ? new Date(entity.date)
+      : undefined;
+
+    const description: TPartialTransactionMutableModel['description'] =
+      entity.description;
+
+    const repeat: TPartialTransactionMutableModel['repeat'] = entity.repeat;
+
+    const period: TPartialTransactionMutableModel['period'] = entity.period
+      ? {
+          periodicity: entity.period.periodicity,
+          when: entity.period.when,
+        }
+      : undefined;
+
+    const tags: TPartialTransactionMutableModel['tags'] = entity.tags
+      ? [...entity.tags]
+      : undefined;
+
+    const accountId: TPartialTransactionMutableModel['accountId'] =
+      entity.accountId;
+
     return {
       type,
       cash,
-      date: entity.date ? new Date(entity.date) : undefined,
-      description: entity.description,
-      repeat: entity.repeat,
+      date,
+      description,
+      repeat,
       period,
-      tags: entity.tags,
-      accountId: entity.accountId,
+      tags,
+      accountId,
     };
   }
 }

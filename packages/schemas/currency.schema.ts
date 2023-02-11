@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 
-export const RestCurrencySchema = Type.Object({
+export const CurrencySchema = Type.Object({
   precision: Type.Integer(),
   symbol: Type.String({ maxLength: 10 }),
   code: Type.String({ maxLength: 3 }),
@@ -8,4 +8,4 @@ export const RestCurrencySchema = Type.Object({
   separator: Type.String({ maxLength: 1 }),
 });
 
-export type TRestCurrencySchema = Static<typeof RestCurrencySchema>;
+export type TCurrencySchema = Static<typeof CurrencySchema>;

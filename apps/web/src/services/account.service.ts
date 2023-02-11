@@ -1,8 +1,8 @@
-import { TRestAccountSchema, TRestCreateAccountSchema } from '@wallet/schemas';
+import { TAccountReadonlySchema, TAccountMutableSchema } from '@wallet/schemas';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { TPaginableSchema } from '@wallet/utilities/schema.utility';
 import config from '../config';
-import { IAccount, ICreatableAccount } from '../models/account.model';
+import { IAccountReadonly, IAccountMutable } from '../models/account.model';
 import { IPaging } from '../models/paging.model';
 import { restGet, restPost } from '../utilities/rest-api.utility';
 import { ICreateable } from './creatable.service';
@@ -11,14 +11,14 @@ import { IReadable } from './readable.service';
 
 const ACCOUNTS_BASE_PATH = '/v2/accounts';
 
-type TIndexableAccount = TIndexable<IAccount>;
-type TIndexableRestAccount = TIndexable<TRestAccountSchema>;
+type TIndexableAccount = TIndexable<IAccountReadonly>;
+type TIndexableRestAccount = TIndexable<TAccountReadonlySchema>;
 
 export type TAccountQuery = Partial<TIndexableAccount> & {
   paging: Partial<IPaging>;
 };
 
-export type TAccountBody = ICreatableAccount;
+export type TAccountBody = IAccountMutable;
 
 export type TAccountCreateResponse = TIndexableAccount;
 
@@ -27,7 +27,7 @@ export type TAccountReadResponse = {
   paging: IPaging;
 };
 
-function appToRest(entity: IAccount): TRestAccountSchema {
+function appToRest(entity: IAccountReadonly): TAccountReadonlySchema {
   return {
     label: entity.label,
     balance: {
@@ -51,9 +51,7 @@ function appToRest(entity: IAccount): TRestAccountSchema {
   };
 }
 
-function modifableAppToRest(
-  entity: ICreatableAccount
-): TRestCreateAccountSchema {
+function mutableAppToRest(entity: IAccountMutable): TAccountMutableSchema {
   return {
     label: entity.label,
     balance: {
@@ -70,7 +68,7 @@ function modifableAppToRest(
   };
 }
 
-function restToApp(entity: TRestAccountSchema): IAccount {
+function restToApp(entity: TAccountReadonlySchema): IAccountReadonly {
   return {
     label: entity.label,
     currency: {
@@ -94,7 +92,7 @@ function restToApp(entity: TRestAccountSchema): IAccount {
   };
 }
 
-function indexableRestToApp(entity: TIndexableRestAccount): TIndexableAccount {
+function readonlyRestToApp(entity: TIndexableRestAccount): TIndexableAccount {
   return {
     ...restToApp(entity),
     id: entity.id,
@@ -115,11 +113,11 @@ class AccountsServiceImpl
     const body = await restPost<TIndexableRestAccount>({
       baseUrl: this._apiBaseUrl,
       endpoint: ACCOUNTS_BASE_PATH,
-      body: modifableAppToRest(entity),
+      body: mutableAppToRest(entity),
       signal: this.signal,
     });
 
-    return indexableRestToApp(body.data);
+    return readonlyRestToApp(body.data);
   }
 
   async find(query?: TAccountQuery): Promise<TAccountReadResponse> {
@@ -134,7 +132,7 @@ class AccountsServiceImpl
     });
 
     return {
-      accounts: body.data.map(indexableRestToApp),
+      accounts: body.data.map(readonlyRestToApp),
       paging: body.paging,
     };
   }

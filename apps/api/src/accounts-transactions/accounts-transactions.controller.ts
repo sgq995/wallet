@@ -1,18 +1,19 @@
 import { Type } from '@sinclair/typebox';
 import {
-  RestTransactionSchema,
-  TRestTransactionSchema,
-  TWithAccountId,
-  TWithTransactionId,
-  WithAccountId,
-  WithTransactionId,
+  AccountIdSchema,
+  TAccountIdSchema,
+  TransactionIdSchema,
+  TransactionMutableSchema,
+  TransactionReadonlySchema,
+  TTransactionIdSchema,
+  TTransactionMutableSchema,
+  TTransactionReadonlySchema,
 } from '@wallet/schemas';
 import { HttpStatus } from '@wallet/utilities/http.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import {
-  PartialWithId,
+  IndexableSchema,
   RecursivePartial,
-  WithId,
 } from '@wallet/utilities/schema.utility';
 import { IController, IRoute, TRouteHandler } from '../models';
 import { TransactionsController } from '../transactions';
@@ -33,10 +34,14 @@ export class AccountsTransactionsController implements IController {
         endpoint: '/:accountId/transactions',
         handler: this.find,
         schema: {
-          params: WithAccountId,
-          query: PartialWithId(RestTransactionSchema),
+          params: AccountIdSchema,
+          query: Type.Partial(
+            Type.Intersect([TransactionMutableSchema, IndexableSchema])
+          ),
           reply: {
-            [HttpStatus.Ok]: Type.Array(WithId(RestTransactionSchema)),
+            [HttpStatus.Ok]: Type.Array(
+              Type.Intersect([TransactionReadonlySchema, IndexableSchema])
+            ),
           },
         },
       },
@@ -45,10 +50,13 @@ export class AccountsTransactionsController implements IController {
         endpoint: '/:accountId/transactions',
         handler: this.add,
         schema: {
-          params: WithAccountId,
-          body: RestTransactionSchema,
+          params: AccountIdSchema,
+          body: TransactionMutableSchema,
           reply: {
-            [HttpStatus.Created]: WithId(RestTransactionSchema),
+            [HttpStatus.Created]: Type.Intersect([
+              TransactionReadonlySchema,
+              IndexableSchema,
+            ]),
           },
         },
       },
@@ -57,9 +65,12 @@ export class AccountsTransactionsController implements IController {
         endpoint: '/:accountId/transactions/:transactionId',
         handler: this.find,
         schema: {
-          params: Type.Intersect([WithAccountId, WithTransactionId]),
+          params: Type.Intersect([AccountIdSchema, TransactionIdSchema]),
           reply: {
-            [HttpStatus.Ok]: WithId(RestTransactionSchema),
+            [HttpStatus.Ok]: Type.Intersect([
+              TransactionReadonlySchema,
+              IndexableSchema,
+            ]),
           },
         },
       },
@@ -68,10 +79,13 @@ export class AccountsTransactionsController implements IController {
         endpoint: '/:accountId/transactions/:transactionId',
         handler: this.update,
         schema: {
-          params: Type.Intersect([WithAccountId, WithTransactionId]),
-          body: RecursivePartial(RestTransactionSchema),
+          params: Type.Intersect([AccountIdSchema, TransactionIdSchema]),
+          body: Type.Partial(TransactionMutableSchema),
           reply: {
-            [HttpStatus.Ok]: WithId(RestTransactionSchema),
+            [HttpStatus.Ok]: Type.Intersect([
+              TransactionReadonlySchema,
+              IndexableSchema,
+            ]),
           },
         },
       },
@@ -80,9 +94,12 @@ export class AccountsTransactionsController implements IController {
         endpoint: '/:accountId/transactions/:transactionId',
         handler: this.remove,
         schema: {
-          params: Type.Intersect([WithAccountId, WithTransactionId]),
+          params: Type.Intersect([AccountIdSchema, TransactionIdSchema]),
           reply: {
-            [HttpStatus.Ok]: WithId(RestTransactionSchema),
+            [HttpStatus.Ok]: Type.Intersect([
+              TransactionReadonlySchema,
+              IndexableSchema,
+            ]),
           },
         },
       },
@@ -90,11 +107,11 @@ export class AccountsTransactionsController implements IController {
   }
 
   find: TRouteHandler<{
-    Params: TWithAccountId | (TWithAccountId & TWithTransactionId);
-    Query: Partial<TRestTransactionSchema>;
+    Params: TAccountIdSchema | (TAccountIdSchema & TTransactionIdSchema);
+    Query: Partial<TTransactionMutableSchema>;
     Reply:
-      | TIndexable<TRestTransactionSchema>
-      | TIndexable<TRestTransactionSchema>[];
+      | TIndexable<TTransactionReadonlySchema>
+      | TIndexable<TTransactionReadonlySchema>[];
   }> = async ({ params, query, ...request }) => {
     await this._repository.verifyAccountExists();
     return this._transactionsController.find({
@@ -106,9 +123,9 @@ export class AccountsTransactionsController implements IController {
   };
 
   add: TRouteHandler<{
-    Params: TWithAccountId;
-    Body: TRestTransactionSchema;
-    Reply: TIndexable<TRestTransactionSchema>;
+    Params: TAccountIdSchema;
+    Body: TTransactionMutableSchema;
+    Reply: TIndexable<TTransactionReadonlySchema>;
   }> = async ({ params, body, ...request }) => {
     await this._repository.verifyAccountExists();
     return this._transactionsController.add({
@@ -119,9 +136,9 @@ export class AccountsTransactionsController implements IController {
   };
 
   update: TRouteHandler<{
-    Params: TWithAccountId & TWithTransactionId;
-    Body: Partial<TRestTransactionSchema>;
-    Reply: TIndexable<TRestTransactionSchema>;
+    Params: TAccountIdSchema & TTransactionIdSchema;
+    Body: Partial<TTransactionMutableSchema>;
+    Reply: TIndexable<TTransactionReadonlySchema>;
   }> = async ({ params, body, ...request }) => {
     await this._repository.verifyAccountExists();
     await this._repository.verifyTransactionOwnership(
@@ -136,8 +153,8 @@ export class AccountsTransactionsController implements IController {
   };
 
   remove: TRouteHandler<{
-    Params: TWithAccountId & TWithTransactionId;
-    Reply: TIndexable<TRestTransactionSchema>;
+    Params: TAccountIdSchema & TTransactionIdSchema;
+    Reply: TIndexable<TTransactionReadonlySchema>;
   }> = async ({ params, ...request }) => {
     await this._repository.verifyAccountExists();
     await this._repository.verifyTransactionOwnership(

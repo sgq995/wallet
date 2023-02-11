@@ -1,9 +1,9 @@
 import { TPaginableSchema } from '@wallet/utilities/schema.utility';
-import { IAppPagingModel } from '../models/paging.model';
+import { IPagingModel } from '../models/paging.model';
 
 export function paginableRestToModel(
   paging: TPaginableSchema['paging']
-): IAppPagingModel {
+): IPagingModel {
   return {
     page: paging.page,
     previous: paging.previous,

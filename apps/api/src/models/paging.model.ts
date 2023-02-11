@@ -1,4 +1,4 @@
-export interface IAppPagingModel {
+export interface IPagingModel {
   page?: string;
   previous?: string;
   next?: string;

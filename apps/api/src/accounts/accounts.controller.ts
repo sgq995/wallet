@@ -1,25 +1,24 @@
 import { Type } from '@sinclair/typebox';
 import {
-  RestAccountSchema,
-  RestCreateAccountSchema,
-  TRestAccountSchema,
-  TRestCreateAccountSchema,
+  AccountReadonlySchema,
+  AccountMutableSchema,
+  TAccountMutableSchema,
 } from '@wallet/schemas';
 import { HttpStatus } from '@wallet/utilities/http.utility';
-import { TIndexable, TRecursivePartial } from '@wallet/utilities/model.utility';
 import {
   IndexableSchema,
   PaginableSchema,
-  RecursivePartial,
   TIndexableSchema,
   TPaginableSchema,
-  WithId,
 } from '@wallet/utilities/schema.utility';
 import { IController } from '../models/controller.model';
 import { IRoute, TRouteHandler } from '../models/route.model';
 import { AccountsAdapter } from './accounts.adapter';
-import { IAppAccountModel } from './accounts.model';
 import { AccountsRepository } from './accounts.repository';
+import {
+  TIndexableAccountReadonlyModel,
+  TIndexableAccountReadonlySchema,
+} from './accounts.types';
 
 export class AccountsController implements IController {
   public prefix?: string | undefined = '/v2/accounts';
@@ -36,14 +35,14 @@ export class AccountsController implements IController {
         endpoint: '/',
         handler: this.find,
         schema: {
-          query: Type.Intersect([
-            Type.Partial(IndexableSchema),
-            RecursivePartial(RestAccountSchema),
-            Type.Partial(PaginableSchema),
-          ]),
+          query: Type.Partial(
+            Type.Intersect([AccountMutableSchema, PaginableSchema])
+          ),
           paging: PaginableSchema,
           reply: {
-            [HttpStatus.Ok]: Type.Array(WithId(RestAccountSchema)),
+            [HttpStatus.Ok]: Type.Array(
+              Type.Intersect([AccountReadonlySchema, IndexableSchema])
+            ),
           },
         },
       },
@@ -52,9 +51,12 @@ export class AccountsController implements IController {
         endpoint: '/',
         handler: this.add,
         schema: {
-          body: RestCreateAccountSchema,
+          body: AccountMutableSchema,
           reply: {
-            [HttpStatus.Created]: WithId(RestAccountSchema),
+            [HttpStatus.Created]: Type.Intersect([
+              AccountReadonlySchema,
+              IndexableSchema,
+            ]),
           },
         },
       },
@@ -65,7 +67,10 @@ export class AccountsController implements IController {
         schema: {
           params: IndexableSchema,
           reply: {
-            [HttpStatus.Ok]: WithId(RestAccountSchema),
+            [HttpStatus.Ok]: Type.Intersect([
+              AccountReadonlySchema,
+              IndexableSchema,
+            ]),
           },
         },
       },
@@ -75,9 +80,12 @@ export class AccountsController implements IController {
         handler: this.update,
         schema: {
           params: IndexableSchema,
-          body: RecursivePartial(RestCreateAccountSchema),
+          body: Type.Partial(AccountMutableSchema),
           reply: {
-            [HttpStatus.Ok]: WithId(RestAccountSchema),
+            [HttpStatus.Ok]: Type.Intersect([
+              AccountReadonlySchema,
+              IndexableSchema,
+            ]),
           },
         },
       },
@@ -88,7 +96,10 @@ export class AccountsController implements IController {
         schema: {
           params: IndexableSchema,
           reply: {
-            [HttpStatus.Ok]: WithId(RestAccountSchema),
+            [HttpStatus.Ok]: Type.Intersect([
+              AccountReadonlySchema,
+              IndexableSchema,
+            ]),
           },
         },
       },
@@ -97,15 +108,16 @@ export class AccountsController implements IController {
 
   find: TRouteHandler<{
     Params: TIndexableSchema | undefined;
-    Query: Partial<TRestAccountSchema & TPaginableSchema>;
-    Reply: TIndexable<TRestAccountSchema> | TIndexable<TRestAccountSchema>[];
+    Query: Partial<TAccountMutableSchema & TPaginableSchema>;
+    Reply: TIndexableAccountReadonlySchema | TIndexableAccountReadonlySchema[];
   }> = async ({ params, query }) => {
     const { accounts, paging } = await this._repository.find(
       params?.id,
-      query ? this._adapter.restToModel(query) : undefined
+      query ? this._adapter.mutableSchemaToModel(query) : undefined
     );
-    const data: TIndexable<TRestAccountSchema>[] = accounts.map(
-      (value: TIndexable<IAppAccountModel>) => this._adapter.modelToRest(value)
+    const data: TIndexableAccountReadonlySchema[] = accounts.map(
+      (value: TIndexableAccountReadonlyModel) =>
+        this._adapter.readonlyModelToSchema(value)
     );
 
     if (params?.id) {
@@ -116,36 +128,38 @@ export class AccountsController implements IController {
   };
 
   add: TRouteHandler<{
-    Body: TRestCreateAccountSchema;
-    Reply: TIndexable<TRestAccountSchema>;
+    Body: TAccountMutableSchema;
+    Reply: TIndexableAccountReadonlySchema;
   }> = async ({ body }) => {
-    const account = await this._repository.add(this._adapter.restToModel(body));
-    const data: TIndexable<TRestAccountSchema> =
-      this._adapter.modelToRest(account);
+    const account = await this._repository.add(
+      this._adapter.mutableSchemaToModel(body)
+    );
+    const data: TIndexableAccountReadonlySchema =
+      this._adapter.readonlyModelToSchema(account);
     return { status: HttpStatus.Created, data };
   };
 
   update: TRouteHandler<{
     Params: TIndexableSchema;
-    Body: TRecursivePartial<TRestCreateAccountSchema>;
-    Reply: TIndexable<TRestAccountSchema>;
+    Body: Partial<TAccountMutableSchema>;
+    Reply: TIndexableAccountReadonlySchema;
   }> = async ({ params, body }) => {
     const account = await this._repository.update(
       params.id,
-      this._adapter.restToModel(body)
+      this._adapter.mutableSchemaToModel(body)
     );
-    const data: TIndexable<TRestAccountSchema> =
-      this._adapter.modelToRest(account);
+    const data: TIndexableAccountReadonlySchema =
+      this._adapter.readonlyModelToSchema(account);
     return { status: HttpStatus.Ok, data };
   };
 
   remove: TRouteHandler<{
     Params: TIndexableSchema;
-    Reply: TIndexable<TRestAccountSchema>;
+    Reply: TIndexableAccountReadonlySchema;
   }> = async ({ params }) => {
     const account = await this._repository.remove(params.id);
-    const data: TIndexable<TRestAccountSchema> =
-      this._adapter.modelToRest(account);
+    const data: TIndexableAccountReadonlySchema =
+      this._adapter.readonlyModelToSchema(account);
     return { status: HttpStatus.Ok, data };
   };
 }

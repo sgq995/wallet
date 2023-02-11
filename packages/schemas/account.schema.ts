@@ -1,24 +1,30 @@
 import { Static, Type } from '@sinclair/typebox';
-import { WithId } from '@wallet/utilities/schema.utility';
-import { RestCashBaseSchema } from './cash.schema';
-import { RestCurrencySchema } from './currency.schema';
+import { IndexableSchema, IndexType } from '@wallet/utilities/schema.utility';
+import { CashBaseSchema } from './cash.schema';
+import { CurrencySchema } from './currency.schema';
 
-const base = {
+export const AccountBaseSchema = Type.Object({
   label: Type.String(),
-  startingBalance: Type.Optional(RestCashBaseSchema),
-  balance: RestCashBaseSchema,
-};
-
-export const RestAccountSchema = Type.Object({
-  ...base,
-  currency: WithId(RestCurrencySchema),
+  startingBalance: Type.Optional(CashBaseSchema),
+  balance: CashBaseSchema,
 });
 
-export type TRestAccountSchema = Static<typeof RestAccountSchema>;
+export type TAccountBaseSchema = Static<typeof AccountBaseSchema>;
 
-export const RestCreateAccountSchema = Type.Object({
-  ...base,
-  currencyId: Type.Integer(),
-});
+export const AccountReadonlySchema = Type.Intersect([
+  AccountBaseSchema,
+  Type.Object({
+    currency: Type.Intersect([CurrencySchema, IndexableSchema]),
+  }),
+]);
 
-export type TRestCreateAccountSchema = Static<typeof RestCreateAccountSchema>;
+export type TAccountReadonlySchema = Static<typeof AccountReadonlySchema>;
+
+export const AccountMutableSchema = Type.Intersect([
+  AccountBaseSchema,
+  Type.Object({
+    currencyId: IndexType,
+  }),
+]);
+
+export type TAccountMutableSchema = Static<typeof AccountMutableSchema>;

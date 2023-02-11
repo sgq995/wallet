@@ -3,11 +3,12 @@ import {
   HttpBadRequestError,
   HttpNotFoundError,
 } from '@wallet/utilities/http.utility';
+import { TIndex } from '@wallet/utilities/model.utility';
 
 export class AccountsTransactionsRepository {
   constructor(private _prisma: PrismaClient) {}
 
-  async verifyAccountExists(accountId?: number) {
+  async verifyAccountExists(accountId?: TIndex) {
     if (!accountId) {
       return;
     }
@@ -20,7 +21,7 @@ export class AccountsTransactionsRepository {
     }
   }
 
-  async verifyTransactionOwnership(accountId?: number, transactionId?: number) {
+  async verifyTransactionOwnership(accountId?: TIndex, transactionId?: TIndex) {
     if (!transactionId) {
       return;
     }

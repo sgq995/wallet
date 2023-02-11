@@ -3,21 +3,24 @@ import {
   HttpInternalServerError,
   HttpNotFoundError,
 } from '@wallet/utilities/http.utility';
-import { TIndexable, TRecursivePartial } from '@wallet/utilities/model.utility';
 import config from '../config';
-import { IAppPagingModel } from '../models/paging.model';
-import { IAppAccountModel, IAppCreateAccountModel } from './accounts.model';
+import { IPagingModel } from '../models/paging.model';
+import { IAccountMutableModel } from './accounts.model';
+import {
+  TIndexableAccountReadonlyModel,
+  TPartialAccountMutableModel,
+} from './accounts.types';
 
 export class AccountsRepository {
   constructor(private _prisma: PrismaClient) {}
 
   async find(
     id?: number,
-    filter?: Partial<IAppAccountModel>,
-    requestPaging?: IAppPagingModel
+    filter?: TPartialAccountMutableModel,
+    requestPaging?: IPagingModel
   ): Promise<{
-    accounts: TIndexable<IAppAccountModel>[];
-    paging: IAppPagingModel;
+    accounts: TIndexableAccountReadonlyModel[];
+    paging: IPagingModel;
   }> {
     const result = await this._prisma.account.findMany({
       where: {
@@ -34,11 +37,11 @@ export class AccountsRepository {
       throw new HttpNotFoundError('account not found');
     }
 
-    const accounts: TIndexable<IAppAccountModel>[] = result.map(
+    const accounts: TIndexableAccountReadonlyModel[] = result.map(
       this._toAppModel
     );
 
-    const paging: IAppPagingModel = {
+    const paging: IPagingModel = {
       offset: requestPaging?.offset ?? 0,
       limit: requestPaging?.limit ?? config.app.transactions.readLimit,
     };
@@ -47,8 +50,8 @@ export class AccountsRepository {
   }
 
   async add(
-    account: IAppCreateAccountModel
-  ): Promise<TIndexable<IAppAccountModel>> {
+    account: IAccountMutableModel
+  ): Promise<TIndexableAccountReadonlyModel> {
     try {
       const result = await this._prisma.account.create({
         data: {
@@ -70,7 +73,7 @@ export class AccountsRepository {
     }
   }
 
-  async update(id: number, account: TRecursivePartial<IAppCreateAccountModel>) {
+  async update(id: number, account: TPartialAccountMutableModel) {
     try {
       const result = await this._prisma.account.update({
         where: {
@@ -106,7 +109,7 @@ export class AccountsRepository {
     }
   }
 
-  async remove(id: number): Promise<TIndexable<IAppAccountModel>> {
+  async remove(id: number): Promise<TIndexableAccountReadonlyModel> {
     try {
       const result = await this._prisma.account.delete({
         where: {
@@ -128,8 +131,8 @@ export class AccountsRepository {
     entity: Account & {
       currency: Currency;
     }
-  ): TIndexable<IAppAccountModel> {
-    const currency: IAppAccountModel['currency'] = {
+  ): TIndexableAccountReadonlyModel {
+    const currency: TIndexableAccountReadonlyModel['currency'] = {
       id: entity.currency.id,
       symbol: entity.currency.symbol,
       separator: entity.currency.separator,

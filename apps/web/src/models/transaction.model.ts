@@ -1,4 +1,4 @@
-import { ICashWithCurrency, ICashWithCurrencyId } from './cash.model';
+import { ICashReadonly, ICashMutable } from './cash.model';
 import { ITimePeriod } from './time-period.model';
 
 interface ITransactionBase {
@@ -11,10 +11,10 @@ interface ITransactionBase {
   accountId?: number;
 }
 
-export interface ITransaction extends ITransactionBase {
-  cash: ICashWithCurrency;
+export interface ITransactionReadonly extends ITransactionBase {
+  cash: ICashReadonly;
 }
 
-export interface ICreatableTransaction extends ITransactionBase {
-  cash: ICashWithCurrencyId;
+export interface ITransactionMutable extends ITransactionBase {
+  cash: ICashMutable;
 }

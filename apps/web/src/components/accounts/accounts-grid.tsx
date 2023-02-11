@@ -1,11 +1,11 @@
 import { Grid } from '@mui/material';
 import { TIndexable } from '@wallet/utilities/model.utility';
-import { IAccount } from '../../models/account.model';
+import { IAccountReadonly } from '../../models/account.model';
 import { cashToString } from '../../utilities/cash.utility';
 import { AccountsGridItem } from './accounts-grid-item';
 
 export interface IAccountGridProps {
-  accounts: TIndexable<IAccount>[];
+  accounts: TIndexable<IAccountReadonly>[];
 }
 
 export const AccountsGrid: React.FC<IAccountGridProps> = ({ accounts }) => {

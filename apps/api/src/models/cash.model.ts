@@ -1,12 +1,15 @@
-import { TIndexable } from '@wallet/utilities/model.utility';
-import { IAppCurrencyModel } from './currency.model';
+import { TIndex, TIndexable } from '@wallet/utilities/model.utility';
+import { ICurrencyModel } from './currency.model';
 
-export interface IAppCashValueModel {
+export interface ICashBaseModel {
   units: number;
   cents: number;
 }
 
-export interface IAppCashModel extends IAppCashValueModel {
-  currency?: TIndexable<IAppCurrencyModel>;
-  currencyId?: number;
+export interface ICashReadonlyModel extends ICashBaseModel {
+  currency: TIndexable<ICurrencyModel>;
+}
+
+export interface ICashMutableModel extends ICashBaseModel {
+  currencyId: TIndex;
 }

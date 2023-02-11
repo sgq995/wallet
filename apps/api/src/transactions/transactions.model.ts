@@ -1,13 +1,21 @@
-import { IAppCashModel } from '../models/cash.model';
-import { IAppTimePeriodModel } from '../models/time-period.model';
+import { TIndex } from '@wallet/utilities/model.utility';
+import { ICashMutableModel, ICashReadonlyModel } from '../models/cash.model';
+import { ITimePeriodModel } from '../models/time-period.model';
 
-export interface IAppTransactionModel {
+export interface ITransactionBaseModel {
   type: 'income' | 'expense';
-  cash: IAppCashModel;
   date: Date;
   description?: string;
   repeat?: boolean;
-  period?: IAppTimePeriodModel;
+  period?: ITimePeriodModel;
   tags: string[];
-  accountId?: number;
+  accountId?: TIndex;
+}
+
+export interface ITransactionReadonlyModel extends ITransactionBaseModel {
+  cash: ICashReadonlyModel;
+}
+
+export interface ITransactionMutableModel extends ITransactionBaseModel {
+  cash: ICashMutableModel;
 }

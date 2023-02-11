@@ -1,12 +1,15 @@
-import { TRestTransactionSchema } from '@wallet/schemas';
+import {
+  TTransactionMutableSchema,
+  TTransactionReadonlySchema,
+} from '@wallet/schemas';
 import { dateTime } from '@wallet/utilities/date.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { TPaginableSchema } from '@wallet/utilities/schema.utility';
 import config from '../config';
 import { IPaging } from '../models/paging.model';
 import {
-  ICreatableTransaction,
-  ITransaction,
+  ITransactionMutable,
+  ITransactionReadonly,
 } from '../models/transaction.model';
 import { restDelete, restGet, restPost } from '../utilities/rest-api.utility';
 import { ICreateable } from './creatable.service';
@@ -16,8 +19,8 @@ import { HttpService } from './http.service';
 
 const TRANSACTIONS_BASE_PATH = '/v2/transactions';
 
-type TIndexableTransaction = TIndexable<ITransaction>;
-type TIndexableRestTransaction = TIndexable<TRestTransactionSchema>;
+type TIndexableTransaction = TIndexable<ITransactionReadonly>;
+type TIndexableRestTransaction = TIndexable<TTransactionReadonlySchema>;
 
 export type TTransactionParams = Pick<TIndexableTransaction, 'id'>;
 
@@ -25,7 +28,7 @@ export type TTransactionQuery = Partial<TIndexableTransaction> & {
   paging: Partial<IPaging>;
 };
 
-export type TTransactionBody = ICreatableTransaction;
+export type TTransactionBody = ITransactionMutable;
 
 export type TTransactionCreateResponse = TIndexableTransaction;
 
@@ -36,12 +39,12 @@ export type TTransactionReadResponse = {
 
 export type TTransactionDeleteResponse = TIndexableTransaction;
 
-function restToApp(entity: TRestTransactionSchema): ITransaction {
+function restToApp(entity: TTransactionReadonlySchema): ITransactionReadonly {
   if (!('currency' in entity.cash)) {
     throw new Error('Not implemented yet');
   }
 
-  const cash: ITransaction['cash'] = {
+  const cash: ITransactionReadonly['cash'] = {
     units: entity.cash.units,
     cents: entity.cash.cents,
     currency: {
@@ -71,7 +74,7 @@ function restToApp(entity: TRestTransactionSchema): ITransaction {
   };
 }
 
-function indexableRestToApp(
+function readonlyRestToModel(
   entity: TIndexableRestTransaction
 ): TIndexableTransaction {
   return {
@@ -80,26 +83,13 @@ function indexableRestToApp(
   };
 }
 
-function appToRest(
-  entity: ITransaction | ICreatableTransaction
-): TRestTransactionSchema {
-  const cash: TRestTransactionSchema['cash'] = {
+function mutableModelToRest(
+  entity: ITransactionMutable
+): TTransactionMutableSchema {
+  const cash: TTransactionMutableSchema['cash'] = {
     units: entity.cash.units,
     cents: entity.cash.cents,
-    ...('currency' in entity.cash
-      ? {
-          currency: {
-            code: entity.cash.currency.code,
-            decimal: entity.cash.currency.decimal,
-            id: entity.cash.currency.id,
-            precision: entity.cash.currency.precision,
-            separator: entity.cash.currency.separator,
-            symbol: entity.cash.currency.symbol,
-          },
-        }
-      : {
-          currencyId: entity.cash.currencyId,
-        }),
+    currencyId: entity.cash.currencyId,
   };
 
   return {
@@ -111,15 +101,6 @@ function appToRest(
     description: entity.description,
     period: entity.period ? { ...entity.period } : undefined,
     repeat: entity.repeat,
-  };
-}
-
-function indexableAppToRest(
-  entity: TIndexableTransaction
-): TIndexableRestTransaction {
-  return {
-    ...appToRest(entity),
-    id: entity.id,
   };
 }
 
@@ -138,11 +119,11 @@ class TransactionsServiceImpl
     const body = await restPost<TIndexableRestTransaction>({
       baseUrl: this._apiBaseUrl,
       endpoint: TRANSACTIONS_BASE_PATH,
-      body: appToRest(entity),
+      body: mutableModelToRest(entity),
       signal: this.signal,
     });
 
-    return indexableRestToApp(body.data);
+    return readonlyRestToModel(body.data);
   }
 
   async find(query?: TTransactionQuery): Promise<TTransactionReadResponse> {
@@ -157,7 +138,7 @@ class TransactionsServiceImpl
     });
 
     return {
-      transactions: body.data.map(indexableRestToApp),
+      transactions: body.data.map(readonlyRestToModel),
       paging: body.paging,
     };
   }

@@ -1,4 +1,6 @@
-export type TIndexable<T> = { id: number } & T;
+export type TIndex = number;
+
+export type TIndexable<T> = { id: TIndex } & T;
 
 export type TRecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]

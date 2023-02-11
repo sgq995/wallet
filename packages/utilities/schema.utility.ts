@@ -55,18 +55,21 @@ export function toErrorSchema(schema: TSchema) {
   );
 }
 
+export const IndexType = Type.Integer();
+
 export const IndexableSchema = Type.Object({
-  id: Type.Integer(),
+  id: IndexType,
 });
 
 export type TIndexableSchema = Static<typeof IndexableSchema>;
 
-export function WithId<
-  Properties extends TProperties = TProperties,
-  Schema extends TObject<TProperties> = TObject<Properties>
->(schema: Schema) {
-  return Type.Intersect([IndexableSchema, schema]);
-}
+// Disable temporally because typescript issues
+// export function WithId<
+//   Properties extends TProperties = TProperties,
+//   Schema extends TObject<TProperties> = TObject<Properties>
+// >(schema: Schema) {
+//   return Type.Intersect([IndexableSchema, schema]);
+// }
 
 export function PartialWithId<
   Schema extends TObject<TProperties> = TObject<TProperties>

@@ -1,10 +1,11 @@
-export interface IAdapter<
-  A,
-  R,
-  AppModel extends A = A,
-  RestModel extends R = R
-> {
-  modelToRest(entity: AppModel): RestModel;
+export interface IReadonlyAdapter<ReadonlyModel, ReadonlySchema> {
+  readonlyModelToSchema(entity: ReadonlyModel): ReadonlySchema;
 
-  restToModel(entity: RestModel): AppModel;
+  readonlySchemaToModel(entity: ReadonlySchema): ReadonlyModel;
+}
+
+export interface IMutableAdapter<MutableModel, MutableSchema> {
+  mutableModelToSchema(entity: MutableModel): MutableSchema;
+
+  mutableSchemaToModel(entity: MutableSchema): MutableModel;
 }

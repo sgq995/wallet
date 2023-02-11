@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 
-export const RestTimePeriodSchema = Type.Object({
+export const TimePeriodSchema = Type.Object({
   periodicity: Type.Union([
     Type.Literal('daily'),
     Type.Literal('weekly'),
@@ -12,4 +12,4 @@ export const RestTimePeriodSchema = Type.Object({
   when: Type.Union([Type.Number(), Type.Literal('begin'), Type.Literal('end')]),
 });
 
-export type TRestTimePeriodSchema = Static<typeof RestTimePeriodSchema>;
+export type TTimePeriodSchema = Static<typeof TimePeriodSchema>;
