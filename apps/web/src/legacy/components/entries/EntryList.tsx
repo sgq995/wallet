@@ -1,13 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-  List,
-  ListItem,
-  CircularProgress,
-  Box,
-  Button,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import { Reply, TEntryModel } from '@wallet/schemas/legacy/entries';
 
@@ -16,13 +9,12 @@ import { useNotificationSystem } from '../../contexts/notifications';
 import {
   useFindAllInfiniteQuery,
   useRemoveOneMutation,
-} from '../../legacy/hooks/entries';
-import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
+} from '../../hooks/entries';
 
 import { EntryItem } from './EntryItem';
 import { EntryDeleteDialog } from './EntryDeleteDialog';
 import { EntryEditDialog } from './EntryEditDialog';
-import { InfiniteList } from '../../legacy/components/infinite-list';
+import { InfiniteList } from '../../components/infinite-list';
 
 export interface IEntryListProps {}
 

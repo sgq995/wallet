@@ -13,7 +13,7 @@ import {
   Select,
 } from '@mui/material';
 
-import { useFindAllQuery } from '../../legacy/hooks/entry-types';
+import { useFindAllQuery } from '../../hooks/entry-types';
 
 import AsyncViewer, {
   AsyncData,

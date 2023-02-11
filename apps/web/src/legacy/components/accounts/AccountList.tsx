@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { Reply } from '@wallet/schemas/legacy/accounts';
 import { TAccountModel } from '@wallet/schemas/legacy/accounts/model';
 import { useNotificationSystem } from '../../contexts/notifications';
-import { useFindAllInfiniteQuery, useFindAllQuery } from '../../legacy/hooks/accounts';
-import { InfiniteList } from '../../legacy/components/infinite-list';
+import { useFindAllInfiniteQuery } from '../../hooks/accounts';
+import { InfiniteList } from '../../components/infinite-list';
 import { AccountItem } from './AccountItem';
 
 function useAccountData() {

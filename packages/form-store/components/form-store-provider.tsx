@@ -1,12 +1,12 @@
 import React, { PropsWithChildren, useState } from 'react';
 import { FormStoreContext } from '../context';
-import { FormStore, TStore } from '../form-store';
+import { FormStore, TStore, TStoreKey } from '../form-store';
 
-export interface FormStoreProviderProps<T extends TStore> {
+export interface FormStoreProviderProps<T extends TStore<TStoreKey, string>> {
   defaultValues: T;
 }
 
-export function FormStoreProvider<T extends TStore>({
+export function FormStoreProvider<T extends TStore<TStoreKey, string>>({
   defaultValues,
   children,
 }: PropsWithChildren<FormStoreProviderProps<T>>) {

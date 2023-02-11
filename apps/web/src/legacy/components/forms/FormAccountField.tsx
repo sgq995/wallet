@@ -17,7 +17,7 @@ import {
 
 import { useControlledFormComponent } from '@wallet/forms';
 
-import { useFindAllQuery } from '../../legacy/hooks/accounts';
+import { useFindAllQuery } from '../../hooks/accounts';
 
 import AsyncViewer, {
   AsyncData,

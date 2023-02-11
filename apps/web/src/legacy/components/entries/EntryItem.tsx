@@ -11,7 +11,7 @@ import { DeleteIcon } from '../../components/IconsMaterial';
 
 import { yyyyMMdd } from '../../utilities/date.utility';
 import { transactionToAmount } from './utils';
-import { useSystemContext } from '../../../contexts/system';
+import { useSystemContext } from '../../contexts/system';
 
 import theme from '../../theme';
 

@@ -14,7 +14,7 @@ import {
 import { numberValidator, useControlledFormComponent } from '@wallet/forms';
 import { toInteger } from 'lodash';
 
-import { useSystemContext } from '../../../contexts/system';
+import { useSystemContext } from '../../contexts/system';
 
 export interface IFormAmountFieldProps {
   fullWidth?: FormControlProps['fullWidth'];

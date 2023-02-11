@@ -21,7 +21,7 @@ import {
   AddIcon,
   HomeIcon,
   LogoutIcon,
-} from '../../../legacy/components/IconsMaterial';
+} from '../../components/IconsMaterial';
 
 import { AccountForm } from '../../components/accounts';
 import { CategoryForm } from '../categories';

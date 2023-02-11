@@ -1,12 +1,12 @@
 import { Static, Type } from '@sinclair/typebox';
 import { WithId } from '@wallet/utilities/schema.utility';
-import { RestCashValueSchema } from './cash.schema';
+import { RestCashBaseSchema } from './cash.schema';
 import { RestCurrencySchema } from './currency.schema';
 
 const base = {
   label: Type.String(),
-  startingBalance: Type.Optional(RestCashValueSchema),
-  balance: RestCashValueSchema,
+  startingBalance: Type.Optional(RestCashBaseSchema),
+  balance: RestCashBaseSchema,
 };
 
 export const RestAccountSchema = Type.Object({
