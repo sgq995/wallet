@@ -10,7 +10,7 @@ describe('FormStore', () => {
         defaultValue: 'test',
       });
 
-      expect(instance.snapshot()).toEqual({ test: 'test' });
+      expect(instance.snapshot()).toEqual({ test: 'test', hasError: false });
     });
   });
 
@@ -23,7 +23,7 @@ describe('FormStore', () => {
       });
       instance.update({ name: 'test', rawValue: 'test' });
 
-      expect(instance.snapshot()).toEqual({ test: 'test' });
+      expect(instance.snapshot()).toEqual({ test: 'test', hasError: false });
     });
 
     it('should detect uncontrolled elements', () => {
@@ -39,7 +39,7 @@ describe('FormStore', () => {
       expect(() =>
         instance.update({ name: 'test', rawValue: 'test' })
       ).toThrow();
-      expect(instance.snapshot()).toEqual({ test: 'test' });
+      expect(instance.snapshot()).toEqual({ test: 'test', hasError: false });
     });
   });
 
@@ -47,7 +47,7 @@ describe('FormStore', () => {
     it('should return the default values', () => {
       const instance = new FormStore({ test: '' });
 
-      expect(instance.snapshot()).toEqual({ test: '' });
+      expect(instance.snapshot()).toEqual({ test: '', hasError: false });
     });
 
     it('should include components without a default value', () => {
@@ -56,7 +56,11 @@ describe('FormStore', () => {
       instance.register({ name: 'component' });
       instance.update({ name: 'component', rawValue: 'test' });
 
-      expect(instance.snapshot()).toEqual({ test: '', component: 'test' });
+      expect(instance.snapshot()).toEqual({
+        test: '',
+        component: 'test',
+        hasError: false,
+      });
     });
   });
 });

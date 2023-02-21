@@ -9,6 +9,7 @@ describe('useUncontrolledFormComponent', () => {
   beforeEach(() => {
     MockFormStore.mockClear();
     (MockFormStore.prototype as any).register = jest.fn();
+    (MockFormStore.prototype as any).unregister = jest.fn();
   });
 
   describe('when ref is called', () => {
