@@ -1,82 +1,75 @@
-import { TRestAccountSchema } from '@wallet/schemas';
+import { TAccountMutableSchema, TAccountReadonlySchema } from '@wallet/schemas';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import tap from 'tap';
-import { AccountsAdapter, IAppAccountModel } from '../../src/accounts';
+import {
+  AccountsAdapter,
+  IAccountMutableModel,
+  IAccountReadonlyModel,
+} from '../../src/accounts';
 
 void tap.test('AccountsAdapter', (t) => {
-  void t.test('modelToRest', async (t) => {
-    void t.test('should convert app model to rest model', async (t) => {
-      const entity: TIndexable<IAppAccountModel> = {
-        id: 1,
-        label: 'account',
-        currency: {
+  void t.test('readonlyModelToSchema', async (t) => {
+    void t.test(
+      'should convert readonly model to readonly schema',
+      async (t) => {
+        const entity: TIndexable<IAccountReadonlyModel> = {
           id: 1,
-          symbol: '$',
-          separator: ',',
-          decimal: '.',
-          precision: 2,
-          code: 'USD',
-        },
-        balance: {
-          units: 1000,
-          cents: 0,
-        },
-      };
-      const expected: TIndexable<TRestAccountSchema> = {
-        id: 1,
-        label: 'account',
-        currency: {
+          label: 'account',
+          currency: {
+            id: 1,
+            symbol: '$',
+            separator: ',',
+            decimal: '.',
+            precision: 2,
+            code: 'USD',
+          },
+          balance: {
+            units: 1000,
+            cents: 0,
+          },
+        };
+        const expected: TIndexable<TAccountReadonlySchema> = {
           id: 1,
-          symbol: '$',
-          separator: ',',
-          decimal: '.',
-          precision: 2,
-          code: 'USD',
-        },
-        balance: {
-          units: 1000,
-          cents: 0,
-        },
-        startingBalance: undefined,
-      };
+          label: 'account',
+          currency: {
+            id: 1,
+            symbol: '$',
+            separator: ',',
+            decimal: '.',
+            precision: 2,
+            code: 'USD',
+          },
+          balance: {
+            units: 1000,
+            cents: 0,
+          },
+          startingBalance: undefined,
+        };
 
-      const adapter = new AccountsAdapter();
-      const result = adapter.modelToRest(entity);
+        const adapter = new AccountsAdapter();
+        const result = adapter.readonlyModelToSchema(entity);
 
-      t.same(result, expected);
-      t.end();
-    });
+        t.same(result, expected);
+        t.end();
+      }
+    );
 
     t.end();
   });
 
-  void t.test('restToModel', async (t) => {
-    void t.test('should convert rest model to app model', async (t) => {
-      const entity: TRestAccountSchema = {
+  void t.test('mutableSchemaToModel', async (t) => {
+    void t.test('should conver mutable schema to mutable model', async (t) => {
+      const entity: TAccountMutableSchema = {
         label: 'account',
-        currency: {
-          id: 1,
-          symbol: '$',
-          separator: ',',
-          decimal: '.',
-          precision: 2,
-          code: 'USD',
-        },
+        currencyId: 1,
         balance: {
           units: 1000,
           cents: 0,
         },
       };
-      const expected: IAppAccountModel = {
+      const expected: IAccountMutableModel = {
         label: 'account',
-        currency: {
-          id: 1,
-          symbol: '$',
-          separator: ',',
-          decimal: '.',
-          precision: 2,
-          code: 'USD',
-        },
+        currencyId: 1,
         balance: {
           units: 1000,
           cents: 0,
@@ -85,7 +78,7 @@ void tap.test('AccountsAdapter', (t) => {
       };
 
       const adapter = new AccountsAdapter();
-      const result = adapter.restToModel(entity);
+      const result = adapter.mutableSchemaToModel(entity);
 
       t.same(result, expected);
       t.end();

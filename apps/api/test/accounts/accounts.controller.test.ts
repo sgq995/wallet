@@ -1,186 +1,212 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import tap from 'tap';
-import { TRestAccountSchema, TRestCreateAccountSchema } from '@wallet/schemas';
+import { TAccountMutableSchema, TAccountReadonlySchema } from '@wallet/schemas';
 import { IReply } from '../../src/models';
 import {
-  AccountsAdapter,
   AccountsController,
-  AccountsRepository,
-  IAppAccountModel,
-  IAppCreateAccountModel,
+  TIndexableAccountReadonlyModel,
+  TIndexableAccountReadonlySchema,
 } from '../../src/accounts';
 import { TIndexable } from '@wallet/utilities/model.utility';
+import { MockAccountsAdapter } from '../../mocks/accounts/accounts.adapter.mock';
+import { MockAccountsRepository } from '../../mocks/accounts/accounts.repository.mock';
+import { TIndexableSchema } from '@wallet/utilities/schema.utility';
 
 void tap.test('AccountsController', (t) => {
-  const adapterMock: AccountsAdapter = <AccountsAdapter>{};
-  const repositoryMock: AccountsRepository = <AccountsRepository>{};
+  const params: TIndexableSchema = { id: 1 };
 
-  const controller = new AccountsController(repositoryMock, adapterMock);
+  const partialMutableAccountSchema: Partial<TAccountMutableSchema> = {
+    label: '',
+  };
+
+  const mutableAccountSchema: TAccountMutableSchema = {
+    balance: {
+      cents: 0,
+      units: 0,
+    },
+    currencyId: 1,
+    label: '',
+    startingBalance: {
+      cents: 0,
+      units: 0,
+    },
+  };
+
+  const readonlyAccountModel: TIndexableAccountReadonlyModel = {
+    balance: {
+      cents: 0,
+      units: 0,
+    },
+    currency: {
+      code: '',
+      decimal: '',
+      id: 1,
+      precision: 1,
+      separator: '',
+      symbol: '',
+    },
+    id: 1,
+    label: '',
+    startingBalance: {
+      cents: 0,
+      units: 0,
+    },
+  };
+
+  const readonlyAccountSchema: TIndexableAccountReadonlySchema = {
+    balance: {
+      cents: 0,
+      units: 0,
+    },
+    currency: {
+      code: '',
+      decimal: '',
+      id: 1,
+      precision: 1,
+      separator: '',
+      symbol: '',
+    },
+    id: 1,
+    label: '',
+    startingBalance: {
+      cents: 0,
+      units: 0,
+    },
+  };
 
   void t.test('find', async (t) => {
-    void t.test('should return all accounts', async (t) => {
-      const params: { id: number } = <{ id: number }>{};
-      const query: Partial<TRestAccountSchema> = {};
-      const expected: IReply<{ Reply: TIndexable<TRestAccountSchema>[] }> = {
-        status: 200,
-        data: [{ id: undefined } as unknown as TIndexable<TRestAccountSchema>],
-      };
+    const expected: IReply<{ Reply: TIndexable<TAccountReadonlySchema>[] }> = {
+      status: 200,
+      data: [readonlyAccountSchema],
+      paging: undefined,
+    };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppAccountModel & IAppCreateAccountModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestAccountSchema>;
-      repositoryMock.find = async (id, query) => [
-        <TIndexable<IAppAccountModel>>{ id },
-      ];
+    const repositoryMock = new MockAccountsRepository({
+      findResult: [readonlyAccountModel],
+    });
+    const adapterMock = new MockAccountsAdapter({
+      readonlySchema: readonlyAccountSchema,
+    });
+    const controller = new AccountsController(repositoryMock, adapterMock);
 
-      const result = await controller.find({
-        query,
-        params,
-        headers: undefined,
-        body: undefined,
-      });
-
-      t.same(result, expected);
-      t.end();
+    const result = await controller.find({
+      query: partialMutableAccountSchema,
+      params: undefined,
+      headers: undefined,
+      body: undefined,
     });
 
-    void t.test('should return selected account', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
-      const query: Partial<TRestAccountSchema> = {};
-      const expected: IReply<{ Reply: TIndexable<TRestAccountSchema> }> = {
-        status: 200,
-        data: { id } as unknown as TIndexable<TRestAccountSchema>,
-      };
-
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppAccountModel & IAppCreateAccountModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestAccountSchema>;
-      repositoryMock.find = async (id, query) => [
-        <TIndexable<IAppAccountModel>>{ id },
-      ];
-
-      const result = await controller.find({
-        query,
-        params,
-        headers: undefined,
-        body: undefined,
-      });
-
-      t.same(result, expected);
-      t.end();
-    });
-
+    t.same(
+      adapterMock.lastReadonlyModel,
+      readonlyAccountModel,
+      'should convert the entity returned by the repository'
+    );
+    t.same(
+      result,
+      expected,
+      'should respond with the entity returned by the adapter'
+    );
     t.end();
   });
 
   void t.test('add', async (t) => {
-    void t.test('should create a new account', async (t) => {
-      const body: TRestCreateAccountSchema = <TRestCreateAccountSchema>{};
+    const expected: IReply<{ Reply: TAccountReadonlySchema }> = {
+      status: 201,
+      data: readonlyAccountSchema,
+    };
 
-      const transaction: TIndexable<IAppAccountModel> = //
-        <TIndexable<IAppAccountModel>>{};
+    const repositoryMock = new MockAccountsRepository({
+      addResult: readonlyAccountModel,
+    });
+    const adapterMock = new MockAccountsAdapter({
+      readonlySchema: readonlyAccountSchema,
+    });
+    const controller = new AccountsController(repositoryMock, adapterMock);
 
-      const expected: IReply<{ Reply: TRestAccountSchema }> = {
-        status: 201,
-        data: transaction as unknown as TRestAccountSchema,
-      };
-
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppCreateAccountModel & IAppAccountModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestAccountSchema>;
-      repositoryMock.add = async () => transaction;
-
-      const result = await controller.add({
-        query: undefined,
-        params: undefined,
-        headers: undefined,
-        body,
-      });
-
-      t.same(result, expected);
-      t.end();
+    const result = await controller.add({
+      query: undefined,
+      params: undefined,
+      headers: undefined,
+      body: mutableAccountSchema,
     });
 
+    t.same(
+      adapterMock.lastReadonlyModel,
+      readonlyAccountModel,
+      'should convert the entity returned by the repository'
+    );
+    t.same(
+      result,
+      expected,
+      'should respond with the entity returned by the adapter'
+    );
     t.end();
   });
 
   void t.test('update', async (t) => {
-    void t.test('should update an account', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
-      const body: TRestAccountSchema = <TRestAccountSchema>{
-        label: 'test',
-      };
+    const expected: IReply<{ Reply: TAccountReadonlySchema }> = {
+      status: 200,
+      data: readonlyAccountSchema,
+    };
 
-      const transaction: TIndexable<IAppAccountModel> = //
-        <TIndexable<IAppAccountModel>>{
-          id,
-          label: 'test',
-        };
+    const repositoryMock = new MockAccountsRepository({
+      updateResult: readonlyAccountModel,
+    });
+    const adapterMock = new MockAccountsAdapter({
+      readonlySchema: readonlyAccountSchema,
+    });
+    const controller = new AccountsController(repositoryMock, adapterMock);
 
-      const expected: IReply<{ Reply: TRestAccountSchema }> = {
-        status: 200,
-        data: transaction as unknown as TRestAccountSchema,
-      };
-
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppAccountModel & IAppCreateAccountModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestAccountSchema>;
-      repositoryMock.update = async (id, transaction) =>
-        <TIndexable<IAppAccountModel>>{
-          id,
-          ...transaction,
-        };
-
-      const result = await controller.update({
-        query: undefined,
-        params,
-        headers: undefined,
-        body,
-      });
-
-      t.same(result, expected);
-      t.end();
+    const result = await controller.update({
+      query: undefined,
+      params,
+      headers: undefined,
+      body: partialMutableAccountSchema,
     });
 
+    t.same(
+      adapterMock.lastReadonlyModel,
+      readonlyAccountModel,
+      'should convert the entity returned by the repository'
+    );
+    t.same(
+      result,
+      expected,
+      'should respond with the entity returned by the adapter'
+    );
     t.end();
   });
 
   void t.test('remove', async (t) => {
-    void t.test('should remove an account', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
+    const expected: IReply<{ Reply: TAccountReadonlySchema }> = {
+      status: 200,
+      data: readonlyAccountSchema,
+    };
 
-      const expected: IReply<{ Reply: TRestAccountSchema }> = {
-        status: 200,
-        data: { id } as unknown as TRestAccountSchema,
-      };
+    const repositoryMock = new MockAccountsRepository({
+      removeResult: readonlyAccountModel,
+    });
+    const adapterMock = new MockAccountsAdapter({
+      readonlySchema: readonlyAccountSchema,
+    });
+    const controller = new AccountsController(repositoryMock, adapterMock);
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppAccountModel & IAppCreateAccountModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestAccountSchema>;
-      repositoryMock.remove = async (id) =>
-        <TIndexable<IAppAccountModel>>{
-          id,
-        };
-
-      const result = await controller.remove({
-        query: undefined,
-        params,
-        headers: undefined,
-        body: undefined,
-      });
-
-      t.same(result, expected);
-      t.end();
+    const result = await controller.remove({
+      query: undefined,
+      params,
+      headers: undefined,
+      body: undefined,
     });
 
+    t.same(
+      adapterMock.lastReadonlyModel,
+      readonlyAccountModel,
+      'should convert the entity returned by the repository'
+    );
+    t.same(
+      result,
+      expected,
+      'should respond with the entity returned by the adapter'
+    );
     t.end();
   });
 

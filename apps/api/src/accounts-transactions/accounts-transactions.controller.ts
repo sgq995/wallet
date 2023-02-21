@@ -11,10 +11,7 @@ import {
 } from '@wallet/schemas';
 import { HttpStatus } from '@wallet/utilities/http.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
-import {
-  IndexableSchema,
-  RecursivePartial,
-} from '@wallet/utilities/schema.utility';
+import { IndexableSchema } from '@wallet/utilities/schema.utility';
 import { IController, IRoute, TRouteHandler } from '../models';
 import { TransactionsController } from '../transactions';
 import { AccountsTransactionsRepository } from './accounts-transactions.repository';

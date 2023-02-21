@@ -81,13 +81,13 @@ export class AccountsAdapter
     throw new Error('Method not implemented.');
   }
 
-  mutableSchemaToModel(entity: TAccountMutableSchema): TAccountMutableSchema;
+  mutableSchemaToModel(entity: TAccountMutableSchema): IAccountMutableModel;
   mutableSchemaToModel(
     entity: TPartialAccountMutableSchema
   ): TPartialAccountMutableModel;
   mutableSchemaToModel(
     entity: TAccountMutableSchema | TPartialAccountMutableSchema
-  ): TAccountMutableSchema | TPartialAccountMutableModel {
+  ): IAccountMutableModel | TPartialAccountMutableModel {
     const label: TPartialAccountMutableModel['label'] = entity.label;
 
     const currencyId: TPartialAccountMutableModel['currencyId'] =

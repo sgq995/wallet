@@ -1,322 +1,400 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
-  TRestTransactionSchema,
-  TRestTypedTransactionSchema,
+  TTransactionMutableSchema,
+  TTransactionReadonlySchema,
+  TTypedTransactionMutableSchema,
+  TTypedTransactionReadonlySchema,
 } from '@wallet/schemas';
 import { TIndexable } from '@wallet/utilities/model.utility';
+import { TIndexableSchema } from '@wallet/utilities/schema.utility';
 import tap from 'tap';
 import { IReply } from '../../src/models';
 import {
-  TransactionsAdapter,
+  TIndexableTransactionReadonlyModel,
+  TIndexableTransactionReadonlySchema,
   TransactionsController,
-  IAppTransactionModel,
-  TransactionsRepository,
 } from '../../src/transactions';
+import { MockTransactionsAdapter } from '../../mocks/transactions/transactions.adapter.mock';
+import { MockTransactionsRepository } from '../../mocks/transactions/transactions.repository.mock';
 
 void tap.test('TransactionsController', (t) => {
-  const adapterMock: TransactionsAdapter = <TransactionsAdapter>{};
-  const repositoryMock: TransactionsRepository = <TransactionsRepository>{};
+  const params: TIndexableSchema = { id: 1 };
 
-  const controller = new TransactionsController(repositoryMock, adapterMock);
+  const partialMutableTransactionSchema: Partial<TTransactionMutableSchema> = {
+    date: '',
+  };
+
+  const mutableTransactionSchema: TTransactionMutableSchema = {
+    cash: {
+      cents: 0,
+      currencyId: 1,
+      units: 0,
+    },
+    date: '',
+    tags: [],
+    type: 'income',
+  };
+
+  const readonlyTransactionModel: TIndexableTransactionReadonlyModel = {
+    cash: {
+      cents: 0,
+      currency: {
+        code: '',
+        decimal: '',
+        id: 1,
+        precision: 1,
+        separator: '',
+        symbol: '',
+      },
+      units: 0,
+    },
+    date: new Date(),
+    id: 1,
+    tags: [],
+    type: 'expense',
+  };
+
+  const readonlyTransactionSchema: TIndexableTransactionReadonlySchema = {
+    cash: {
+      cents: 0,
+      currency: {
+        code: '',
+        decimal: '',
+        id: 1,
+        precision: 1,
+        separator: '',
+        symbol: '',
+      },
+      units: 0,
+    },
+    date: '',
+    id: 1,
+    tags: [],
+    type: 'expense',
+  };
 
   void t.test('find', async (t) => {
-    void t.test('should return all items', async (t) => {
-      const params: { id: number } = <{ id: number }>{};
-      const query: Partial<TRestTransactionSchema> = {};
-      const expected: IReply<{ Reply: TIndexable<TRestTransactionSchema>[] }> =
-        {
-          status: 200,
-          data: [
-            { id: undefined } as unknown as TIndexable<TRestTransactionSchema>,
-          ],
-        };
+    const expected: IReply<{
+      Reply: TIndexable<TTransactionReadonlySchema>[];
+    }> = {
+      status: 200,
+      data: [readonlyTransactionSchema],
+      paging: undefined,
+    };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.find = async (id, query) => [
-        <TIndexable<IAppTransactionModel>>{ id },
-      ];
+    const repositoryMock = new MockTransactionsRepository({
+      findResult: [readonlyTransactionModel],
+    });
+    const adapterMock = new MockTransactionsAdapter({
+      readonlySchema: readonlyTransactionSchema,
+    });
+    const controller = new TransactionsController(repositoryMock, adapterMock);
 
-      const result = await controller.find({
-        query,
-        params,
-        headers: undefined,
-        body: undefined,
-      });
-
-      t.same(result, expected);
-      t.end();
+    const result = await controller.find({
+      query: partialMutableTransactionSchema,
+      params: undefined,
+      headers: undefined,
+      body: undefined,
     });
 
-    void t.test('should return selected item', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
-      const query: Partial<TRestTransactionSchema> = {};
-      const expected: IReply<{ Reply: TIndexable<TRestTransactionSchema> }> = {
-        status: 200,
-        data: { id } as unknown as TIndexable<TRestTransactionSchema>,
-      };
-
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.find = async (id, query) => [
-        <TIndexable<IAppTransactionModel>>{ id },
-      ];
-
-      const result = await controller.find({
-        query,
-        params,
-        headers: undefined,
-        body: undefined,
-      });
-
-      t.same(result, expected);
-      t.end();
-    });
-
+    t.same(
+      adapterMock.lastReadonlyModel,
+      readonlyTransactionModel,
+      'should convert the entity returned by the repository'
+    );
+    t.same(
+      result,
+      expected,
+      'should respond with the entity returned by the adapter'
+    );
     t.end();
   });
 
   void t.test('add', async (t) => {
-    void t.test('should create a new transaction', async (t) => {
-      const body: TRestTransactionSchema = <TRestTransactionSchema>{};
+    const expected: IReply<{ Reply: TTransactionReadonlySchema }> = {
+      status: 201,
+      data: readonlyTransactionSchema,
+    };
 
-      const transaction: TIndexable<IAppTransactionModel> = //
-        <TIndexable<IAppTransactionModel>>{};
+    const repositoryMock = new MockTransactionsRepository({
+      addResult: readonlyTransactionModel,
+    });
+    const adapterMock = new MockTransactionsAdapter({
+      readonlySchema: readonlyTransactionSchema,
+    });
+    const controller = new TransactionsController(repositoryMock, adapterMock);
 
-      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
-        status: 201,
-        data: transaction as unknown as TRestTransactionSchema,
-      };
-
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.add = async () => transaction;
-
-      const result = await controller.add({
-        query: undefined,
-        params: undefined,
-        headers: undefined,
-        body,
-      });
-
-      t.same(result, expected);
-      t.end();
+    const result = await controller.add({
+      query: undefined,
+      params: undefined,
+      headers: undefined,
+      body: mutableTransactionSchema,
     });
 
+    t.same(
+      adapterMock.lastReadonlyModel,
+      readonlyTransactionModel,
+      'should convert the entity returned by the repository'
+    );
+    t.same(
+      result,
+      expected,
+      'should respond with the entity returned by the adapter'
+    );
     t.end();
   });
 
   void t.test('update', async (t) => {
-    void t.test('should update a transaction', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
-      const body: TRestTransactionSchema = <TRestTransactionSchema>{
-        tags: ['test'],
-      };
+    const expected: IReply<{ Reply: TTransactionReadonlySchema }> = {
+      status: 200,
+      data: readonlyTransactionSchema,
+    };
 
-      const transaction: TIndexable<IAppTransactionModel> = //
-        <TIndexable<IAppTransactionModel>>{
-          id,
-          tags: ['test'],
-        };
+    const repositoryMock = new MockTransactionsRepository({
+      updateResult: readonlyTransactionModel,
+    });
+    const adapterMock = new MockTransactionsAdapter({
+      readonlySchema: readonlyTransactionSchema,
+    });
+    const controller = new TransactionsController(repositoryMock, adapterMock);
 
-      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
-        status: 200,
-        data: transaction as unknown as TRestTransactionSchema,
-      };
-
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.update = async (id, transaction) =>
-        <TIndexable<IAppTransactionModel>>{
-          id,
-          ...transaction,
-        };
-
-      const result = await controller.update({
-        query: undefined,
-        params,
-        headers: undefined,
-        body,
-      });
-
-      t.same(result, expected);
-      t.end();
+    const result = await controller.update({
+      query: undefined,
+      params,
+      headers: undefined,
+      body: mutableTransactionSchema,
     });
 
+    t.same(
+      adapterMock.lastReadonlyModel,
+      readonlyTransactionModel,
+      'should convert the entity returned by the repository'
+    );
+    t.same(
+      result,
+      expected,
+      'should respond with the entity returned by the adapter'
+    );
     t.end();
   });
 
   void t.test('remove', async (t) => {
-    void t.test('should remove a transaction', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
+    const expected: IReply<{ Reply: TTransactionReadonlySchema }> = {
+      status: 200,
+      data: readonlyTransactionSchema,
+    };
 
-      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
+    const repositoryMock = new MockTransactionsRepository({
+      removeResult: readonlyTransactionModel,
+    });
+    const adapterMock = new MockTransactionsAdapter({
+      readonlySchema: readonlyTransactionSchema,
+    });
+    const controller = new TransactionsController(repositoryMock, adapterMock);
+
+    const result = await controller.remove({
+      query: undefined,
+      params,
+      headers: undefined,
+      body: undefined,
+    });
+
+    t.same(
+      adapterMock.lastReadonlyModel,
+      readonlyTransactionModel,
+      'should convert the entity returned by the repository'
+    );
+    t.same(
+      result,
+      expected,
+      'should respond with the entity returned by the adapter'
+    );
+    t.end();
+  });
+
+  void t.test('income', (t) => {
+    const partialMutableIncomeSchema: Partial<TTypedTransactionMutableSchema> =
+      {
+        date: '',
+      };
+
+    const mutalbeIncomeSchema: TTypedTransactionMutableSchema = {
+      cash: {
+        cents: 0,
+        currencyId: 1,
+        units: 0,
+      },
+      date: '',
+      tags: [],
+    };
+
+    const readonlyIncomeModel: TIndexableTransactionReadonlyModel = {
+      cash: {
+        cents: 0,
+        currency: {
+          code: '',
+          decimal: '',
+          id: 1,
+          precision: 1,
+          separator: '',
+          symbol: '',
+        },
+        units: 0,
+      },
+      date: new Date(),
+      id: 1,
+      tags: [],
+      type: 'income',
+    };
+
+    const readonlyIncomeSchema: TIndexableTransactionReadonlySchema = {
+      cash: {
+        cents: 0,
+        currency: {
+          code: '',
+          decimal: '',
+          id: 1,
+          precision: 1,
+          separator: '',
+          symbol: '',
+        },
+        units: 0,
+      },
+      date: '',
+      id: 1,
+      tags: [],
+      type: 'income',
+    };
+
+    void t.test('findIncome', async (t) => {
+      const expected: IReply<{
+        Reply: TIndexable<TTransactionReadonlySchema>[];
+      }> = {
         status: 200,
-        data: { id } as unknown as TRestTransactionSchema,
+        data: [readonlyIncomeSchema],
+        paging: undefined,
       };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.remove = async (id) =>
-        <TIndexable<IAppTransactionModel>>{
-          id,
-        };
+      const repositoryMock = new MockTransactionsRepository({
+        findResult: [readonlyIncomeModel],
+      });
+      const adapterMock = new MockTransactionsAdapter({
+        readonlySchema: readonlyIncomeSchema,
+      });
+      const controller = new TransactionsController(
+        repositoryMock,
+        adapterMock
+      );
 
-      const result = await controller.remove({
-        query: undefined,
-        params,
+      const result = await controller.findIncome({
+        query: partialMutableIncomeSchema,
+        params: undefined,
         headers: undefined,
         body: undefined,
       });
 
-      t.same(result, expected);
+      t.same(
+        adapterMock.lastReadonlyModel,
+        readonlyIncomeModel,
+        'should convert the entity returned by the repository'
+      );
+      t.same(
+        result,
+        expected,
+        'should respond with the entity returned by the adapter'
+      );
       t.end();
     });
 
-    t.end();
-  });
-
-  void t.test('findIncome', async (t) => {
-    void t.test('should return all income items', async (t) => {
-      const params: { id: number } = <{ id: number }>{};
-      const query: Partial<TRestTransactionSchema> = {};
-      const expected: IReply<{ Reply: TIndexable<TRestTransactionSchema>[] }> =
-        {
-          status: 200,
-          data: [
-            { id: undefined } as unknown as TIndexable<TRestTransactionSchema>,
-          ],
-        };
-
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.find = async (id, query) => [
-        <TIndexable<IAppTransactionModel>>{ id },
-      ];
-
-      const result = await controller.find({
-        query,
-        params,
-        headers: undefined,
-        body: undefined,
-      });
-
-      t.same(result, expected);
-      t.end();
-    });
-
-    t.end();
-  });
-
-  void t.test('addIncome', async (t) => {
-    void t.test('should create a new income transaction', async (t) => {
-      const body: TRestTypedTransactionSchema = <TRestTypedTransactionSchema>{};
-
-      const expected: IReply<{ Reply: TRestTypedTransactionSchema }> = {
+    void t.test('addIncome', async (t) => {
+      const expected: IReply<{ Reply: TTypedTransactionReadonlySchema }> = {
         status: 201,
-        data: {
-          type: 'income',
-        } as unknown as TRestTypedTransactionSchema,
+        data: readonlyIncomeSchema,
       };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.add = async (entity) =>
-        entity as TIndexable<IAppTransactionModel>;
+      const repositoryMock = new MockTransactionsRepository({
+        addResult: readonlyIncomeModel,
+      });
+      const adapterMock = new MockTransactionsAdapter({
+        readonlySchema: readonlyIncomeSchema,
+      });
+      const controller = new TransactionsController(
+        repositoryMock,
+        adapterMock
+      );
 
       const result = await controller.addIncome({
         query: undefined,
         params: undefined,
         headers: undefined,
-        body,
+        body: mutalbeIncomeSchema,
       });
 
-      t.same(result, expected);
+      t.same(
+        adapterMock.lastReadonlyModel,
+        readonlyIncomeModel,
+        'should convert the entity returned by the repository'
+      );
+      t.same(
+        result,
+        expected,
+        'should respond with the entity returned by the adapter'
+      );
       t.end();
     });
 
-    t.end();
-  });
-
-  void t.test('updateIncome', async (t) => {
-    void t.test('should update a income transaction', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
-      const body: TRestTransactionSchema = <TRestTransactionSchema>{
-        tags: ['test'],
-      };
-
-      const transaction: TIndexable<IAppTransactionModel> = //
-        <TIndexable<IAppTransactionModel>>{
-          id,
-          type: 'income',
-          tags: ['test'],
-        };
-
-      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
+    void t.test('updateIncome', async (t) => {
+      const expected: IReply<{ Reply: TTypedTransactionReadonlySchema }> = {
         status: 200,
-        data: transaction as unknown as TRestTransactionSchema,
+        data: readonlyIncomeSchema,
       };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.update = async (id, entity) =>
-        <TIndexable<IAppTransactionModel>>{
-          id,
-          ...entity,
-        };
+      const repositoryMock = new MockTransactionsRepository({
+        updateResult: readonlyIncomeModel,
+      });
+      const adapterMock = new MockTransactionsAdapter({
+        readonlySchema: readonlyIncomeSchema,
+      });
+      const controller = new TransactionsController(
+        repositoryMock,
+        adapterMock
+      );
 
       const result = await controller.updateIncome({
         query: undefined,
         params,
         headers: undefined,
-        body,
+        body: partialMutableIncomeSchema,
       });
 
-      t.same(result, expected);
+      t.same(
+        adapterMock.lastReadonlyModel,
+        readonlyIncomeModel,
+        'should convert the entity returned by the repository'
+      );
+      t.same(
+        result,
+        expected,
+        'should respond with the entity returned by the adapter'
+      );
       t.end();
     });
 
-    t.end();
-  });
-
-  void t.test('removeIncome', async (t) => {
-    void t.test('should remove a income transaction', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
-
-      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
+    void t.test('removeIncome', async (t) => {
+      const expected: IReply<{ Reply: TTransactionReadonlySchema }> = {
         status: 200,
-        data: { id } as unknown as TRestTransactionSchema,
+        data: readonlyIncomeSchema,
       };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.remove = async (id) =>
-        <TIndexable<IAppTransactionModel>>{
-          id,
-        };
+      const repositoryMock = new MockTransactionsRepository({
+        removeResult: readonlyIncomeModel,
+      });
+      const adapterMock = new MockTransactionsAdapter({
+        readonlySchema: readonlyIncomeSchema,
+      });
+      const controller = new TransactionsController(
+        repositoryMock,
+        adapterMock
+      );
 
       const result = await controller.removeIncome({
         query: undefined,
@@ -325,156 +403,224 @@ void tap.test('TransactionsController', (t) => {
         body: undefined,
       });
 
-      t.same(result, expected);
+      t.same(
+        adapterMock.lastReadonlyModel,
+        readonlyIncomeModel,
+        'should convert the entity returned by the repository'
+      );
+      t.same(
+        result,
+        expected,
+        'should respond with the entity returned by the adapter'
+      );
       t.end();
     });
 
     t.end();
   });
 
-  void t.test('findExpenses', async (t) => {
-    void t.test('should return all expense items', async (t) => {
-      const params: { id: number } = <{ id: number }>{};
-      const query: Partial<TRestTransactionSchema> = {};
-      const expected: IReply<{ Reply: TIndexable<TRestTransactionSchema>[] }> =
-        {
-          status: 200,
-          data: [
-            {
-              id: undefined,
-              type: 'expense',
-            } as unknown as TIndexable<TRestTransactionSchema>,
-          ],
-        };
+  void t.test('expense', async (t) => {
+    const partialMutableExpenseSchema: Partial<TTypedTransactionMutableSchema> =
+      {
+        tags: [],
+      };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.find = async (id, query) => [
-        <TIndexable<IAppTransactionModel>>{ id, ...query },
-      ];
+    const mutableExpenseSchema: TTypedTransactionMutableSchema = {
+      cash: {
+        cents: 0,
+        currencyId: 0,
+        units: 0,
+      },
+      date: '',
+      tags: [],
+    };
+
+    const readonlyExpenseModel: TIndexableTransactionReadonlyModel = {
+      cash: {
+        cents: 0,
+        currency: {
+          code: '',
+          decimal: '',
+          id: 1,
+          precision: 1,
+          separator: '',
+          symbol: '',
+        },
+        units: 0,
+      },
+      date: new Date(),
+      id: 1,
+      tags: [],
+      type: 'expense',
+    };
+
+    const readonlyExpenseSchema: TIndexableTransactionReadonlySchema = {
+      cash: {
+        cents: 0,
+        currency: {
+          code: '',
+          decimal: '',
+          id: 1,
+          precision: 1,
+          separator: '',
+          symbol: '',
+        },
+        units: 0,
+      },
+      date: '',
+      id: 1,
+      tags: [],
+      type: 'expense',
+    };
+
+    void t.test('findExpenses', async (t) => {
+      const expected: IReply<{
+        Reply: TIndexableTransactionReadonlySchema[];
+      }> = {
+        status: 200,
+        data: [readonlyExpenseSchema],
+        paging: undefined,
+      };
+
+      const repositoryMock = new MockTransactionsRepository({
+        findResult: [readonlyExpenseModel],
+      });
+      const adapterMock = new MockTransactionsAdapter({
+        readonlySchema: readonlyExpenseSchema,
+      });
+      const controller = new TransactionsController(
+        repositoryMock,
+        adapterMock
+      );
 
       const result = await controller.findExpenses({
-        query,
-        params,
+        query: partialMutableExpenseSchema,
+        params: undefined,
         headers: undefined,
         body: undefined,
       });
 
-      t.same(result, expected);
+      t.same(
+        adapterMock.lastReadonlyModel,
+        readonlyExpenseModel,
+        'should convert the entity returned by the repository'
+      );
+      t.same(
+        result,
+        expected,
+        'should respond with the entity returned by the adapter'
+      );
       t.end();
     });
 
-    t.end();
-  });
-
-  void t.test('addExpenses', async (t) => {
-    void t.test('should create a new expense transaction', async (t) => {
-      const body: TRestTransactionSchema = <TRestTransactionSchema>{};
-
-      const transaction: TIndexable<IAppTransactionModel> = //
-        <TIndexable<IAppTransactionModel>>{
-          type: 'expense',
-        };
-
-      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
+    void t.test('addExpenses', async (t) => {
+      const expected: IReply<{ Reply: TTransactionReadonlySchema }> = {
         status: 201,
-        data: transaction as unknown as TRestTransactionSchema,
+        data: readonlyExpenseSchema,
       };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.add = async (entity) =>
-        entity as TIndexable<IAppTransactionModel>;
+      const repositoryMock = new MockTransactionsRepository({
+        addResult: readonlyExpenseModel,
+      });
+      const adapterMock = new MockTransactionsAdapter({
+        readonlySchema: readonlyExpenseSchema,
+      });
+      const controller = new TransactionsController(
+        repositoryMock,
+        adapterMock
+      );
 
       const result = await controller.addExpenses({
         query: undefined,
         params: undefined,
         headers: undefined,
-        body,
+        body: mutableExpenseSchema,
       });
 
-      t.same(result, expected);
+      t.same(
+        adapterMock.lastReadonlyModel,
+        readonlyExpenseModel,
+        'should convert the entity returned by the repository'
+      );
+      t.same(
+        result,
+        expected,
+        'should respond with the entity returned by the adapter'
+      );
       t.end();
     });
 
-    t.end();
-  });
-
-  void t.test('updateExpenses', async (t) => {
-    void t.test('should update a expense transaction', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
-      const body: TRestTransactionSchema = <TRestTransactionSchema>{
-        tags: ['test'],
-      };
-
-      const transaction: TIndexable<IAppTransactionModel> = //
-        <TIndexable<IAppTransactionModel>>{
-          id,
-          type: 'expense',
-          tags: ['test'],
-        };
-
-      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
+    void t.test('updateExpenses', async (t) => {
+      const expected: IReply<{ Reply: TTransactionReadonlySchema }> = {
         status: 200,
-        data: transaction as unknown as TRestTransactionSchema,
+        data: readonlyExpenseSchema,
       };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.update = async (id, transaction) =>
-        <TIndexable<IAppTransactionModel>>{
-          id,
-          ...transaction,
-        };
+      const repositoryMock = new MockTransactionsRepository({
+        updateResult: readonlyExpenseModel,
+      });
+      const adapterMock = new MockTransactionsAdapter({
+        readonlySchema: readonlyExpenseSchema,
+      });
+      const controller = new TransactionsController(
+        repositoryMock,
+        adapterMock
+      );
 
       const result = await controller.updateExpenses({
         query: undefined,
         params,
         headers: undefined,
-        body,
+        body: mutableExpenseSchema,
       });
 
-      t.same(result, expected);
+      t.same(
+        adapterMock.lastReadonlyModel,
+        readonlyExpenseModel,
+        'should convert the entity returned by the repository'
+      );
+      t.same(
+        result,
+        expected,
+        'should respond with the entity returned by the adapter'
+      );
       t.end();
     });
 
-    t.end();
-  });
-
-  void t.test('removeExpenses', async (t) => {
-    void t.test('should remove a expense transaction', async (t) => {
-      const id = 1;
-      const params: { id: number } = { id };
-
-      const expected: IReply<{ Reply: TRestTransactionSchema }> = {
+    void t.test('removeExpenses', async (t) => {
+      const expectedResponse: IReply<{ Reply: TTransactionReadonlySchema }> = {
         status: 200,
-        data: { id } as unknown as TRestTransactionSchema,
+        data: readonlyExpenseSchema,
       };
 
-      adapterMock.restToModel = (model) =>
-        model as unknown as IAppTransactionModel;
-      adapterMock.modelToRest = (model) =>
-        model as unknown as TIndexable<TRestTransactionSchema>;
-      repositoryMock.remove = async (id) =>
-        <TIndexable<IAppTransactionModel>>{
-          id,
-        };
+      const repositoryMock = new MockTransactionsRepository({
+        removeResult: readonlyExpenseModel,
+      });
+      const adapterMock = new MockTransactionsAdapter({
+        readonlySchema: readonlyExpenseSchema,
+      });
+      const controller = new TransactionsController(
+        repositoryMock,
+        adapterMock
+      );
 
-      const result = await controller.removeExpenses({
+      const response = await controller.removeExpenses({
         query: undefined,
         params,
         headers: undefined,
         body: undefined,
       });
 
-      t.same(result, expected);
+      t.same(
+        adapterMock.lastReadonlyModel,
+        readonlyExpenseModel,
+        'should convert the entity returned by the repository'
+      );
+      t.same(
+        response,
+        expectedResponse,
+        'should respond with the entity returned by the adapter'
+      );
       t.end();
     });
 

@@ -42,7 +42,7 @@ describe('url.utility', () => {
           world: 'hello',
         },
       };
-      const expected = "test%5B'hello'%5D=world&test%5B'world'%5D=hello";
+      const expected = 'test%5Bhello%5D=world&test%5Bworld%5D=hello';
 
       const result = buildUrlQuery(query);
 
@@ -71,7 +71,7 @@ describe('url.utility', () => {
         },
       };
       const expected =
-        "test%5B'dict'%5D%5B'hello'%5D=world&test%5B'dict'%5D%5B'world'%5D=hello&test%5B'array'%5D%5B%5D=hello&test%5B'array'%5D%5B%5D=world";
+        'test%5Bdict%5D%5Bhello%5D=world&test%5Bdict%5D%5Bworld%5D=hello&test%5Barray%5D%5B%5D=hello&test%5Barray%5D%5B%5D=world';
 
       const result = buildUrlQuery(query);
 
@@ -115,7 +115,7 @@ describe('url.utility', () => {
       };
 
       const expected =
-        "baseUrl/endpoint?boolean=true&number=0&string=hello%20world!&dictionary%5B'hello'%5D=world&array%5B%5D=hello&array%5B%5D=world";
+        'baseUrl/endpoint?boolean=true&number=0&string=hello%20world!&dictionary%5Bhello%5D=world&array%5B%5D=hello&array%5B%5D=world';
 
       const result = buildUrl(baseUrl, endpoint, parameters);
 
