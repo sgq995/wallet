@@ -6,7 +6,7 @@ export function useCreateTransaction() {
   const queryClient = useQueryClient();
 
   return useMutation(
-    [TRANSACTIONS_KEY],
+    [TRANSACTIONS_KEY, 'create'],
     (transaction: TTransactionBody) => TransactionsService.add(transaction),
     {
       onSuccess() {

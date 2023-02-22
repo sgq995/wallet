@@ -16,7 +16,7 @@ export function useIntersection<E extends Element>({
   onIntersectOut,
   options,
 }: IUseIntersectionParameters) {
-  const ref = useRef<E>();
+  const ref = useRef<E>(null);
 
   const callback = useCallback<IntersectionObserverCallback>(
     (entries, observer) => {
@@ -33,7 +33,7 @@ export function useIntersection<E extends Element>({
 
   useEffect(() => {
     const observer = new IntersectionObserver(callback, options);
-    observer.observe(ref.current);
+    observer.observe(ref.current!);
 
     return () => {
       observer.disconnect();

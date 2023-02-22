@@ -2,10 +2,10 @@ import React from 'react';
 import { TStore, TStoreKey } from '../form-store';
 import { FormStoreProvider } from './form-store-provider';
 
-export function WithFormStoreProvider<T, S extends TStore<TStoreKey, string>>(
-  WrappedComponent: React.ComponentType<T>,
-  defaultValues: S
-) {
+export function WithFormStoreProvider<
+  T extends {},
+  S extends TStore<TStoreKey, string>
+>(WrappedComponent: React.ComponentType<T>, defaultValues: S) {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 

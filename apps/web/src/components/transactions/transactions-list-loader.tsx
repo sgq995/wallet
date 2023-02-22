@@ -2,7 +2,8 @@ import { Box, Typography } from '@mui/material';
 import { isEqual, uniqWith } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { useInfiniteTransactions } from '../../hooks/transactions';
-import { TransactionsList } from './transactions-list';
+import { InfiniteList } from '../common/infinite-list';
+import { TransactionsListContent } from './transactions-list-content';
 import { TransactionsListFallback } from './transactions-list-fallback';
 
 export const TransactionsListLoader: React.FC = () => {
@@ -36,10 +37,9 @@ export const TransactionsListLoader: React.FC = () => {
 
   return (
     <>
-      <TransactionsList
-        transactions={transactions}
-        onBottomReached={handleListBottomReached}
-      />
+      <InfiniteList onBottomReached={handleListBottomReached}>
+        <TransactionsListContent transactions={transactions} />
+      </InfiniteList>
 
       {isFetchingNextPage && <TransactionsListFallback />}
     </>

@@ -30,59 +30,80 @@ function isValidType(type: string) {
   return false;
 }
 
-export interface ITransactionsFormProps {}
+export interface ITransactionsFormProps extends PropsWithChildren {
+  type?: string;
+  description?: string;
+  year?: string;
+  month?: string;
+  day?: string;
+  currency?: string;
+  units?: string;
+  cents?: string;
+}
 
-export const TransactionsForm: React.FC<
-  PropsWithChildren<ITransactionsFormProps>
-> = WithFormStoreProvider(({ children }) => {
-  const typeRef = useUncontrolledInput('type', {
-    defaultValue: defaultType,
-    rawValidator: isValidType,
-  });
-  const descriptionRef = useUncontrolledInput('description', {
-    defaultValue: defaultDescription,
-  });
+export const TransactionsForm: React.FC<ITransactionsFormProps> =
+  WithFormStoreProvider(
+    ({
+      type = defaultType,
+      description = defaultDescription,
+      year = defaultYear,
+      month = defaultMonth,
+      day = defaultDay,
+      currency = defaultCurrency,
+      units = defaultUnits,
+      cents = defaultCents,
+      children,
+    }) => {
+      const typeRef = useUncontrolledInput('type', {
+        defaultValue: type,
+        rawValidator: isValidType,
+      });
+      const descriptionRef = useUncontrolledInput('description', {
+        defaultValue: description,
+      });
 
-  return (
-    <Stack component="form" direction="column" spacing={4}>
-      <FormDateField
-        id="transactions-date"
-        defaultYear={defaultYear}
-        defaultMonth={defaultMonth}
-        defaultDay={defaultDay}
-        required
-      />
+      return (
+        <Stack component="form" direction="column" spacing={4}>
+          <FormDateField
+            id="transactions-date"
+            defaultYear={year}
+            defaultMonth={month}
+            defaultDay={day}
+            required
+          />
 
-      <TextField
-        id="transactions-type"
-        inputRef={typeRef}
-        defaultValue={defaultType}
-        label="Type"
-        required
-        select
-        SelectProps={{ native: true }}
-      >
-        <option value="" disabled></option>
-        <option value="income">Income</option>
-        <option value="expense">Expense</option>
-      </TextField>
+          <TextField
+            id="transactions-type"
+            inputRef={typeRef}
+            defaultValue={type}
+            label="Type"
+            required
+            select
+            SelectProps={{ native: true }}
+          >
+            <option value="" disabled></option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </TextField>
 
-      <FormAmountField
-        id="transactions-amount"
-        defaultCurrency={defaultCurrency}
-        defaultUnits={defaultUnits}
-        defaultCents={defaultCents}
-        required
-      />
+          <FormAmountField
+            id="transactions-amount"
+            defaultCurrency={currency}
+            defaultUnits={units}
+            defaultCents={cents}
+            required
+          />
 
-      <TextField
-        id="transactions-description"
-        inputRef={descriptionRef}
-        defaultValue={defaultDescription}
-        label="Description"
-      />
+          <TextField
+            id="transactions-description"
+            inputRef={descriptionRef}
+            defaultValue={description}
+            label="Description"
+          />
 
-      {children}
-    </Stack>
+          {children}
+        </Stack>
+      );
+    },
+    DEFAULT_TRANSACTIONS_FORM_VALUES
   );
-}, DEFAULT_TRANSACTIONS_FORM_VALUES);
