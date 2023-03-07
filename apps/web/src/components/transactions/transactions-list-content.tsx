@@ -1,13 +1,13 @@
 import { ListItemButton } from '@mui/material';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { useState } from 'react';
-import { ITransactionReadonly } from '../../models/transaction.model';
+import { ITransactionReadonlyModel } from '../../models/transaction.model';
 import { cashToString } from '../../utilities/cash.utility';
 import { TransactionsEditModal } from './transactions-edit-dialog';
 import { TransactionsListItem } from './transactions-list-item';
 
 export interface ITransactionsListContentProps {
-  transactions: TIndexable<ITransactionReadonly>[];
+  transactions: TIndexable<ITransactionReadonlyModel>[];
 }
 
 export const TransactionsListContent: React.FC<
@@ -15,7 +15,7 @@ export const TransactionsListContent: React.FC<
 > = ({ transactions }) => {
   const [open, setOpen] = useState(false);
   const [transaction, setTransaction] = useState<
-    TIndexable<ITransactionReadonly> | undefined
+    TIndexable<ITransactionReadonlyModel> | undefined
   >(undefined);
 
   return (

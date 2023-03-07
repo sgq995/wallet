@@ -1,3 +1,3 @@
-export interface IUpdateable<Entity, Result> {
-  update(entity: Entity): Promise<Result>;
+export interface IUpdateable<Params, Entity, Result> {
+  update(params: Params, entity: Entity): Promise<Result>;
 }

@@ -1,11 +1,9 @@
 import { Box, Grid } from '@mui/material';
-import { useQuery } from 'react-query';
 import {
   TransactionsFormCreateButton,
   TransactionsForm,
 } from '../components/transactions';
 import { TransactionsListLoader } from '../components/transactions/transactions-list-loader';
-import { CurrencyService } from '../services';
 
 export default function Home() {
   return (

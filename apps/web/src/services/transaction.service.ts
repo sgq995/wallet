@@ -8,43 +8,56 @@ import { TPaginableSchema } from '@wallet/utilities/schema.utility';
 import config from '../config';
 import { IPaging } from '../models/paging.model';
 import {
-  ITransactionMutable,
-  ITransactionReadonly,
+  ITransactionMutableModel,
+  ITransactionReadonlyModel,
 } from '../models/transaction.model';
-import { restDelete, restGet, restPost } from '../utilities/rest-api.utility';
+import {
+  restDelete,
+  restGet,
+  restPatch,
+  restPost,
+} from '../utilities/rest-api.utility';
 import { ICreateable } from './creatable.service';
 import { IDeletable } from './deletable.service';
 import { IReadable } from './readable.service';
 import { HttpService } from './http.service';
+import { IUpdateable } from './updateable.service';
+import { isUndefined } from 'lodash';
 
 const TRANSACTIONS_BASE_PATH = '/v2/transactions';
 
-type TIndexableTransaction = TIndexable<ITransactionReadonly>;
-type TIndexableRestTransaction = TIndexable<TTransactionReadonlySchema>;
+type TIndexableTransactionModel = TIndexable<ITransactionReadonlyModel>;
+type TIndexableTransactionSchema = TIndexable<TTransactionReadonlySchema>;
 
-export type TTransactionParams = Pick<TIndexableTransaction, 'id'>;
+export type TTransactionParams = Pick<TIndexableTransactionModel, 'id'>;
 
-export type TTransactionQuery = Partial<TIndexableTransaction> & {
+export type TTransactionQuery = Partial<TIndexableTransactionModel> & {
   paging: Partial<IPaging>;
 };
 
-export type TTransactionBody = ITransactionMutable;
+export type TTransactionBody = ITransactionMutableModel;
 
-export type TTransactionCreateResponse = TIndexableTransaction;
+export type TPartialTransactionBody = Partial<TTransactionBody>;
+
+export type TTransactionCreateResponse = TIndexableTransactionModel;
 
 export type TTransactionReadResponse = {
-  transactions: Array<TIndexableTransaction>;
+  transactions: Array<TIndexableTransactionModel>;
   paging: IPaging;
 };
 
-export type TTransactionDeleteResponse = TIndexableTransaction;
+export type TTransactionUpdateResponse = TIndexableTransactionModel;
 
-function restToApp(entity: TTransactionReadonlySchema): ITransactionReadonly {
+export type TTransactionDeleteResponse = TIndexableTransactionModel;
+
+function restToApp(
+  entity: TTransactionReadonlySchema
+): ITransactionReadonlyModel {
   if (!('currency' in entity.cash)) {
     throw new Error('Not implemented yet');
   }
 
-  const cash: ITransactionReadonly['cash'] = {
+  const cash: ITransactionReadonlyModel['cash'] = {
     units: entity.cash.units,
     cents: entity.cash.cents,
     currency: {
@@ -75,27 +88,49 @@ function restToApp(entity: TTransactionReadonlySchema): ITransactionReadonly {
 }
 
 function readonlyRestToModel(
-  entity: TIndexableRestTransaction
-): TIndexableTransaction {
+  entity: TIndexableTransactionSchema
+): TIndexableTransactionModel {
   return {
     ...restToApp(entity),
     id: entity.id,
   };
 }
 
-function mutableModelToRest(
-  entity: ITransactionMutable
-): TTransactionMutableSchema {
-  const cash: TTransactionMutableSchema['cash'] = {
-    units: entity.cash.units,
-    cents: entity.cash.cents,
-    currencyId: entity.cash.currencyId,
-  };
+function mutableModelToSchema(
+  entity: ITransactionMutableModel
+): TTransactionMutableSchema;
+function mutableModelToSchema(
+  entity: Partial<ITransactionMutableModel>
+): Partial<TTransactionMutableSchema>;
+function mutableModelToSchema(
+  entity: ITransactionMutableModel | Partial<ITransactionMutableModel>
+): TTransactionMutableSchema | Partial<TTransactionMutableSchema> {
+  const cash: TTransactionMutableSchema['cash'] | undefined = !isUndefined(
+    entity.cash
+  )
+    ? {
+        units: entity.cash.units,
+        cents: entity.cash.cents,
+        currencyId: entity.cash.currencyId,
+      }
+    : undefined;
+
+  const date: TTransactionMutableSchema['date'] | undefined = !isUndefined(
+    entity.date
+  )
+    ? dateTime(entity.date, true)
+    : undefined;
+
+  const tags: TTransactionMutableSchema['tags'] | undefined = !isUndefined(
+    entity.tags
+  )
+    ? [...entity.tags]
+    : undefined;
 
   return {
     cash,
-    date: dateTime(entity.date, true),
-    tags: [...entity.tags],
+    date,
+    tags,
     type: entity.type,
     accountId: entity.accountId,
     description: entity.description,
@@ -109,6 +144,11 @@ class TransactionsServiceImpl
   implements
     ICreateable<TTransactionBody, TTransactionCreateResponse>,
     IReadable<TTransactionQuery, TTransactionReadResponse>,
+    IUpdateable<
+      TTransactionParams,
+      TPartialTransactionBody,
+      TTransactionUpdateResponse
+    >,
     IDeletable<TTransactionParams, TTransactionDeleteResponse>
 {
   constructor(private _apiBaseUrl: string, signal?: AbortSignal) {
@@ -116,10 +156,10 @@ class TransactionsServiceImpl
   }
 
   async add(entity: TTransactionBody): Promise<TTransactionCreateResponse> {
-    const body = await restPost<TIndexableRestTransaction>({
+    const body = await restPost<TIndexableTransactionSchema>({
       baseUrl: this._apiBaseUrl,
       endpoint: TRANSACTIONS_BASE_PATH,
-      body: mutableModelToRest(entity),
+      body: mutableModelToSchema(entity),
       signal: this.signal,
     });
 
@@ -128,7 +168,7 @@ class TransactionsServiceImpl
 
   async find(query?: TTransactionQuery): Promise<TTransactionReadResponse> {
     const body = await restGet<
-      TIndexableRestTransaction[],
+      TIndexableTransactionSchema[],
       TPaginableSchema['paging']
     >({
       baseUrl: this._apiBaseUrl,
@@ -141,6 +181,20 @@ class TransactionsServiceImpl
       transactions: body.data.map(readonlyRestToModel),
       paging: body.paging,
     };
+  }
+
+  async update(
+    params: TTransactionParams,
+    entity: TPartialTransactionBody
+  ): Promise<TTransactionUpdateResponse> {
+    const body = await restPatch<TTransactionUpdateResponse>({
+      baseUrl: this._apiBaseUrl,
+      endpoint: `${TRANSACTIONS_BASE_PATH}/${params.id}`,
+      body: mutableModelToSchema(entity),
+      signal: this.signal,
+    });
+
+    return body.data;
   }
 
   async remove(

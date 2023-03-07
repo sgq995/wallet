@@ -11,12 +11,12 @@ export interface IUseIntersectionParameters {
   options?: IntersectionObserverInit;
 }
 
-export function useIntersection<E extends Element>({
+export function useIntersection<ElementType extends Element>({
   onIntersectIn,
   onIntersectOut,
   options,
 }: IUseIntersectionParameters) {
-  const ref = useRef<E>(null);
+  const ref = useRef<ElementType>(null);
 
   const callback = useCallback<IntersectionObserverCallback>(
     (entries, observer) => {

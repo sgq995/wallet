@@ -138,6 +138,8 @@ function getDaysPerMonth(month: string, year?: number): number {
       return 28;
     }
   }
+
+  throw new RangeError('WTF');
 }
 
 function createDaysList(daysPerMonth: number): string[] {

@@ -1,3 +1,3 @@
-export interface IDeletable<Entity, Result> {
-  remove(entity: Entity): Promise<Result>;
+export interface IDeletable<Params, Result> {
+  remove(params: Params): Promise<Result>;
 }
