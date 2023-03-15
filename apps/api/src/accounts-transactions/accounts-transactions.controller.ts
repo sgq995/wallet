@@ -137,11 +137,13 @@ export class AccountsTransactionsController implements IController {
     Body: Partial<TTransactionMutableSchema>;
     Reply: TIndexable<TTransactionReadonlySchema>;
   }> = async ({ params, body, ...request }) => {
-    await this._repository.verifyAccountExists();
-    await this._repository.verifyTransactionOwnership(
-      params.accountId,
-      params.transactionId
-    );
+    await Promise.all([
+      this._repository.verifyAccountExists(),
+      this._repository.verifyTransactionOwnership(
+        params.accountId,
+        params.transactionId
+      ),
+    ]);
     return this._transactionsController.update({
       ...request,
       params: { id: params.transactionId },
@@ -153,11 +155,13 @@ export class AccountsTransactionsController implements IController {
     Params: TAccountIdSchema & TTransactionIdSchema;
     Reply: TIndexable<TTransactionReadonlySchema>;
   }> = async ({ params, ...request }) => {
-    await this._repository.verifyAccountExists();
-    await this._repository.verifyTransactionOwnership(
-      params.accountId,
-      params.transactionId
-    );
+    await Promise.all([
+      this._repository.verifyAccountExists(),
+      this._repository.verifyTransactionOwnership(
+        params.accountId,
+        params.transactionId
+      ),
+    ]);
     return this._transactionsController.remove({
       ...request,
       params: { id: params.transactionId },
