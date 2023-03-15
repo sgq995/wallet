@@ -5,6 +5,12 @@ const withTM = require('next-transpile-modules')([
   '@wallet/utilities',
 ]);
 
-module.exports = withTM({
-  reactStrictMode: true,
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
 });
+
+module.exports = withBundleAnalyzer(
+  withTM({
+    reactStrictMode: true,
+  })
+);
