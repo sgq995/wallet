@@ -18,7 +18,7 @@ export function FormTextField({
   name,
   label,
 }: IFormTextFieldProps) {
-  const fieldName = name;
+  const fieldName = name ?? '';
 
   const { value, onChange, isValid } = useControlledFormComponent({
     name: fieldName,

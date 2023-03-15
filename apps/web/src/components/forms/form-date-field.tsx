@@ -259,24 +259,24 @@ export const FormDateField: React.FC<IFormDateFieldProps> = ({
       <YearSelect
         id={yearFieldId}
         required={required}
-        year={year}
+        year={year ?? ''}
         setYear={setYear}
       />
 
       <MonthSelect
         id={monthFieldId}
         required={required}
-        month={month}
+        month={month ?? ''}
         setMonth={setMonth}
       />
 
       <DaySelect
         id={dayFieldId}
         required={required}
-        day={day}
+        day={day ?? ''}
         setDay={setDay}
-        month={month}
-        year={year}
+        month={month ?? ''}
+        year={year ?? ''}
       />
     </Stack>
   );

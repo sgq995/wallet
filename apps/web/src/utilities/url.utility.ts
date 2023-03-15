@@ -39,7 +39,7 @@ function objectToQuery(
   return dictionaryToQuery(key, obj);
 }
 
-const typeToQueryMap = {
+const typeToQueryMap: Record<string, (key: string, value: any) => string> = {
   boolean: booleanToQuery,
   number: numberToQuery,
   string: stringToQuery,
@@ -47,12 +47,15 @@ const typeToQueryMap = {
 };
 
 function typeToQuery(key: string, value: any): string {
-  return (
-    typeToQueryMap[typeof value]?.(
-      encodeURIComponent(decodeURIComponent(key)),
-      value
-    ) ?? ''
-  );
+  const type: string = typeof value;
+  const toQuery: ((key: string, value: any) => string) | undefined =
+    typeToQueryMap[type];
+
+  if (!toQuery) {
+    return '';
+  }
+
+  return toQuery(encodeURIComponent(decodeURIComponent(key)), value);
 }
 
 function joinQueryParams(queryParams: string[]): string {

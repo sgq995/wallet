@@ -74,6 +74,8 @@ function getDaysPerMonth(month: string, year?: number): number {
       return 28;
     }
   }
+
+  return NaN;
 }
 
 // const parseWithLeadingZero = createPadStartParser(2, '0');
@@ -136,7 +138,7 @@ export function FormDateField({
         return false;
       }
 
-      const daysPerMonth = getDaysPerMonth(MONTH_LIST[month], year);
+      const daysPerMonth = getDaysPerMonth(MONTH_LIST[month!], year);
       if (value < 1 && daysPerMonth < value) {
         return false;
       }
@@ -160,11 +162,11 @@ export function FormDateField({
   );
 
   useEffect(() => {
-    if (month < 0 && MONTH_LIST.length <= month) {
+    if (month! < 0 && MONTH_LIST.length <= month!) {
       return;
     }
 
-    const daysPerMonth = getDaysPerMonth(MONTH_LIST[month], year);
+    const daysPerMonth = getDaysPerMonth(MONTH_LIST[month!], year);
     setDayList(() =>
       new Array(daysPerMonth).fill(0).map((_, index) => (index + 1).toString())
     );

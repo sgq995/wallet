@@ -1,7 +1,6 @@
 import { Delete } from '@mui/icons-material';
-import { Avatar, List, Skeleton, Stack } from '@mui/material';
+import { Avatar, Skeleton, Stack } from '@mui/material';
 import { Repeat } from '../helpers';
-import { TransactionsListItem } from './transactions-list-item';
 
 export const TransactionsListFallback: React.FC = () => {
   return (

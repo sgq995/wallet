@@ -14,14 +14,14 @@ export interface IInfiniteListProps<
   children: (entity: TEntity) => ReactElement;
 }
 
-export const InfiniteList: React.FC<IInfiniteListProps> = ({
+export const InfiniteList = <TEntity,>({
   list,
   isLoading,
   isFetching,
   hasNextPage,
   onLoadMore,
   children,
-}) => {
+}: IInfiniteListProps<TEntity>) => {
   const [observerRef, isIntersecting] = useIntersectionObserver({
     root: null,
     rootMargin: '0px',

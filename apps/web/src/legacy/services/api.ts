@@ -7,7 +7,7 @@ export class RequestError<T = any> extends Error {
   readonly status: number;
   readonly body: T;
 
-  constructor(status: number, body: T, message?, options?) {
+  constructor(status: number, body: T, message?: any, options?: any) {
     super(message, options);
 
     this.status = status;
@@ -19,7 +19,7 @@ export async function request<T>(
   input: RequestInfo,
   init?: RequestInit
 ): Promise<T> {
-  let response: Response = null;
+  let response: Response | null = null;
   if (typeof input === 'string') {
     response = await fetch(`${BASE_URL}${input}`, init);
   } else {
@@ -97,7 +97,10 @@ export class EndpointService<
     }
   }
 
-  findAll = <TQuery = Options['Query'], TFindAll = Options['Reply']['FindAll']>(
+  findAll = <
+    TQuery = Options['Query'],
+    TFindAll = NonNullable<Options['Reply']>['FindAll']
+  >(
     query?: TQuery,
     init?: RequestInit
   ) => {
@@ -107,8 +110,8 @@ export class EndpointService<
   };
 
   addOne = <
-    TRequestAddOne = Options['Request']['AddOne'],
-    TReplyAddOne = Options['Reply']['AddOne']
+    TRequestAddOne = NonNullable<Options['Request']>['AddOne'],
+    TReplyAddOne = NonNullable<Options['Reply']>['AddOne']
   >(
     body: TRequestAddOne,
     init?: RequestInit
@@ -124,7 +127,10 @@ export class EndpointService<
     });
   };
 
-  findOne = <TId = Options['Id'], TFindOne = Options['Reply']['FindOne']>(
+  findOne = <
+    TId = Options['Id'],
+    TFindOne = NonNullable<Options['Reply']>['FindOne']
+  >(
     id: TId,
     init?: RequestInit
   ) => {
@@ -133,8 +139,8 @@ export class EndpointService<
 
   updateOne = <
     TId = Options['Id'],
-    TRequestUpdateOne = Options['Request']['UpdateOne'],
-    TReplyUpdateOne = Options['Reply']['UpdateOne']
+    TRequestUpdateOne = NonNullable<Options['Request']>['UpdateOne'],
+    TReplyUpdateOne = NonNullable<Options['Reply']>['UpdateOne']
   >(
     id: TId,
     body: TRequestUpdateOne,
@@ -151,7 +157,10 @@ export class EndpointService<
     });
   };
 
-  removeOne = <TId = Options['Id'], TRemoveOne = Options['Reply']['RemoveOne']>(
+  removeOne = <
+    TId = Options['Id'],
+    TRemoveOne = NonNullable<Options['Reply']>['RemoveOne']
+  >(
     id: TId,
     init?: RequestInit
   ) => {

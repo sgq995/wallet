@@ -5,7 +5,7 @@ import type { AlertProps } from '@mui/material';
 import { Alert, Collapse } from '@mui/material';
 
 export interface INotificationProps {
-  id: number | string;
+  id: number;
   severity: AlertProps['severity'];
   message: string;
   onExited?: (id: INotificationProps['id']) => void;

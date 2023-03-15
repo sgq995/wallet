@@ -12,7 +12,7 @@ export function useIntersectionObserver(
     }, options)
   );
 
-  const ref = useCallback((node) => {
+  const ref = useCallback((node: any) => {
     if (lastIntersectionNode.current) {
       intersectionObserverRef.current.unobserve(lastIntersectionNode.current);
       lastIntersectionNode.current = null;

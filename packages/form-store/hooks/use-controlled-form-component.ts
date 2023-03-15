@@ -8,7 +8,7 @@ export interface IUseControlledFormComponentOptions<Value = unknown>
 export function useControlledFormComponent<Value = unknown>(
   name: string,
   options?: IUseControlledFormComponentOptions<Value>
-): [string, (value: string) => void] {
+) {
   const { defaultValue, rawValidator, parser, validator } = options ?? {};
   const formStore = useFormStore();
 
@@ -35,5 +35,5 @@ export function useControlledFormComponent<Value = unknown>(
     [formStore, name]
   );
 
-  return [state, setValue];
+  return [state, setValue] as const;
 }

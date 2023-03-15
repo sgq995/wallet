@@ -23,7 +23,7 @@ function useAccountData() {
     () =>
       data?.pages?.reduce((all, current) => {
         return all.concat(current.data);
-      }, []) ?? [],
+      }, [] as Reply.TFindAllData['data']) ?? [],
     [data]
   );
 
@@ -72,7 +72,7 @@ export const AccountList: React.FC<AccountListProps> = () => {
   return (
     <>
       <InfiniteList
-        hasNextPage={hasNextPage}
+        hasNextPage={!!hasNextPage}
         isFetching={isFetching}
         isLoading={isLoading}
         list={accounts}

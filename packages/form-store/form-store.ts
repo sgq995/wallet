@@ -1,4 +1,4 @@
-import { produce } from 'immer';
+import { Draft, produce } from 'immer';
 import { forEach, mapValues } from 'lodash';
 
 export type TDefaultFormComponentValue = unknown;
@@ -11,7 +11,7 @@ export interface IFormComponent<Value = TDefaultFormComponentValue> {
 export class ControlledFormComponent<Value = TDefaultFormComponentValue>
   implements IFormComponent<Value>
 {
-  private _value: Value;
+  constructor(private _value: Value) {}
 
   get value(): Value {
     return this._value;
@@ -169,7 +169,9 @@ export class FormStore<
     if (rawValue) {
       component = new UncontrolledFormComponent<RawValue>(rawValue);
     } else {
-      component = new ControlledFormComponent<RawValue>();
+      component = new ControlledFormComponent<RawValue>(
+        this._defaultValues[componentName as keyof RawStore] as RawValue
+      );
     }
 
     this._components[componentName] = component;
@@ -214,46 +216,45 @@ export class FormStore<
           return;
         }
 
-        let value = this._defaultValues[componentName];
+        let value: any = this._defaultValues[componentName as keyof RawStore];
         if (typeof component.value !== 'undefined') {
           value = component.value;
         }
 
-        const rawValidator = this._rawValidators[componentName];
+        const rawValidator =
+          this._rawValidators[
+            componentName as keyof typeof this._rawValidators
+          ];
         try {
           if (rawValidator && !rawValidator(value)) {
-            console.log('rawValidator', componentName, value);
             value = null;
             hasError = true;
           }
         } catch {
-          console.log('rawValidator catch', componentName);
           value = null;
           hasError = true;
         }
 
-        draft[componentName] = value;
+        draft[componentName as keyof Draft<RawStore>] = value;
       });
     });
 
     const snapshot: Snapshot = mapValues(
       rawValues,
-      (rawValue, componentName: Key) => {
+      (rawValue: RawStore[keyof RawStore] | null, componentName: Key) => {
         let value: RawStore[keyof RawStore] | Store[keyof Store] | null =
           rawValue;
 
         const parser = this._parsers[componentName];
         const validator = this._validators[componentName];
-        if (parser) {
+        if (parser && rawValue !== null) {
           try {
             value = parser(rawValue);
             if (validator && !validator(value)) {
-              console.log('validator', { componentName, rawValue, value });
               value = null;
               hasError = true;
             }
           } catch {
-            console.log('validator catch', componentName);
             value = null;
             hasError = true;
           }

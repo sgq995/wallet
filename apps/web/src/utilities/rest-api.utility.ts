@@ -1,5 +1,6 @@
 import { HttpError } from '@wallet/utilities/http.utility';
 import { isSuccessfulStatus } from '@wallet/utilities/rest.utility';
+import { isNull, isObject } from 'lodash';
 import { buildUrl } from './url.utility';
 
 interface IRestOptions {
@@ -41,7 +42,7 @@ export function isFailureResponse<T, P = undefined>(
 }
 
 function isErrorWithMessage<T>(error: T | IWithMessage): error is IWithMessage {
-  return typeof error === 'object' && 'message' in error;
+  return isObject(error) && !isNull(error) && 'message' in error;
 }
 
 async function restFetch<T, P = undefined>(

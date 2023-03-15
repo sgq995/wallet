@@ -72,7 +72,7 @@ export default function LayoutNavigation() {
     })
   );
 
-  const handleOnChange = (event, newValue) => {
+  const handleOnChange = (event: any, newValue: any) => {
     if (!routes[newValue]) {
       return;
     }

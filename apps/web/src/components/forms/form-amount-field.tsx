@@ -67,7 +67,7 @@ const CurrencySelect: React.FC<ICurrencySelectProps> = ({
       fullWidth
     >
       <option value="" disabled></option>
-      {data.map(({ id, code, symbol }) => (
+      {data?.map(({ id, code, symbol }) => (
         <option key={id} value={id.toString()}>
           {symbol} ({code})
         </option>
@@ -76,12 +76,12 @@ const CurrencySelect: React.FC<ICurrencySelectProps> = ({
   );
 };
 
-const parseIfNotEmpty = wrap(parseInt, (func, ...args) => {
-  if (isEmpty(args[0])) {
-    return undefined;
+const parseIfNotEmpty = wrap(parseInt, (func, string: string) => {
+  if (isEmpty(string)) {
+    throw new Error('String could not be empty');
   }
 
-  return func.apply(this, args);
+  return func.apply(this, [string]);
 });
 
 const isUndefinedOrFinite = flowOr(isUndefined, isFinite);

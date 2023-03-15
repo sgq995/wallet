@@ -49,7 +49,7 @@ export const EntryList: React.FC<IEntryListProps> = ({}) => {
     () =>
       data?.pages?.reduce((all, current) => {
         return all.concat(current.data);
-      }, []) ?? [],
+      }, [] as Reply.TFindAllData['data']) ?? [],
     [data]
   );
 
@@ -62,7 +62,7 @@ export const EntryList: React.FC<IEntryListProps> = ({}) => {
     setDeleteDialogOpen(false);
   };
 
-  const handleEdit = (id) => {
+  const handleEdit = (id: number) => {
     setId(id);
     setEditDialogOpen(true);
   };
@@ -72,7 +72,7 @@ export const EntryList: React.FC<IEntryListProps> = ({}) => {
     setDeleteDialogOpen(false);
   };
 
-  const handleDeleteConfirm = (id) => {
+  const handleDeleteConfirm = (id: number) => {
     setId(id);
     setDeleteDialogOpen(true);
   };
@@ -104,7 +104,7 @@ export const EntryList: React.FC<IEntryListProps> = ({}) => {
         list={body}
         isLoading={isLoading}
         isFetching={isFetching}
-        hasNextPage={hasNextPage}
+        hasNextPage={!!hasNextPage}
         onLoadMore={handleLoadMore}
       >
         {(entry: TEntryModel) => (

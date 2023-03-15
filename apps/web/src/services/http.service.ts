@@ -7,11 +7,11 @@ export class HttpService {
     return signal;
   }
 
-  set signal(signal: AbortSignal) {
+  set signal(signal: AbortSignal | undefined) {
     this._signal = signal;
   }
 
-  withSignal(signal: AbortSignal) {
+  withSignal(signal: AbortSignal | undefined) {
     this._signal = signal;
     return this;
   }

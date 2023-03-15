@@ -16,8 +16,8 @@ function generateId(notifications: NotificationList) {
 
 function useNotify(
   severity: Notification['severity'],
-  notifications,
-  setNotifications
+  notifications: NotificationList,
+  setNotifications: (notifications: NotificationList) => void
 ) {
   return useCallback(
     (message: string) => {

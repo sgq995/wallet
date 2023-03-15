@@ -4,7 +4,7 @@ function isDefined(literal: any) {
 
 export function objectToUrlSearchParams(obj: any) {
   const keys = Object.keys(obj);
-  const values = Object.values(obj);
+  const values: any[] = Object.values(obj);
 
   const params = keys.reduce((params, key, index) => {
     const value = values[index];
@@ -14,7 +14,7 @@ export function objectToUrlSearchParams(obj: any) {
       params.push(`${encodedKey}=${encodedValue}`);
     }
     return params;
-  }, []);
+  }, [] as string[]);
 
   return params.join('&');
 }

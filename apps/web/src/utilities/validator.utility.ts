@@ -1,7 +1,7 @@
-export function flowOr(...args: Function[]) {
-  return (value) => args.some((func) => func(value));
+export function flowOr<T>(...args: ((value: T) => boolean)[]) {
+  return (value: T) => args.some((func) => func(value));
 }
 
-export function flowAnd(...args: Function[]) {
-  return (value) => args.every((func) => func(value));
+export function flowAnd<T>(...args: ((value: T) => boolean)[]) {
+  return (value: T) => args.every((func) => func(value));
 }

@@ -20,8 +20,8 @@ export function useFindAllInfiniteQuery(query?: Request.TQuery) {
       refetchOnWindowFocus: false,
       getNextPageParam: (lastPage, pages) => {
         if (
-          typeof query.take === 'number' &&
-          lastPage.data.length < query.take
+          typeof query!.take === 'number' &&
+          lastPage.data.length < query!.take
         ) {
           return undefined;
         }

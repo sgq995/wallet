@@ -42,7 +42,7 @@ export const EntryItem: React.FC<IEntryItemProps> = ({
           aria-label="delete"
           onClick={(event) => {
             event.stopPropagation();
-            onDelete(event);
+            onDelete?.(event);
           }}
         >
           <DeleteIcon color="error" />
@@ -63,7 +63,7 @@ export const EntryItem: React.FC<IEntryItemProps> = ({
         inset
         primary={transactionToAmount(entry.transaction)}
         primaryTypographyProps={{ variant: 'body2' }}
-        secondary={entry.transaction.currency.code}
+        secondary={entry?.transaction?.currency?.code}
         secondaryTypographyProps={{ variant: 'body2' }}
       />
     </ListItem>

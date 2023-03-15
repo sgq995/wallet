@@ -13,7 +13,7 @@ export function FormStoreProvider<T extends TStore<TStoreKey, string>>({
   const [formStore] = useState(() => new FormStore(defaultValues));
 
   return (
-    <FormStoreContext.Provider value={formStore}>
+    <FormStoreContext.Provider value={formStore as any}>
       {children}
     </FormStoreContext.Provider>
   );

@@ -48,14 +48,14 @@ function getUpdateDelta(
     date: date !== entry?.date ? date : undefined,
     typeId: typeId !== entry?.typeId ? typeId : undefined,
     transaction: {
-      units: units !== entry?.transaction.units ? units : undefined,
-      cents: cents !== entry?.transaction.cents ? cents : undefined,
+      units: units !== entry?.transaction?.units ? units : undefined,
+      cents: cents !== entry?.transaction?.cents ? cents : undefined,
       currencyId:
-        currencyId !== entry?.transaction.currencyId ? currencyId : undefined,
+        currencyId !== entry?.transaction?.currencyId ? currencyId : undefined,
     },
-    description: description !== entry.description ? description : undefined,
-    accountId: accountId !== entry.accountId ? accountId : undefined,
-    categoryId: categoryId !== entry.categoryId ? categoryId : undefined,
+    description: description !== entry?.description ? description : undefined,
+    accountId: accountId !== entry?.accountId ? accountId : undefined,
+    categoryId: categoryId !== entry?.categoryId ? categoryId : undefined,
   };
 
   return delta;
@@ -154,9 +154,9 @@ export const EntryForm: React.FC<EntryFormProps> = ({ entry }) => {
         month: defaultDate.getUTCMonth(),
         day: defaultDate.getUTCDate(),
         type: entry?.typeId ?? '',
-        units: entry?.transaction.units ?? 0,
-        cents: entry?.transaction.cents ?? 0,
-        currency: entry?.transaction.currencyId ?? '',
+        units: entry?.transaction?.units ?? 0,
+        cents: entry?.transaction?.cents ?? 0,
+        currency: entry?.transaction?.currencyId ?? '',
         description: entry?.description ?? '',
         account: entry?.accountId ?? '',
         category: entry?.categoryId ?? '',

@@ -1,4 +1,5 @@
 import {
+  ComponentProps,
   ComponentType,
   createElement,
   ElementType,
@@ -29,7 +30,9 @@ function withForwardedRef<
   P extends OverrideProps<M, C> | DefaultComponentProps<M>,
   R = 'ref' extends keyof P ? P['ref'] : Ref<unknown>
 >(Component: OverridableComponent<M>, ref: R) {
-  return function WithForwardedRef(props) {
+  return function WithForwardedRef(
+    props: ComponentProps<OverridableComponent<M>>
+  ) {
     return <Component {...{ ...props, ref }} />;
   };
 }
