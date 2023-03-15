@@ -1,4 +1,4 @@
-import config from '../../config';
+import config from '../../src/config';
 import { objectToUrlSearchParams } from '../utilities/url.utility';
 
 const BASE_URL = config.app.apiBaseUrl;

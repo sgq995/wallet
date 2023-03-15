@@ -14,7 +14,7 @@ import {
 import { EntryItem } from './EntryItem';
 import { EntryDeleteDialog } from './EntryDeleteDialog';
 import { EntryEditDialog } from './EntryEditDialog';
-import { InfiniteList } from '../../components/infinite-list';
+import { InfiniteList } from '../infinite-list';
 
 export interface IEntryListProps {}
 

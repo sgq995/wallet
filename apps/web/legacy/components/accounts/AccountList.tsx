@@ -4,7 +4,7 @@ import { Reply } from '@wallet/schemas/legacy/accounts';
 import { TAccountModel } from '@wallet/schemas/legacy/accounts/model';
 import { useNotificationSystem } from '../../contexts/notifications';
 import { useFindAllInfiniteQuery } from '../../hooks/accounts';
-import { InfiniteList } from '../../components/infinite-list';
+import { InfiniteList } from '../infinite-list';
 import { AccountItem } from './AccountItem';
 
 function useAccountData() {

@@ -21,12 +21,12 @@ import {
   AddIcon,
   HomeIcon,
   LogoutIcon,
-} from '../../components/IconsMaterial';
+} from '../IconsMaterial';
 
-import { AccountForm } from '../../components/accounts';
+import { AccountForm } from '../accounts';
 import { CategoryForm } from '../categories';
-import { EntryForm } from '../../components/entries';
-import { ResponsiveDialog } from '../../components/dialogs/ResponsiveDialog';
+import { EntryForm } from '../entries';
+import { ResponsiveDialog } from '../dialogs/ResponsiveDialog';
 
 interface Route {
   path: string;
