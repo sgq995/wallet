@@ -1,7 +1,9 @@
 import { Send as SendIcon } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useFormStore } from '@wallet/form-store';
+import { isUndefined } from 'lodash';
 import { useCreateAccount } from '../../hooks/accounts/use-create-accounts';
+import { TAccountBody } from '../../services';
 import { TAccountsStore } from './accounts.types';
 
 export const AccountsFormCreateButton: React.FC = () => {
@@ -10,10 +12,14 @@ export const AccountsFormCreateButton: React.FC = () => {
 
   const handleClick = () => {
     const data = snapshot();
-    console.log({ data });
     if (data.hasError === false) {
-      const hasStartingBalance =
-        isFinite(data.startingCents) && isFinite(data.startingUnits);
+      const startingBalance: TAccountBody['startingBalance'] =
+        !isUndefined(data.startingCents) && !isUndefined(data.startingUnits)
+          ? {
+              cents: data.startingCents,
+              units: data.startingUnits,
+            }
+          : undefined;
 
       mutate({
         label: data.label,
@@ -22,12 +28,7 @@ export const AccountsFormCreateButton: React.FC = () => {
           units: data.units,
         },
         currencyId: data.currency,
-        startingBalance: hasStartingBalance
-          ? {
-              cents: data.startingCents,
-              units: data.startingUnits,
-            }
-          : undefined,
+        startingBalance,
       });
     }
   };
