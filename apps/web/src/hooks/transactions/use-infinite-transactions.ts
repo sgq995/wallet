@@ -6,6 +6,7 @@ import {
   TTransactionQuery,
   TTransactionReadResponse,
 } from '../../services';
+import { getNextPageParamFactory } from '../../utilities/paging.utility';
 import { TRANSACTIONS_KEY } from './transactions.key';
 
 export function useInfiniteTransactions(query?: TTransactionQuery) {
@@ -17,20 +18,9 @@ export function useInfiniteTransactions(query?: TTransactionQuery) {
         paging: pageParam,
       }),
     {
-      getNextPageParam(lastPage, allPages): IPaging | undefined {
-        if (!lastPage.paging) {
-          return undefined;
-        }
-
-        if (lastPage.transactions.length < lastPage.paging.limit) {
-          return undefined;
-        }
-
-        return {
-          offset: lastPage.paging.offset + lastPage.paging.limit,
-          limit: lastPage.paging.limit,
-        };
-      },
+      getNextPageParam: getNextPageParamFactory(
+        (lastPage) => lastPage.transactions.length
+      ),
     }
   );
 }
