@@ -2,32 +2,40 @@ import { TAccountReadonlySchema, TAccountMutableSchema } from '@wallet/schemas';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { TPaginableSchema } from '@wallet/utilities/schema.utility';
 import config from '../config';
-import { IAccountReadonly, IAccountMutable } from '../models/account.model';
+import {
+  IAccountReadonlyModel,
+  IAccountMutableModel,
+} from '../models/account.model';
 import { IPaging } from '../models/paging.model';
-import { restGet, restPost } from '../utilities/rest-api.utility';
+import { restDelete, restGet, restPost } from '../utilities/rest-api.utility';
 import { ICreateable } from './creatable.service';
+import { IDeletable } from './deletable.service';
 import { HttpService } from './http.service';
 import { IReadable } from './readable.service';
 
 const ACCOUNTS_BASE_PATH = '/v2/accounts';
 
-type TIndexableAccount = TIndexable<IAccountReadonly>;
-type TIndexableRestAccount = TIndexable<TAccountReadonlySchema>;
+type TIndexableAccountModel = TIndexable<IAccountReadonlyModel>;
+type TIndexableAccountSchema = TIndexable<TAccountReadonlySchema>;
 
-export type TAccountQuery = Partial<TIndexableAccount> & {
+export type TAccountParams = Pick<TIndexableAccountModel, 'id'>;
+
+export type TAccountQuery = Partial<TIndexableAccountModel> & {
   paging: Partial<IPaging>;
 };
 
-export type TAccountBody = IAccountMutable;
+export type TAccountBody = IAccountMutableModel;
 
-export type TAccountCreateResponse = TIndexableAccount;
+export type TAccountCreateResponse = TIndexableAccountModel;
 
 export type TAccountReadResponse = {
-  accounts: Array<TIndexableAccount>;
+  accounts: Array<TIndexableAccountModel>;
   paging: IPaging;
 };
 
-function appToRest(entity: IAccountReadonly): TAccountReadonlySchema {
+export type TAccountDeleteResponse = TIndexableAccountModel;
+
+function appToRest(entity: IAccountReadonlyModel): TAccountReadonlySchema {
   return {
     label: entity.label,
     balance: {
@@ -51,7 +59,7 @@ function appToRest(entity: IAccountReadonly): TAccountReadonlySchema {
   };
 }
 
-function mutableAppToRest(entity: IAccountMutable): TAccountMutableSchema {
+function mutableAppToRest(entity: IAccountMutableModel): TAccountMutableSchema {
   return {
     label: entity.label,
     balance: {
@@ -68,7 +76,7 @@ function mutableAppToRest(entity: IAccountMutable): TAccountMutableSchema {
   };
 }
 
-function restToApp(entity: TAccountReadonlySchema): IAccountReadonly {
+function restToApp(entity: TAccountReadonlySchema): IAccountReadonlyModel {
   return {
     label: entity.label,
     currency: {
@@ -92,7 +100,9 @@ function restToApp(entity: TAccountReadonlySchema): IAccountReadonly {
   };
 }
 
-function readonlyRestToApp(entity: TIndexableRestAccount): TIndexableAccount {
+function readonlyRestToApp(
+  entity: TIndexableAccountSchema
+): TIndexableAccountModel {
   return {
     ...restToApp(entity),
     id: entity.id,
@@ -103,14 +113,15 @@ class AccountsServiceImpl
   extends HttpService
   implements
     ICreateable<TAccountBody, TAccountCreateResponse>,
-    IReadable<TAccountQuery, TAccountReadResponse>
+    IReadable<TAccountQuery, TAccountReadResponse>,
+    IDeletable<TAccountParams, TAccountDeleteResponse>
 {
   constructor(private _apiBaseUrl: string, signal?: AbortSignal) {
     super(signal);
   }
 
   async add(entity: TAccountBody): Promise<TAccountCreateResponse> {
-    const body = await restPost<TIndexableRestAccount>({
+    const body = await restPost<TIndexableAccountSchema>({
       baseUrl: this._apiBaseUrl,
       endpoint: ACCOUNTS_BASE_PATH,
       body: mutableAppToRest(entity),
@@ -122,7 +133,7 @@ class AccountsServiceImpl
 
   async find(query?: TAccountQuery): Promise<TAccountReadResponse> {
     const body = await restGet<
-      TIndexableRestAccount[],
+      TIndexableAccountSchema[],
       TPaginableSchema['paging']
     >({
       baseUrl: this._apiBaseUrl,
@@ -135,6 +146,16 @@ class AccountsServiceImpl
       accounts: body.data.map(readonlyRestToApp),
       paging: body.paging,
     };
+  }
+
+  async remove(params: TAccountParams): Promise<TAccountDeleteResponse> {
+    const body = await restDelete<TAccountDeleteResponse>({
+      baseUrl: this._apiBaseUrl,
+      endpoint: `${ACCOUNTS_BASE_PATH}/${params.id}`,
+      signal: this.signal,
+    });
+
+    return body.data;
   }
 }
 

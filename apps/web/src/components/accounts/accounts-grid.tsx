@@ -1,11 +1,11 @@
 import { Grid } from '@mui/material';
 import { TIndexable } from '@wallet/utilities/model.utility';
-import { IAccountReadonly } from '../../models/account.model';
+import { IAccountReadonlyModel } from '../../models/account.model';
 import { cashToString } from '../../utilities/cash.utility';
 import { AccountsGridItem } from './accounts-grid-item';
 
 export interface IAccountGridProps {
-  accounts: TIndexable<IAccountReadonly>[];
+  accounts: TIndexable<IAccountReadonlyModel>[];
 }
 
 export const AccountsGrid: React.FC<IAccountGridProps> = ({ accounts }) => {
@@ -14,6 +14,7 @@ export const AccountsGrid: React.FC<IAccountGridProps> = ({ accounts }) => {
       {accounts.map((account) => (
         <AccountsGridItem
           key={account.id}
+          id={account.id}
           label={account.label}
           balance={cashToString(account.balance, account.currency)}
           currencyCode={account.currency.code}
