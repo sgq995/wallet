@@ -4,6 +4,7 @@
     "/apps/web/src/hooks/transactions/transactions.key.ts",
     "/apps/web/src/hooks/currencies/currencies.key.ts",
     "/apps/web/src/components/transactions/transactions-default-values.ts",
-    "/apps/web/src/components/transactions/transactions.types.ts"
+    "/apps/web/src/components/transactions/transactions.types.ts",
+    "/apps/web/src/components/page/page-context.ts"
   ]
 }

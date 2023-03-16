@@ -7,7 +7,7 @@ import {
   QueryClientProvider,
 } from 'react-query';
 import { Layout } from '../components/layout';
-import { PageProvider } from '../components/page/page';
+import { PageProvider } from '../components/page';
 
 export default function MyApp({
   Component,
