@@ -5,7 +5,6 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
-import { DateFormatter } from '@wallet/utilities/date.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { ITransactionReadonlyModel } from '../../models/transaction.model';
 import { TransactionsForm } from './transactions-form';
@@ -33,13 +32,13 @@ function getFormValuesFrom(transaction: TIndexable<ITransactionReadonlyModel>) {
   };
 }
 
-export interface ITransactionsEditModalProps {
+export interface ITransactionsEditDialogProps {
   open: boolean;
   onClose?: () => void;
   transaction?: TIndexable<ITransactionReadonlyModel>;
 }
 
-export const TransactionsEditModal: React.FC<ITransactionsEditModalProps> = ({
+export const TransactionsEditDialog: React.FC<ITransactionsEditDialogProps> = ({
   open,
   onClose,
   transaction,

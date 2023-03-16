@@ -1,20 +1,14 @@
-import { Box, Grid } from '@mui/material';
-import {
-  TransactionsFormCreateButton,
-  TransactionsForm,
-} from '../components/transactions';
+import { AppBar, Box, Grid, Paper, Toolbar } from '@mui/material';
+import { PageToolbarPortal } from '../components/page/page';
+import { TransactionsCreateButton } from '../components/transactions/transactions-create-buton';
 import { TransactionsListLoader } from '../components/transactions/transactions-list-loader';
 
 export default function Home() {
   return (
     <Grid component="main" container padding={2} spacing={2}>
-      <Grid item xs={12} md={6} xl={4}>
-        <TransactionsForm>
-          <Box display="flex" alignItems="center">
-            <TransactionsFormCreateButton />
-          </Box>
-        </TransactionsForm>
-      </Grid>
+      <PageToolbarPortal>
+        <TransactionsCreateButton />
+      </PageToolbarPortal>
 
       <Grid item xs={12}>
         <TransactionsListLoader />

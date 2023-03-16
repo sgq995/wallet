@@ -3,7 +3,7 @@ import { TIndexable } from '@wallet/utilities/model.utility';
 import { useState } from 'react';
 import { ITransactionReadonlyModel } from '../../models/transaction.model';
 import { cashToString } from '../../utilities/cash.utility';
-import { TransactionsEditModal } from './transactions-edit-dialog';
+import { TransactionsEditDialog } from './transactions-edit-dialog';
 import { TransactionsListItem } from './transactions-list-item';
 
 export interface ITransactionsListContentProps {
@@ -20,7 +20,7 @@ export const TransactionsListContent: React.FC<
 
   return (
     <>
-      <TransactionsEditModal
+      <TransactionsEditDialog
         open={open}
         onClose={() => setOpen(false)}
         transaction={transaction}
