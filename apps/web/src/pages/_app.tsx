@@ -7,6 +7,7 @@ import {
   QueryClientProvider,
 } from 'react-query';
 import { Layout } from '../components/layout';
+import { PageProvider } from '../components/page/page';
 
 export default function MyApp({
   Component,
@@ -26,9 +27,11 @@ export default function MyApp({
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <PageProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </PageProvider>
       </Hydrate>
     </QueryClientProvider>
   );
