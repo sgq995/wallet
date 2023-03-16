@@ -18,7 +18,7 @@ export const TransactionsCreateDialog: React.FC<
 > = ({ open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Update transaction</DialogTitle>
+      <DialogTitle>Create Transaction</DialogTitle>
       <DialogContent>
         <DialogContentText></DialogContentText>
         <TransactionsForm>
