@@ -1,15 +1,15 @@
-import { Skeleton, Stack } from '@mui/material';
+import { Grid, Skeleton, Stack } from '@mui/material';
 import { Repeat } from '../helpers';
 import { AccountsGridItem } from './accounts-grid-item';
 
 export const AccountsGridFallback: React.FC = () => {
   return (
-    <Stack>
+    <Grid container spacing={2}>
       <Repeat times={5}>
-        <Skeleton>
-          <AccountsGridItem label="" balance="" currencyCode="" />
-        </Skeleton>
+        <Grid item xs={12} sm={12} md={6} lg={4}>
+          <Skeleton></Skeleton>
+        </Grid>
       </Repeat>
-    </Stack>
+    </Grid>
   );
 };
