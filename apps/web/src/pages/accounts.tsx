@@ -1,18 +1,14 @@
-import { Box, Grid, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { AccountsGridLoader } from '../components/accounts';
-import { AccountsForm } from '../components/accounts/accounts-form';
-import { AccountsFormCreateButton } from '../components/accounts/accounts-form-create-button';
+import { AccountsCreateButton } from '../components/accounts/accounts-create-button';
+import { PageToolbar } from '../components/page';
 
 export default function Accounts() {
   return (
     <Stack width="100%" component="main" padding={2}>
-      <Grid item xs={12} md={6} xl={4}>
-        <AccountsForm>
-          <Box display="flex" alignItems="center">
-            <AccountsFormCreateButton />
-          </Box>
-        </AccountsForm>
-      </Grid>
+      <PageToolbar>
+        <AccountsCreateButton />
+      </PageToolbar>
 
       <AccountsGridLoader />
     </Stack>
