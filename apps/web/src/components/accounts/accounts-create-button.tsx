@@ -1,5 +1,9 @@
+import dynamic from 'next/dynamic';
 import { ToolbarCreateButton } from '../common/toolbar-create-button';
-import { AccountsCreateDialog } from './accounts-create-dialog';
+
+const AccountsCreateDialog = dynamic(() =>
+  import('./accounts-create-dialog').then((mod) => mod.AccountsCreateDialog)
+);
 
 export const AccountsCreateButton: React.FC = () => {
   return (

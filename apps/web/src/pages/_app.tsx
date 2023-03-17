@@ -9,6 +9,10 @@ import {
 import { Layout } from '../components/layout';
 import { PageProvider } from '../components/page';
 
+export function reportWebVitals(metric: unknown) {
+  console.log(metric);
+}
+
 export default function MyApp({
   Component,
   pageProps,

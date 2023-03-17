@@ -1,9 +1,16 @@
 import { Box, Typography } from '@mui/material';
 import { isEqual, uniqWith } from 'lodash';
+import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { useInfiniteAccounts } from '../../hooks/accounts';
-import { AccountsGrid } from './accounts-grid';
 import { AccountsGridFallback } from './accounts-grid-fallback';
+
+const AccountsGrid = dynamic(
+  () => import('./accounts-grid').then((mod) => mod.AccountsGrid),
+  {
+    loading: () => <AccountsGridFallback />,
+  }
+);
 
 export const AccountsGridLoader: React.FC = () => {
   const { isLoading, data, error, fetchNextPage, isFetchingNextPage } =

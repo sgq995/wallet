@@ -1,10 +1,23 @@
 import { Box, Typography } from '@mui/material';
 import { isEqual, uniqWith } from 'lodash';
+import dynamic from 'next/dynamic';
 import React, { useCallback, useMemo } from 'react';
 import { useInfiniteTransactions } from '../../hooks/transactions';
-import { InfiniteList } from '../common/infinite-list';
-import { TransactionsListContent } from './transactions-list-content';
 import { TransactionsListFallback } from './transactions-list-fallback';
+
+const InfiniteList = dynamic(() =>
+  import('../common/infinite-list').then((mod) => mod.InfiniteList)
+);
+
+const TransactionsListContent = dynamic(
+  () =>
+    import('./transactions-list-content').then(
+      (mod) => mod.TransactionsListContent
+    ),
+  {
+    loading: () => <TransactionsListFallback />,
+  }
+);
 
 export const TransactionsListLoader: React.FC = () => {
   const { isLoading, data, error, fetchNextPage, isFetchingNextPage } =
