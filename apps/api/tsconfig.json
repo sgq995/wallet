@@ -1,7 +1,9 @@
 {
   "extends": "@wallet/dev-tools/tsconfig/base.json",
   "compilerOptions": {
-    "target": "ES2017",
+    "lib": ["ES2022"],
+    "module": "CommonJS",
+    "target": "ES2022",
     "rootDir": "src",
     "outDir": "build"
   },

@@ -3,20 +3,35 @@
   "version": "3.0.0",
   "types": "index.ts",
   "private": true,
+  "main": "build/index.js",
+  "files": [
+    "**.ts"
+  ],
+  "exports": {
+    ".": "./build/index.js",
+    "./legacy": "./build/legacy/index.js",
+    "./legacy/accounts": "./build/legacy/accounts/index.js",
+    "./legacy/categories": "./build/legacy/categories/index.js",
+    "./legacy/commons": "./build/legacy/commons/index.js",
+    "./legacy/currencies": "./build/legacy/currencies/index.js",
+    "./legacy/custom-types": "./build/legacy/custom-types/index.js",
+    "./legacy/entries": "./build/legacy/entries/index.js",
+    "./legacy/entry-types": "./build/legacy/entry-types/index.js",
+    "./legacy/helpers": "./build/legacy/helpers/index.js",
+    "./legacy/tags": "./build/legacy/tags/index.js",
+    "./legacy/transactions": "./build/legacy/transactions/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
   "dependencies": {
     "@sinclair/typebox": "^0.25.13",
     "@wallet/utilities": "*"
   },
   "devDependencies": {
-    "@babel/cli": "^7.19.3",
-    "@babel/core": "^7.20.2",
-    "@babel/preset-env": "^7.20.2",
     "@types/node": "^18.11.9",
     "@wallet/dev-tools": "*",
     "typescript": "^4.8.4",
     "yarn-run-all": "^3.1.1"
-  },
-  "files": [
-    "**.ts"
-  ]
+  }
 }

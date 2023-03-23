@@ -5,10 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
-    "start": "cross-env NODE_ENV=production node dist/index.js",
-    "build": "run-s build:typescript build:babel",
-    "build:typescript": "tsc -p tsconfig.json",
-    "build:babel": "babel build -d dist",
+    "start": "cross-env NODE_ENV=production node build/index.js",
+    "build": "tsc -p tsconfig.json",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
@@ -31,9 +29,6 @@
     "supertokens-node": "^12.0.5"
   },
   "devDependencies": {
-    "@babel/cli": "^7.19.3",
-    "@babel/core": "^7.20.2",
-    "@babel/preset-env": "^7.20.2",
     "@types/node": "^18.11.9",
     "@types/tap": "^15.0.7",
     "@wallet/dev-tools": "*",

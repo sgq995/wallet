@@ -2,9 +2,21 @@
   "name": "@wallet/utilities",
   "version": "0.0.0",
   "private": true,
+  "main": "build/index.js",
   "files": [
-    "**.ts"
+    "*.ts"
   ],
+  "exports": {
+    ".": "./build/index.js",
+    "./date.utility": "./build/date.utility.js",
+    "./http.utility": "./build/http.utility.js",
+    "./model.utility": "./build/model.utility.js",
+    "./rest.utility": "./build/rest.utility.js",
+    "./schema.utility": "./build/schema.utility.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
   "dependencies": {
     "@sinclair/typebox": "^0.25.13"
   },
