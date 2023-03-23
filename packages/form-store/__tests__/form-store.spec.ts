@@ -51,7 +51,7 @@ describe('FormStore', () => {
     });
 
     it('should include components without a default value', () => {
-      const instance = new FormStore({ test: '', component: undefined });
+      const instance = new FormStore({ test: '' });
 
       instance.register({ name: 'component' });
       instance.update({ name: 'component', rawValue: 'test' });
