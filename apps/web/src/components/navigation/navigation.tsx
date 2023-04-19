@@ -1,14 +1,12 @@
-import { useMediaQuery } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import { useNavigationItems } from '../../hooks/navigation/use-navigation-items';
 import { DesktopNavigation } from './desktop-navigation';
 import { DesktopNavigationItem } from './desktop-navigation-item';
 import { MobileNavigation } from './mobile-navigation';
 import { MobileNavigationItem } from './mobile-navigation-item';
+import { useDesktopFlag } from '../../hooks/use-desktop-flag';
 
 export const Navigation: React.FC = () => {
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const isDesktop = useDesktopFlag();
   const navigationItems = useNavigationItems();
 
   if (isDesktop) {
