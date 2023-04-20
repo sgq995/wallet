@@ -1,12 +1,4 @@
-import {
-  Box,
-  Divider,
-  List,
-  ListItem,
-  ListItemButton,
-  ListSubheader,
-  makeStyles,
-} from '@mui/material';
+import { Divider, ListItemButton, ListSubheader } from '@mui/material';
 import { DateFormatter } from '@wallet/utilities/date.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { useState } from 'react';
@@ -46,7 +38,7 @@ export const TransactionsListContent: React.FC<
         return (
           <li key={groupLabel}>
             <ul className={styles.list}>
-              <ListSubheader>{groupLabel}</ListSubheader>
+              <Divider component={ListSubheader}>{groupLabel}</Divider>
 
               {group.map((transaction) => (
                 <TransactionsListItem

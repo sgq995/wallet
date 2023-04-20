@@ -45,7 +45,9 @@ export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
             <Typography color="text.secondary">{currencyCode}</Typography>
           </CardContent>
         </CardActionArea>
-        <CardActions>
+        <CardActions disableSpacing>
+          <Button>Open</Button>
+
           <Button
             sx={{ ml: 'auto' }}
             endIcon={<Delete />}

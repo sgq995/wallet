@@ -1,12 +1,7 @@
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@mui/material';
+import { Box } from '@mui/material';
 import { TransactionsForm } from './transactions-form';
 import { TransactionsFormCreateButton } from './transactions-form-create-button';
+import { SimpleDialog } from '../common/simple-dialog';
 
 export interface ITransactionsCreateDialogProps {
   open: boolean;
@@ -17,16 +12,12 @@ export const TransactionsCreateDialog: React.FC<
   ITransactionsCreateDialogProps
 > = ({ open, onClose }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Create Transaction</DialogTitle>
-      <DialogContent>
-        <DialogContentText></DialogContentText>
-        <TransactionsForm>
-          <Box display="flex" alignItems="center">
-            <TransactionsFormCreateButton />
-          </Box>
-        </TransactionsForm>
-      </DialogContent>
-    </Dialog>
+    <SimpleDialog open={open} onClose={onClose}>
+      <TransactionsForm>
+        <Box display="flex" alignItems="center">
+          <TransactionsFormCreateButton />
+        </Box>
+      </TransactionsForm>
+    </SimpleDialog>
   );
 };

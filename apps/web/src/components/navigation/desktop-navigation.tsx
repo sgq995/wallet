@@ -13,7 +13,7 @@ export const DesktopNavigation: React.FC<PropsWithChildren> = ({
           padding: 2,
         }}
       >
-        <List sx={{ position: 'sticky', top: 0 }}>{children}</List>
+        <List sx={{ position: 'sticky', top: '4rem' }}>{children}</List>
       </Paper>
     </Box>
   );

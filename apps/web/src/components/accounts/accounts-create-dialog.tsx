@@ -1,32 +1,24 @@
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@mui/material';
+import { Box } from '@mui/material';
 import { AccountsForm } from './accounts-form';
 import { AccountsFormCreateButton } from './accounts-form-create-button';
+import { SimpleDialog } from '../common/simple-dialog';
 
 export interface IAccountsCreateDialogProps {
   open: boolean;
   onClose?: () => void;
 }
 
-export const AccountsCreateDialog: React.FC<
-  IAccountsCreateDialogProps
-> = ({ open, onClose }) => {
+export const AccountsCreateDialog: React.FC<IAccountsCreateDialogProps> = ({
+  open,
+  onClose,
+}) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Create Account</DialogTitle>
-      <DialogContent>
-        <DialogContentText></DialogContentText>
-        <AccountsForm>
-          <Box display="flex" alignItems="center">
-            <AccountsFormCreateButton />
-          </Box>
-        </AccountsForm>
-      </DialogContent>
-    </Dialog>
+    <SimpleDialog open={open} onClose={onClose}>
+      <AccountsForm>
+        <Box display="flex" alignItems="center">
+          <AccountsFormCreateButton />
+        </Box>
+      </AccountsForm>
+    </SimpleDialog>
   );
 };
