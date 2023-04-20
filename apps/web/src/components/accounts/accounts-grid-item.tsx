@@ -46,7 +46,7 @@ export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
           </CardContent>
         </CardActionArea>
         <CardActions disableSpacing>
-          <Button>Open</Button>
+          <Button>Edit</Button>
 
           <Button
             sx={{ ml: 'auto' }}

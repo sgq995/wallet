@@ -11,7 +11,7 @@ import {
 import { blue, green, red } from '@mui/material/colors';
 import { DateFormatter } from '@wallet/utilities/date.utility';
 import { TIndex } from '@wallet/utilities/model.utility';
-import { ReactNode } from 'react';
+import { MouseEvent } from 'react';
 import { useDeleteTransaction } from '../../hooks/transactions/use-delete-transaction';
 
 export type TTransactionType = 'income' | 'expense' | 'linked';
@@ -38,7 +38,7 @@ export interface ITransactionsListItemProps {
   date: Date;
   description: string;
   type: TTransactionType;
-  renderContentItem?: (content: ReactNode, disabled: boolean) => ReactNode;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 }
 
 export const TransactionsListItem: React.FC<ITransactionsListItemProps> = ({
@@ -47,32 +47,31 @@ export const TransactionsListItem: React.FC<ITransactionsListItemProps> = ({
   date,
   description,
   type,
-  renderContentItem: renderContent = (content) => content,
+  onClick,
 }) => {
   const { isLoading, isSuccess, mutate } = useDeleteTransaction();
   const isDisabled = isLoading || isSuccess;
 
-  const handleDelete = () => {
+  const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
     mutate(id);
+
+    event.stopPropagation();
   };
 
   return (
     <ListItem disablePadding>
-      {renderContent(
-        <>
-          <ListItemAvatar>
-            <Avatar sx={{ bgcolor: color[type] }}>{Icon[type]}</Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={amount} secondary={description} />
-          {/* <ListItemText primary={transactionDateFormat(date)} /> */}
-          <ListItemSecondaryAction>
-            <IconButton edge="end" disabled={isDisabled} onClick={handleDelete}>
-              <Delete sx={{ color: red[500] }} />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </>,
-        isDisabled
-      )}
+      <ListItemButton disabled={isDisabled} onClick={onClick}>
+        <ListItemAvatar>
+          <Avatar sx={{ bgcolor: color[type] }}>{Icon[type]}</Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={amount} secondary={description} />
+        {/* <ListItemText primary={transactionDateFormat(date)} /> */}
+        <ListItemSecondaryAction>
+          <IconButton edge="end" disabled={isDisabled} onClick={handleDelete}>
+            <Delete sx={{ color: red[500] }} />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItemButton>
     </ListItem>
   );
 };

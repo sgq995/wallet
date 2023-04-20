@@ -1,4 +1,4 @@
-import { Divider, ListItemButton, ListSubheader } from '@mui/material';
+import { Divider, ListSubheader } from '@mui/material';
 import { DateFormatter } from '@wallet/utilities/date.utility';
 import { TIndexable } from '@wallet/utilities/model.utility';
 import { useState } from 'react';
@@ -51,17 +51,10 @@ export const TransactionsListContent: React.FC<
                   date={transaction.date}
                   description={transaction.description ?? ''}
                   type={transaction.type}
-                  renderContentItem={(content, disabled) => (
-                    <ListItemButton
-                      disabled={disabled}
-                      onClick={() => {
-                        setOpen(true);
-                        setTransaction(transaction);
-                      }}
-                    >
-                      {content}
-                    </ListItemButton>
-                  )}
+                  onClick={() => {
+                    setOpen(true);
+                    setTransaction(transaction);
+                  }}
                 />
               ))}
             </ul>
