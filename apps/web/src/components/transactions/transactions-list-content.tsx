@@ -8,6 +8,7 @@ import { groupByMonthAndYear } from '../../utilities/transactions.utility';
 import { TransactionsListItem } from './transactions-list-item';
 import styles from './transactions-list-content.module.css';
 import dynamic from 'next/dynamic';
+import { TransactionsDeleteConfirmDialog } from './transactions-delete-confirmation-dialog';
 
 const TransactionsEditDialog = dynamic(
   import('./transactions-edit-dialog').then((mod) => mod.TransactionsEditDialog)
@@ -20,7 +21,8 @@ export interface ITransactionsListContentProps {
 export const TransactionsListContent: React.FC<
   ITransactionsListContentProps
 > = ({ transactions }) => {
-  const [open, setOpen] = useState(false);
+  const [editIsOpen, setEditIsOpen] = useState(false);
+  const [deleteIsOpen, setDeleteIsOpen] = useState(false);
   const [transaction, setTransaction] = useState<
     TIndexable<ITransactionReadonlyModel> | undefined
   >(undefined);
@@ -30,9 +32,15 @@ export const TransactionsListContent: React.FC<
   return (
     <>
       <TransactionsEditDialog
-        open={open}
-        onClose={() => setOpen(false)}
+        open={editIsOpen}
+        onClose={() => setEditIsOpen(false)}
         transaction={transaction}
+      />
+
+      <TransactionsDeleteConfirmDialog
+        open={deleteIsOpen}
+        onClose={() => setDeleteIsOpen(false)}
+        id={transaction?.id ?? 0}
       />
 
       {groupedTransactions.map((group) => {
@@ -55,8 +63,12 @@ export const TransactionsListContent: React.FC<
                   date={transaction.date}
                   description={transaction.description ?? ''}
                   type={transaction.type}
-                  onClick={() => {
-                    setOpen(true);
+                  onEdit={() => {
+                    setEditIsOpen(true);
+                    setTransaction(transaction);
+                  }}
+                  onDelete={() => {
+                    setDeleteIsOpen(true);
                     setTransaction(transaction);
                   }}
                 />

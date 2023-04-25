@@ -11,8 +11,8 @@ import {
 import { blue, green, red } from '@mui/material/colors';
 import { DateFormatter } from '@wallet/utilities/date.utility';
 import { TIndex } from '@wallet/utilities/model.utility';
-import { MouseEvent } from 'react';
-import { useDeleteTransaction } from '../../hooks/transactions/use-delete-transaction';
+import { useAtomValue } from 'jotai';
+import { deletedTransactionAtom } from './transactions.state';
 
 export type TTransactionType = 'income' | 'expense' | 'linked';
 
@@ -38,7 +38,8 @@ export interface ITransactionsListItemProps {
   date: Date;
   description: string;
   type: TTransactionType;
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 export const TransactionsListItem: React.FC<ITransactionsListItemProps> = ({
@@ -47,26 +48,30 @@ export const TransactionsListItem: React.FC<ITransactionsListItemProps> = ({
   date,
   description,
   type,
-  onClick,
+  onEdit,
+  onDelete,
 }) => {
-  const { isLoading, isSuccess, mutate } = useDeleteTransaction();
-  const isDisabled = isLoading || isSuccess;
-
-  const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
-    mutate(id);
-    event.stopPropagation();
-  };
+  const deletedTransaction = useAtomValue(deletedTransactionAtom);
+  const isDisabled =
+    deletedTransaction.id === id && deletedTransaction.disabled;
 
   return (
     <ListItem disablePadding>
-      <ListItemButton disabled={isDisabled} onClick={onClick}>
+      <ListItemButton disabled={isDisabled} onClick={onEdit}>
         <ListItemAvatar>
           <Avatar sx={{ bgcolor: color[type] }}>{Icon[type]}</Avatar>
         </ListItemAvatar>
         <ListItemText primary={amount} secondary={description} />
         {/* <ListItemText primary={transactionDateFormat(date)} /> */}
         <ListItemSecondaryAction>
-          <IconButton edge="end" disabled={isDisabled} onClick={handleDelete}>
+          <IconButton
+            edge="end"
+            disabled={isDisabled}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete?.();
+            }}
+          >
             <Delete sx={{ color: red[500] }} />
           </IconButton>
         </ListItemSecondaryAction>

@@ -9,15 +9,16 @@ import {
   Typography,
 } from '@mui/material';
 import { TIndex } from '@wallet/utilities/model.utility';
-import { useDeleteAccount } from '../../hooks/accounts/use-delete-account';
-import { MouseEvent } from 'react';
+import { useAtomValue } from 'jotai';
+import { deletedAccountAtom } from './accounts.state';
 
 export interface IAccountsGridItemProps {
   id: TIndex;
   label: string;
   balance: string;
   currencyCode: string;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
@@ -25,14 +26,11 @@ export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
   label,
   balance,
   currencyCode,
-  onClick,
+  onEdit,
+  onDelete,
 }) => {
-  const { isLoading, isSuccess, mutate } = useDeleteAccount();
-  const isDisabled = isLoading || isSuccess;
-
-  const handleDelete = () => {
-    mutate(id);
-  };
+  const deletedAccount = useAtomValue(deletedAccountAtom);
+  const isDisabled = deletedAccount.id === id && deletedAccount.disabled;
 
   return (
     <Grid item xs={12} sm={12} md={6} lg={4}>
@@ -49,7 +47,7 @@ export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
           </CardContent>
         </CardActionArea>
         <CardActions disableSpacing>
-          <Button disabled={isDisabled} onClick={onClick}>
+          <Button disabled={isDisabled} onClick={onEdit}>
             Edit
           </Button>
 
@@ -58,7 +56,7 @@ export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
             endIcon={<Delete />}
             color="error"
             disabled={isDisabled}
-            onClick={handleDelete}
+            onClick={onDelete}
           >
             Delete
           </Button>

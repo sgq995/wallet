@@ -1,6 +1,7 @@
 export * from './accounts-create-button';
 export * from './accounts-create-dialog';
 export * from './accounts-default-values';
+export * from './accounts-delete-confirmation-dialog';
 export * from './accounts-edit-dialog';
 export * from './accounts-form-create-button';
 export * from './accounts-form-update-button';
@@ -9,5 +10,6 @@ export * from './accounts-grid-content';
 export * from './accounts-grid-fallback';
 export * from './accounts-grid-item';
 export * from './accounts-grid-loader';
+export * from './accounts.state';
 export * from './accounts.types';
 export * from './accounts.utility';

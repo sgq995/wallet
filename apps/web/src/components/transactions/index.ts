@@ -9,4 +9,5 @@ export * from './transactions-list-content';
 export * from './transactions-list-fallback';
 export * from './transactions-list-item';
 export * from './transactions-list-loader';
+export * from './transactions.state';
 export * from './transactions.utility';

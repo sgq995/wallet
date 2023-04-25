@@ -4,6 +4,7 @@ import { cashToString } from '../../utilities/cash.utility';
 import { AccountsGridItem } from './accounts-grid-item';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import { AccountsDeleteConfirmDialog } from './accounts-delete-confirmation-dialog';
 
 const AccountsEditDialog = dynamic(() =>
   import('./accounts-edit-dialog').then((mod) => mod.AccountsEditDialog)
@@ -14,7 +15,8 @@ export interface IAccountGridProps {
 }
 
 export const AccountsGrid: React.FC<IAccountGridProps> = ({ accounts }) => {
-  const [open, setOpen] = useState(false);
+  const [editIsOpen, setEditIsOpen] = useState(false);
+  const [deleteIsOpen, setDeleteIsOpen] = useState(false);
   const [account, setAccount] = useState<
     TIndexable<IAccountReadonlyModel> | undefined
   >(undefined);
@@ -22,9 +24,15 @@ export const AccountsGrid: React.FC<IAccountGridProps> = ({ accounts }) => {
   return (
     <>
       <AccountsEditDialog
-        open={open}
-        onClose={() => setOpen(false)}
+        open={editIsOpen}
+        onClose={() => setEditIsOpen(false)}
         account={account}
+      />
+
+      <AccountsDeleteConfirmDialog
+        open={deleteIsOpen}
+        onClose={() => setDeleteIsOpen(false)}
+        id={account?.id ?? 0}
       />
 
       {accounts.map((account) => (
@@ -34,8 +42,12 @@ export const AccountsGrid: React.FC<IAccountGridProps> = ({ accounts }) => {
           label={account.label}
           balance={cashToString(account.balance, account.currency)}
           currencyCode={account.currency.code}
-          onClick={() => {
-            setOpen(true);
+          onEdit={() => {
+            setEditIsOpen(true);
+            setAccount(account);
+          }}
+          onDelete={() => {
+            setDeleteIsOpen(true);
             setAccount(account);
           }}
         />
