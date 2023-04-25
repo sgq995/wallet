@@ -2,11 +2,11 @@ import { List, ListItem } from '@mui/material';
 import { PropsWithChildren, useCallback } from 'react';
 import { useIntersection } from '../../hooks/use-intersection';
 
-export interface IInfiniteListProps extends PropsWithChildren {
+export interface IInfiniteListProps {
   onBottomReached?: () => void;
 }
 
-export const InfiniteList: React.FC<IInfiniteListProps> = ({
+export const InfiniteList: React.FC<PropsWithChildren<IInfiniteListProps>> = ({
   onBottomReached,
   children,
 }) => {
