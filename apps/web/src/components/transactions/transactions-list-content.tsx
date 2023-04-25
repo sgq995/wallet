@@ -5,9 +5,13 @@ import { useState } from 'react';
 import { ITransactionReadonlyModel } from '../../models/transaction.model';
 import { cashToString } from '../../utilities/cash.utility';
 import { groupByMonthAndYear } from '../../utilities/transactions.utility';
-import { TransactionsEditDialog } from './transactions-edit-dialog';
 import { TransactionsListItem } from './transactions-list-item';
 import styles from './transactions-list-content.module.css';
+import dynamic from 'next/dynamic';
+
+const TransactionsEditDialog = dynamic(
+  import('./transactions-edit-dialog').then((mod) => mod.TransactionsEditDialog)
+);
 
 export interface ITransactionsListContentProps {
   transactions: TIndexable<ITransactionReadonlyModel>[];

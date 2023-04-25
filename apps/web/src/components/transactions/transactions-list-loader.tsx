@@ -1,9 +1,9 @@
-import { Box, Typography } from '@mui/material';
 import { isEqual, uniqWith } from 'lodash';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useMemo } from 'react';
 import { useInfiniteTransactions } from '../../hooks/transactions';
 import { TransactionsListFallback } from './transactions-list-fallback';
+import { ErrorMessage } from '../common/error-message';
 
 const InfiniteList = dynamic(() =>
   import('../common/infinite-list').then((mod) => mod.InfiniteList)
@@ -37,15 +37,7 @@ export const TransactionsListLoader: React.FC = () => {
   }
 
   if (error) {
-    console.error(error);
-
-    return (
-      <Box width="100%" display="grid" alignContent="center">
-        <Typography variant="body1" color="error">
-          Something goes wrong
-        </Typography>
-      </Box>
-    );
+    return <ErrorMessage />;
   }
 
   return (

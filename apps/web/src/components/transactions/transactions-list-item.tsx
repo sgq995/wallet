@@ -54,7 +54,6 @@ export const TransactionsListItem: React.FC<ITransactionsListItemProps> = ({
 
   const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
     mutate(id);
-
     event.stopPropagation();
   };
 

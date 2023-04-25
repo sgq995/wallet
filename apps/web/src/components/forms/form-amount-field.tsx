@@ -86,7 +86,7 @@ const parseIfNotEmpty = wrap(parseInt, (func, string: string) => {
 
 const isUndefinedOrFinite = flowOr(isUndefined, isFinite);
 
-export interface IFormDateFieldProps {
+export interface IFormAmountFieldProps {
   id?: string;
   name?: string;
   required?: boolean;
@@ -96,7 +96,7 @@ export interface IFormDateFieldProps {
   hideCurrency?: boolean;
 }
 
-export const FormAmountField: React.FC<IFormDateFieldProps> = ({
+export const FormAmountField: React.FC<IFormAmountFieldProps> = ({
   id,
   name,
   required,
