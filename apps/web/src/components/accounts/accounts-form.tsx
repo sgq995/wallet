@@ -15,41 +15,59 @@ import {
   defaultStartingCents,
 } from './accounts-default-values';
 
-export interface IAccountsFormProps {}
+export interface IAccountsFormProps {
+  label?: string;
+  currency?: string;
+  units?: string;
+  cents?: string;
+  startingUnits?: string;
+  startingCents?: string;
+}
 
 export const AccountsForm: React.FC<PropsWithChildren<IAccountsFormProps>> =
-  WithFormStoreProvider(({ children }) => {
-    const labelRef = useUncontrolledInput('label', {
-      defaultValue: '',
-    });
+  WithFormStoreProvider(
+    ({
+      label = defaultLabel,
+      currency = defaultCurrency,
+      units = defaultUnits,
+      cents = defaultCents,
+      startingUnits = defaultStartingUnits,
+      startingCents = defaultStartingCents,
+      children,
+    }) => {
+      const labelRef = useUncontrolledInput('label', {
+        defaultValue: label,
+      });
 
-    return (
-      <Stack component="form" direction="column" spacing={4}>
-        <TextField
-          id="accounts-description"
-          inputRef={labelRef}
-          defaultValue={defaultLabel}
-          label="Label"
-          required
-        />
+      return (
+        <Stack component="form" direction="column" spacing={4}>
+          <TextField
+            id="accounts-description"
+            inputRef={labelRef}
+            defaultValue={label}
+            label="Label"
+            required
+          />
 
-        <FormAmountField
-          id="accounts-balance"
-          defaultCurrency={defaultCurrency}
-          defaultUnits={defaultUnits}
-          defaultCents={defaultCents}
-          required
-        />
+          <FormAmountField
+            id="accounts-balance"
+            defaultCurrency={currency}
+            defaultUnits={units}
+            defaultCents={cents}
+            required
+          />
 
-        <FormAmountField
-          id="accounts-starting-balance"
-          name="starting"
-          defaultUnits={defaultStartingUnits}
-          defaultCents={defaultStartingCents}
-          hideCurrency
-        />
+          <FormAmountField
+            id="accounts-starting-balance"
+            name="starting"
+            defaultUnits={startingUnits}
+            defaultCents={startingCents}
+            hideCurrency
+          />
 
-        {children}
-      </Stack>
-    );
-  }, DEFAULT_ACCOUNTS_FORM_VALUES);
+          {children}
+        </Stack>
+      );
+    },
+    DEFAULT_ACCOUNTS_FORM_VALUES
+  );

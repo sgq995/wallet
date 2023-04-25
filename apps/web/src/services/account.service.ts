@@ -7,7 +7,12 @@ import {
   IAccountMutableModel,
 } from '../models/account.model';
 import { IPaging } from '../models/paging.model';
-import { restDelete, restGet, restPost } from '../utilities/rest-api.utility';
+import {
+  restDelete,
+  restGet,
+  restPatch,
+  restPost,
+} from '../utilities/rest-api.utility';
 import { ICreateable } from './creatable.service';
 import { IDeletable } from './deletable.service';
 import { HttpService } from './http.service';
@@ -26,12 +31,16 @@ export type TAccountQuery = Partial<TIndexableAccountModel> & {
 
 export type TAccountBody = IAccountMutableModel;
 
+export type TPartialAccountBody = Partial<TAccountBody>;
+
 export type TAccountCreateResponse = TIndexableAccountModel;
 
 export type TAccountReadResponse = {
   accounts: Array<TIndexableAccountModel>;
   paging: IPaging;
 };
+
+export type TAccountUpdateResponse = TIndexableAccountModel;
 
 export type TAccountDeleteResponse = TIndexableAccountModel;
 
@@ -146,6 +155,20 @@ class AccountsServiceImpl
       accounts: body.data.map(readonlyRestToApp),
       paging: body.paging,
     };
+  }
+
+  async update(
+    params: TAccountParams,
+    entity: TPartialAccountBody
+  ): Promise<TAccountUpdateResponse> {
+    const body = await restPatch<TAccountUpdateResponse>({
+      baseUrl: this._apiBaseUrl,
+      endpoint: `${ACCOUNTS_BASE_PATH}/${params.id}`,
+      body: entity,
+      signal: this.signal,
+    });
+
+    return body.data;
   }
 
   async remove(params: TAccountParams): Promise<TAccountDeleteResponse> {

@@ -10,12 +10,14 @@ import {
 } from '@mui/material';
 import { TIndex } from '@wallet/utilities/model.utility';
 import { useDeleteAccount } from '../../hooks/accounts/use-delete-account';
+import { MouseEvent } from 'react';
 
 export interface IAccountsGridItemProps {
   id: TIndex;
   label: string;
   balance: string;
   currencyCode: string;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
@@ -23,6 +25,7 @@ export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
   label,
   balance,
   currencyCode,
+  onClick,
 }) => {
   const { isLoading, isSuccess, mutate } = useDeleteAccount();
   const isDisabled = isLoading || isSuccess;
@@ -46,7 +49,9 @@ export const AccountsGridItem: React.FC<IAccountsGridItemProps> = ({
           </CardContent>
         </CardActionArea>
         <CardActions disableSpacing>
-          <Button>Edit</Button>
+          <Button disabled={isDisabled} onClick={onClick}>
+            Edit
+          </Button>
 
           <Button
             sx={{ ml: 'auto' }}

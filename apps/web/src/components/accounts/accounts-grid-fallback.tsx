@@ -1,5 +1,6 @@
 import { Grid, Skeleton } from '@mui/material';
-import { Repeat } from '../helpers';
+import { Repeat } from '../common';
+
 
 export const AccountsGridFallback: React.FC = () => {
   return (

@@ -1,12 +1,19 @@
-import { Box, Typography } from '@mui/material';
 import { isEqual, uniqWith } from 'lodash';
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useInfiniteAccounts } from '../../hooks/accounts';
 import { AccountsGridFallback } from './accounts-grid-fallback';
+import { ErrorMessage } from '../common/error-message';
 
-const AccountsGrid = dynamic(
-  () => import('./accounts-grid').then((mod) => mod.AccountsGrid),
+const InfiniteGrid = dynamic(
+  () => import('../common/infinite-grid').then((mod) => mod.InfiniteGrid),
+  {
+    loading: () => <AccountsGridFallback />,
+  }
+);
+
+const AccountsGridContent = dynamic(
+  () => import('./accounts-grid-content').then((mod) => mod.AccountsGrid),
   {
     loading: () => <AccountsGridFallback />,
   }
@@ -20,19 +27,25 @@ export const AccountsGridLoader: React.FC = () => {
     [data]
   );
 
+  const handleGridBottomReached = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
+
   if (isLoading) {
     return <AccountsGridFallback />;
   }
 
   if (error) {
-    return (
-      <Box width="100%" display="grid" alignContent="center">
-        <Typography variant="body1" color="error">
-          Something goes wrong
-        </Typography>
-      </Box>
-    );
+    return <ErrorMessage />;
   }
 
-  return <AccountsGrid accounts={accounts} />;
+  return (
+    <>
+      <InfiniteGrid onBottomReached={handleGridBottomReached}>
+        <AccountsGridContent accounts={accounts} />
+      </InfiniteGrid>
+
+      {isFetchingNextPage && <AccountsGridFallback />}
+    </>
+  );
 };
